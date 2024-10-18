@@ -1,0 +1,165 @@
+<%- include('../partials/header2.ejs'); %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #f0f2f5;
+    }
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin: 40px 0;
+    }
+    .custom-card, .custom-link-card {
+        width: 380px;
+        padding: 30px;
+        border-radius: 15px;
+        border: none;
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .custom-link-card:hover {
+        transform: scale(1.1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #0d6efd;
+    }
+    .icon {
+        font-size: 45px;
+        color: #0d6efd;
+        margin-bottom: 20px;
+    }
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin-bottom: 15px;
+    }
+    .card-text {
+        font-size: 16px;
+        color: #0d6efd;
+    }
+    .form-container {
+        margin-top: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .form-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin-bottom: 20px;
+    }
+    .form-icon {
+        font-size: 20px;
+        margin-right: 10px;
+        color: #0d6efd;
+    }
+</style>
+</head>
+<body>
+    <div style="margin-top: 200px;" class="container">
+        <div class="card-container">
+            <!-- Cartões sobre Dizimistas -->
+            <div class="custom-card">
+                <div class="icon"><i class="bi bi-people-fill"></i></div>
+                <h5 class="card-title">Total de Dizimistas</h5>
+                <p class="card-text"><%= totalDizimistas  %> dizimistas cadastrados</p>
+            </div>
+            <div class="custom-card">
+                <div class="icon"><i class="bi bi-calendar-check"></i></div>
+                <h5 class="card-title">Dizimistas Ativos Este Ano</h5>
+                <p class="card-text"> <%= dizimistasAtivos  %>  ativos</p>
+            </div>
+            <a href="/listas-dizimistas" class="custom-link-card">
+                <div class="icon"><i class="bi bi-bar-chart"></i></div>
+                <h5 class="card-title">Estatísticas de Dizimistas</h5>
+                <p class="card-text">Uma áre mostrando os dizimistas que já deram os seus valores no més corrente e os que ainda não deram.</p>
+            </a>
+            <a href="/classes-dizimistas" class="custom-link-card">
+                <div class="icon"><i class="bi bi-person-circle"></i></div>
+                <h5 class="card-title">Classificação de dizimistas</h5>
+                <p class="card-text">Dizimistas regulares, irregulares e os novos dizimisas.</p>
+            </a>
+            <a href="/gerir-dizimistas" class="custom-link-card">
+                <div class="icon"><i class="bi bi-trash-fill"></i></div>
+                <h5 class="card-title">Gerenciar Dizimistas</h5>
+                <p class="card-text">Elimine dizimistas e acesse mais detalhes sobre eles.</p>
+            </a>
+            
+            <div class="custom-card">
+                <div class="icon"><i class="bi bi-piggy-bank-fill"></i></div>
+                <h5 class="card-title">Contribuições Recentes</h5>
+                <p class="card-text">Detalhes sobre as contribuições mais recentes.</p>
+            </div>
+            <div class="custom-card">
+                <div class="icon"><i class="bi bi-pie-chart-fill"></i></div>
+                <h5 class="card-title">Relatório de Contribuições</h5>
+                <p class="card-text">Relatório detalhado das contribuições dos dizimistas.</p>
+            </div>
+        </div>
+
+        <!-- Formulário Atraente -->
+        <div class="form-container">
+            <h5 class="form-title">Relatório de Dizimistas</h5>
+            <form action="/dizimistas/total" method="POST">
+                <div class="mb-3">
+                    <label for="periodo" class="form-label">
+                        <i class="form-icon bi bi-calendar"></i>
+                        Selecione o Período
+                    </label>
+                    <select name="periodo" class="form-select" id="periodo" required>
+                        <option value="" disabled selected>Escolha um período...</option>
+                        <option value="dia">Dia</option>
+                        <option value="semana">Semana</option>
+                        <option value="mes">Mês</option>
+                        <option value="trimestre">Trimestre</option>
+                        <option value="ano">Ano</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="membro" class="form-label">
+                        <i class="form-icon bi bi-person"></i>
+                        Selecione o Membro
+                    </label>
+                    <select  name="membro" class="form-select" id="membro" required>
+                        <option value="" disabled selected>Escolha um membro...</option>
+                        <% membros.forEach(function(membro) { %>
+                            <option value="<%= membro.id %>"><%= membro.nome %></option>
+                        <% }); %>
+                    </select>
+                </div>
+            
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Gerar Relatório
+                </button>
+            </form>
+            
+            <!-- Incluindo jQuery e Select2 -->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+            
+            <script>
+                $(document).ready(function() {
+                    $('#membro').select2({
+                        placeholder: "Escolha um membro...",
+                        allowClear: true
+                    });
+                });
+            </script>
+            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

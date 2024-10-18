@@ -1,0 +1,126 @@
+<%- include('../partials/header2.ejs'); %>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #f0f8ff, #ffffff); /* Gradiente suave para o fundo */
+            font-family: 'Arial', sans-serif; /* Fonte agradável */
+        }
+        .header-title {
+            
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00796b; /* Cor do título */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra do texto */
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .mini-card {
+            width: 300px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff; /* Fundo branco para os cartões */
+            transition: transform 0.2s, box-shadow 0.2s; /* Efeitos de hover */
+            border: 1px solid #b2dfdb; /* Borda suave */
+            position: relative;
+        }
+        .mini-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1); /* Sobreposição leve */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mini-card:hover::after {
+            opacity: 1; /* Efeito de sobreposição ao passar o mouse */
+        }
+        .mini-card:hover {
+            transform: translateY(-5px); /* Levanta o cartão ao passar o mouse */
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Sombra mais pronunciada ao passar o mouse */
+        }
+        .total-card {
+            width: 300px;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-color: #e3f2fd; /* Azul claro para o cartão total */
+            margin: 20px auto;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s; /* Efeitos de hover */
+        }
+        .total-card:hover {
+            transform: translateY(-5px); /* Levanta o cartão total ao passar o mouse */
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Sombra mais pronunciada ao passar o mouse */
+        }
+        .card-title {
+            color: #007bff; /* Cor do título dos cartões */
+            font-weight: bold; /* Destaca o título */
+        }
+        .card-icon {
+            font-size: 1.5rem; /* Tamanho dos ícones */
+            color: #007bff; /* Cor dos ícones */
+            margin-right: 10px; /* Espaço entre ícone e texto */
+        }
+        .btn-outline-primary {
+            color: #007bff; /* Cor do texto do botão */
+            border-color: #007bff; /* Cor da borda do botão */
+            transition: background-color 0.3s, color 0.3s; /* Transição suave para hover */
+            border-radius: 10px; /* Bordas arredondadas para o botão */
+            font-weight: bold; /* Negrito para o texto do botão */
+        }
+        .btn-outline-primary:hover {
+            background-color: #007bff; /* Cor de fundo ao passar o mouse */
+            color: #fff; /* Cor do texto ao passar o mouse */
+        }
+        @media (max-width: 768px) {
+            .mini-card {
+                width: 90%; /* Cartões ocupam 90% da largura em telas menores */
+            }
+            .total-card {
+                width: 90%; /* Cartão total ocupa 90% da largura em telas menores */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div style="margin-top: 200px !important;" class="container mt-5">
+    <h1 class="header-title">
+        Relatório <%= periodo.charAt(0).toUpperCase() + periodo.slice(1) %> das <%= origem %>
+    </h1>
+    
+    <div class="card-container">
+        <% despesas.forEach(despesa => { %>
+            <div class="mini-card">
+                <h5 class="card-title"><i class="bi bi-wallet card-icon"></i> Valor: Kz <%= despesa.valor.toFixed(2) %></h5>
+                <p><i class="bi bi-file-earmark-text card-icon"></i> Motivo: <%= despesa.motivo %></p>
+                <p><i class="bi bi-file-earmark-pdf card-icon"></i> Comprovativo: 
+                    <a href="<%= despesa.comprovativo %>" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye"></i> Visualizar
+                    </a>
+                </p>
+                <p><i class="bi bi-calendar card-icon"></i> Data: <%= despesa.createdAt.toLocaleString() %></p>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="total-card">
+        <h5 class="card-title"><i class="bi bi-cash card-icon"></i> Total de Despesas: Kz <%= totalDespesas.toFixed(2) %></h5>
+    </div>
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

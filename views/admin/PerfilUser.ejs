@@ -1,0 +1,247 @@
+<%- include('../partials/header.ejs');%>
+    
+
+
+<%- include('../partials/processamento.ejs');%>
+
+<style>
+.btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    margin: 10px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    outline: none;
+    background: linear-gradient(45deg, #2196F3, #3F51B5);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  .btn i {
+    margin-right: 10px;
+    transition: transform 0.4s ease;
+  }
+  .btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.5);
+    color: #fff
+  }
+  .btn:hover i {
+    transform: rotate(360deg);
+    color:#fff
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    border-radius: 50%;
+    z-index: 0;
+    animation: ripple 1.5s linear infinite;
+  }
+  .btn:hover::before {
+    width: 300%;
+    height: 300%;
+    opacity: 0;
+  }
+  @keyframes ripple {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.5;
+    }
+    100% {
+      width: 200%;
+      height: 200%;
+      opacity: 0;
+    }
+  }
+
+
+  .jumbotron {
+    border-radius: 20px;
+    padding: 50px 20px;
+    margin: 50px auto;
+    background: linear-gradient(135deg, #448AFF, #2962FF);
+    color: #fff;
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    animation: shine 5s infinite alternate;
+  }
+
+  .jumbotron h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .jumbotron p {
+    font-size: 20px;
+    line-height: 1.5;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .jumbotron hr {
+    border-top: 2px solid #fff;
+    width: 50%;
+    margin: 20px auto;
+  }
+
+  .jumbotron i {
+    color: #fff;
+    font-size: 70px;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    animation: floatIcon 5s infinite alternate;
+  }
+
+  @keyframes shine {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(1.3);
+    }
+  }
+
+  @keyframes floatIcon {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+</style>
+
+ 
+
+  <div class="container mt-5">
+
+    
+<div class="jumbotron bg-primary text-white text-center jumb">
+  <h1 class="display-4">Bem-vindo! <i style="font-size: 70px;" class="fas fa-user"></i></h1><br><br><hr class="col-6"> 
+  <p class="lead">Inscreva-se ou faça login abaixo para acessar os recursos do sistema como usuário!
+
+  </p> <br><br>
+</div> <br> <br> <br>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">Cadastro e Login do Funcionário</h3>
+                </div>
+
+                <div class="card-body" id="cadastro-form">
+                    <form id="signup-form" method="POST" action="/cadastro">
+                        <!-- ... Conteúdo do formulário de cadastro ... -->
+                        <div class="mb-3">
+                            <label for="nome" class="form-label"><b>Nome</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero" class="form-label"><b>Telefone</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="text" class="form-control" id="numero" name="telefone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="senha" class="form-label"><b>Senha</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                  <img style="width: 30px; height: 30px;" src="/img/chave.png" alt="">
+
+                                </span>
+                                <input type="password" class="form-control" id="senha" name="senha" required>
+                            </div>
+                        </div>
+                        <button onclick="simularRequisicao()" data-bs-toggle="modal" data-bs-target="#processingModal" type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Cadastrar</button>
+                    </form>
+                    <p class="text-center mt-3"><b>Já tem uma conta? <span class="toggle-link" onclick="toggleForms()">Faça o login</b></span></p>
+                </div>
+
+                <!-- ... Conteúdo do formulário de login ... -->
+                
+                <div class="card-body d-none" id="login-form">
+                  
+                    <form id="signin-form" method="POST" action="/login-user" >
+                        <!-- ... Conteúdo do formulário de login ... -->
+                        <div class="mb-3">
+                          <label for="login-nome" class="form-label"><b>Nome de usuário</b></label>
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              <input type="text" class="form-control" id="login-nome" name="nome" required>
+                          </div>
+                      </div>
+                      <div class="mb-3">
+                          <label for="login-senha" class="form-label"><b>A sua Senha</b></label>
+                          <div class="input-group">
+                              <span class="input-group-text">
+                                
+                                <img style="width: 30px; height: 30px;" src="/img/chave.png" alt="">
+                              </span>
+                              <input type="password" class="form-control" id="login-senha" name="senha" required>
+                          </div>
+                      </div>
+                      <button onclick="simularRequisicao()" data-bs-toggle="modal" data-bs-target="#processingModal" id="btnRequisicao" type="submit" class="btn btn-primary">
+                        
+                        Entrar <i class="fas fa-paper-plane"></i>
+                    </button>
+                    </form>
+                    <p class="text-center mt-3"><b>Não tem uma conta? <span style="color: #fff;" class="toggle-link" onclick="toggleForms()">Cadastre-se</b></span></p>
+                </div>
+
+<!-------->
+
+
+
+
+<!----->
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+ 
+  
+  
+<%- include('../partials/footer.ejs');%>
+ 

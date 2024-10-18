@@ -1,0 +1,215 @@
+<%- include('../partials/header.ejs');%>
+    <style>
+
+
+body {
+    background-color: #f2f2f2; /* Fundo mais neutro para destacar os cartões */
+    font-family: 'Roboto', sans-serif;
+}
+
+.jumbotron {
+    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    color: white;
+    padding: 3rem 1.5rem; /* Aumenta o padding para um efeito mais impactante */
+    border-radius: 1rem;
+    margin-bottom: 3rem; /* Mais espaçamento abaixo do jumbotron */
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Sombra para destacar o jumbotron */
+}
+
+.jumbotron i {
+    font-size: 80px; /* Aumenta o ícone para mais impacto */
+}
+
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 1.5rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Sombra mais profunda */
+    transition: all 0.4s ease-in-out;
+    overflow: hidden;
+    margin-bottom: 2rem; /* Espaço maior entre os cartões */
+    position: relative; /* Permite efeitos de sobreposição */
+}
+
+.card:hover {
+    transform: translateY(-15px) scale(1.05); /* Efeito de elevação mais marcante */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); /* Sombra mais intensa ao passar o mouse */
+}
+
+
+.card-img-top {
+  height: 80px; /* Mantém a imagem pequena */
+    width: 80px;  /* Mantém a imagem pequena */
+    object-fit: cover; /* Garante que a imagem cubra a área sem distorção */
+    border-radius: 0.5rem;
+    margin: 1rem auto; /* Centraliza a imagem */
+}
+
+.card-body {
+    padding: 2rem;
+    text-align: center; /* Centraliza o texto dentro do cartão */
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: #007bff;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.card-title:hover {
+    color: #0056b3;
+    transform: scale(1.05); /* Leve aumento no título ao passar o mouse */
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.6; /* Melhora a legibilidade do texto */
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    padding: 1.5rem;
+    text-align: center; /* Centraliza o conteúdo do rodapé */
+}
+
+.btn-success, .btn-danger {
+    border-radius: 0.75rem; /* Botões com bordas mais arredondadas */
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ver-ficha{
+    background-color: #28a745;
+    border: none;
+}
+
+.ver-ficha:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra adicional no hover */
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra adicional no hover */
+}
+
+.pagination {
+    margin-top: 3rem;
+    justify-content: center;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 0.5rem 1.5rem;
+    border-radius: 1rem; /* Botões de paginação com bordas arredondadas */
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    background-color: #007bff; /* Cor de fundo padrão */
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.form-control {
+    border-radius: 0.75rem;
+    border: 1px solid #ced4da;
+    padding: 0.75rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+.form-group label {
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .jumbotron {
+        padding: 2rem 1rem;
+    }
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4">Agendas Realizadas!</h1>
+        <i class="fas fa-calendar-alt"></i><br><br><hr class="col-6"> 
+        <p class="lead">Explore as opções disponíveis!</p><br>
+    </div>
+
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <% clientes.forEach(client => { %>
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <img src="/img/agendaa.png" class="card-img-top" alt="Imagem de <%= client.nome %>">
+                        <div class="card-body">
+                            <h3 class="card-title text-center"><%= client.nome %></h3>
+                            <hr>
+                            <p class="card-text">
+                                <strong>NIF:</strong> <%= client.BI %><br>
+                                <strong>Bairro:</strong> <%= client.bairro %><br>
+                                <strong>Data da agenda:</strong> <%= new Date(client.data).toLocaleDateString('pt-BR') %><br>
+                                <strong>Procedimento:</strong> <%= client.procedimento %><br>
+                            </p>
+                        </div>
+                        <div class="card-footer  d-flex justify-content-between align-items-center">
+                            <a href="/ficha/<%= client.id %>" class="btn btn-success ver-ficha">
+                                <b>Ver Ficha</b>
+                            </a>
+                            <form action="/delete/client" method="POST" onsubmit="confirmarDelecao(event, this)">
+                                <input type="hidden" name="id" value="<%= client.id %>">
+                                <button type="submit" class="btn btn-danger">
+                                    Excluir Ficha
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <!-- Navegação de paginação -->
+        <div class="d-flex justify-content-center my-4">
+            <% if (currentPage > 1) { %>
+                <a href="/admin/client/list?page=<%= currentPage - 1 %>" class="btn btn-secondary">Voltar</a>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+                <a href="/admin/client/list?page=<%= currentPage + 1 %>" class="btn btn-primary">Ver mais agendas</a>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<%- include('../partials/footer.ejs');%>

@@ -1,0 +1,468 @@
+<%- include('../../partials/header.ejs');%>
+    <style>
+
+/* Estilizando o container principal */
+.container {
+    max-width: 1200px;
+    
+    padding: 40px;
+    font-family: 'Poppins', sans-serif;
+    background: #ffffff;
+    border-radius: 25px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid #e2e2e2;
+    position: relative;
+}
+
+/* Títulos */
+h1 {
+    color: #34495e;
+    margin-bottom: 40px;
+    font-size: 3.2em;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #3498db, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Botões principais */
+.btn {
+    font-size: 1.15em;
+    font-weight: 600;
+    border-radius: 35px;
+    padding: 14px 32px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.btn-primary:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2980b9, #1f5a8c);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.btn-secondary:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #7f8c8d, #6c757d);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.btn-success:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilizando os modais */
+.modal-content {
+    border-radius: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border-bottom: 1px solid #2980b9;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    padding: 30px;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.close {
+    color: white;
+    opacity: 0.85;
+}
+
+.close:hover {
+    color: white;
+    opacity: 1;
+}
+
+/* Estilizando o corpo dos modais */
+.modal-body {
+    padding: 30px;
+    background: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+}
+
+.form-check {
+    margin-bottom: 25px;
+    font-size: 1.1em;
+}
+
+.form-check-input:checked ~ .form-check-label {
+    color: #3498db;
+    font-weight: 600;
+}
+
+.form-check-label {
+    color: #34495e;
+    transition: color 0.3s ease;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+/* Rodapé do modal */
+.modal-footer {
+    border-top: 1px solid #ecf0f1;
+    padding: 20px;
+    text-align: right;
+}
+
+/* Estilizando o formulário final */
+#relatorioForm {
+    margin-top: 40px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+#relatorioForm .form-group {
+    margin-bottom: 20px;
+}
+
+#relatorioForm label {
+    font-size: 1.1em;
+    color: #34495e;
+}
+
+#relatorioForm select.form-control {
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    transition: border-color 0.3s ease;
+}
+
+#relatorioForm select.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+#relatorioForm .btn-success {
+    font-size: 1.2em;
+    padding: 14px 32px;
+}
+
+/* Estilizando botões de seleção */
+#selectAllServices, #selectAllProducts {
+    background: linear-gradient(135deg, #2980b9, #1f5a8c);
+    color: white;
+    border: none;
+    border-radius: 35px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#selectAllServices::before, #selectAllProducts::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+#selectAllServices:hover::before, #selectAllProducts:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#selectAllServices:hover, #selectAllProducts:hover {
+    background: linear-gradient(135deg, #1f5a8c, #0e4f6f);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    .btn {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+    .modal-content {
+        border-radius: 15px;
+    }
+    #relatorioForm {
+        padding: 15px;
+    }
+}
+
+/* Animação de Fade In Up */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Relatório de Vendas</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modalServicos">Serviços</button>
+        <button class="btn btn-secondary" data-toggle="modal" data-target="#modalProdutos">Produtos</button>
+        <button class="btn btn-info" data-toggle="modal" data-target="#modalFormacoes">Formações</button>
+
+        <!-- Modal Serviços -->
+        <div class="modal fade" id="modalServicos" tabindex="-1" role="dialog" aria-labelledby="modalServicosLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalServicosLabel">Selecionar Serviços</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>   
+                    </div>
+                    <div class="modal-body">
+                        <form id="formServicos">
+                            <div id="servicosList" class="form-check">
+                                <% services.forEach(service => { %>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="services[]" value="<%= service.id %>" class="form-check-input">
+                                        <label class="form-check-label"><%= service.title %> - R$<%= service.preco %></label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <button type="button" id="selectAllServices" class="btn btn-primary">Selecionar Tudo</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="submitServices" class="btn btn-primary">Inserir no Relatório</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Produtos -->
+        <div class="modal fade" id="modalProdutos" tabindex="-1" role="dialog" aria-labelledby="modalProdutosLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalProdutosLabel">Selecionar Produtos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formProdutos">
+                            <div id="produtosList" class="form-check">
+                                <% products.forEach(product => { %>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="products[]" value="<%= product.id %>" class="form-check-input">
+                                        <label class="form-check-label"><%= product.nome %> - R$<%= product.preco %></label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <button type="button" id="selectAllProducts" class="btn btn-primary">Selecionar Tudo</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="submitProducts" class="btn btn-primary">Inserir no Relatório</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Formações -->
+        <div class="modal fade" id="modalFormacoes" tabindex="-1" role="dialog" aria-labelledby="modalFormacoesLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalFormacoesLabel">Selecionar Formações</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formFormacoes">
+                            <div id="formacoesList" class="form-check">
+                                <% formacoes.forEach(formacao => { %>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="formacoes[]" value="<%= formacao.id %>" class="form-check-input">
+                                        <label class="form-check-label"><%= formacao.nome %> - R$<%= formacao.valor %></label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <button type="button" id="selectAllFormacoes" class="btn btn-primary">Selecionar Tudo</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="submitFormacoes" class="btn btn-primary">Inserir no Relatório</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="relatorioForm" action="/gerar-relatorio" method="POST">
+            <div class="form-group">
+                <label for="periodo">Período</label>
+                <select id="periodo" name="periodo" class="form-control">
+                    <option value="dia">Dia</option>
+                    <option value="semana">Semana</option>
+                    <option value="mes">Mês</option>
+                    <option value="trimestre">Trimestre</option>
+                    <option value="semestre">Semestre</option>
+                    <option value="ano">Ano</option>
+                </select>
+            </div>
+            <input type="hidden" name="services" id="servicesInput">
+            <input type="hidden" name="products" id="productsInput">
+            <input type="hidden" name="formacoes" id="formacoesInput">
+            <button type="submit" class="btn btn-success">Gerar Relatório</button>
+        </form>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Selecionar todos os serviços
+        document.getElementById('selectAllServices').addEventListener('click', () => {
+            document.querySelectorAll('#servicosList input[type="checkbox"]').forEach(cb => cb.checked = true);
+        });
+
+        // Selecionar todos os produtos
+        document.getElementById('selectAllProducts').addEventListener('click', () => {
+            document.querySelectorAll('#produtosList input[type="checkbox"]').forEach(cb => cb.checked = true);
+        });
+
+        // Selecionar todas as formações
+        document.getElementById('selectAllFormacoes').addEventListener('click', () => {
+            document.querySelectorAll('#formacoesList input[type="checkbox"]').forEach(cb => cb.checked = true);
+        });
+
+        // Enviar serviços selecionados para o formulário
+        document.getElementById('submitServices').addEventListener('click', () => {
+            const selectedServices = Array.from(document.querySelectorAll('#servicosList input[type="checkbox"]:checked')).map(cb => cb.value);
+            document.getElementById('servicesInput').value = JSON.stringify(selectedServices);
+            $('#modalServicos').modal('hide');
+        });
+
+        // Enviar produtos selecionados para o formulário
+        document.getElementById('submitProducts').addEventListener('click', () => {
+            const selectedProducts = Array.from(document.querySelectorAll('#produtosList input[type="checkbox"]:checked')).map(cb => cb.value);
+            document.getElementById('productsInput').value = JSON.stringify(selectedProducts);
+            $('#modalProdutos').modal('hide');
+        });
+
+        // Enviar formações selecionadas para o formulário
+        document.getElementById('submitFormacoes').addEventListener('click', () => {
+            const selectedFormacoes = Array.from(document.querySelectorAll('#formacoesList input[type="checkbox"]:checked')).map(cb => cb.value);
+            document.getElementById('formacoesInput').value = JSON.stringify(selectedFormacoes);
+            $('#modalFormacoes').modal('hide');
+        });
+    </script>
+</body>
+
+
+<%- include('../../partials/footer.ejs');%>

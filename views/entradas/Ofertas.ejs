@@ -1,0 +1,247 @@
+<%- include('../partials/header2.ejs');%>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #6b78ff, #ffffff);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h2 {
+            font-size: 2.5rem;
+            color: #ffffff;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        .header .underline {
+            width: 100%;
+            max-width: 200px;
+            height: 4px;
+            background-color: #ffffff;
+            margin: 10px auto;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            
+        }
+
+        .container-form {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            flex: 0 0 600px;
+            margin-right: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .container-form.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-row input, .form-row select {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: border 0.3s;
+        }
+
+        .form-row input:focus, .form-row select:focus {
+            border-color: #6b78ff;
+            outline: none;
+        }
+
+        /* Botão para carregar foto */
+        .upload-button {
+            display: inline-block;
+            padding: 15px;
+            background-color: #6b78ff;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .upload-button i {
+            margin-right: 10px;
+        }
+
+        .upload-button:hover {
+            background-color: #4c3d99;
+        }
+
+        /* Estilo da imagem de pré-visualização */
+        .preview-image {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-top: 10px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #6b78ff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #4c3d99;
+        }
+
+        label i{
+            color: #4c3d99;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container-form {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            #lottie-animation {
+                margin-top: 20px;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        #lottie-animation {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>CURSOS TEOLÓGICOS</h2>
+        <div class="underline"></div>
+        <p>Preencha o formulário abaixo para cadastrar um novo membro na plataforma.</p>
+    </div>
+
+    <div class="container">
+        <div class="container-form">
+            <form class="contact-form" action="/criar-oferta" method="POST">
+                <!-- Botão de upload de foto -->
+               
+
+                <div class="form-row">
+                    <label for="">
+                        <i class="bi bi-currency-dollar"></i>
+
+
+                        Digite o Valor da Oferta de Hoje</label>
+                     
+                 </div>
+ 
+                <!-- Outros campos -->
+                <div class="form-row">
+                    
+     <input type="number"  name="valor" placeholder="oferta de hoje"  required>
+     
+                                   
+                               </div>
+                
+              
+               
+               
+                <button type="submit">
+                    <i class="bi bi-arrow-down"></i>
+
+                    Inserir oferta</button>
+            </form>
+        </div>
+
+        <div id="lottie-animation"></div>
+    </div>
+
+    <script>
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            path: '/img/porco.json',
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+        });
+
+        // Transição do formulário
+        window.addEventListener('load', function () {
+            document.querySelector('.container-form').classList.add('show');
+        });
+
+        // Pré-visualização da foto
+        const fotoInput = document.getElementById('foto');
+        const previewImage = document.getElementById('preview');
+
+        fotoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

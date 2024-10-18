@@ -1,0 +1,285 @@
+<%- include('../partials/header2.ejs'); %>
+
+<!-- Link para seu CSS personalizado -->
+<title>Classes de Dizimistas</title>
+<style>
+
+/* Estilos Globais */
+.page-container {
+    background: linear-gradient(to right, #e0f7fa, #ffffff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #34495e;
+    margin: 0;
+    padding: 20px;
+    margin-top: 200px;
+}
+
+/* Título Principal */
+.main-title {
+    margin-bottom: 40px;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #2980b9;
+    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: slideIn 1s forwards;
+}
+
+/* Animação de Entrada para Títulos */
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Títulos das Seções */
+.section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    color: #ffffff;
+    position: relative;
+    background-color: #2980b9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+.section-title:hover {
+    background-color: #3498db;
+}
+
+/* Cores das Seções */
+.section-regular {
+    background-color: #27ae60;
+}
+
+.section-irregular {
+    background-color: #f39c12;
+}
+
+.section-new {
+    background-color: #3498db;
+}
+
+/* Estilos da Lista */
+.custom-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.custom-item {
+    flex: 0 0 calc(33.333% - 20px); /* Cada item ocupa 33.333% da largura menos a margem */
+    background-color: #ffffff;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.custom-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    background-color: #f8f9fa;
+}
+
+/* Estilos dos Conteúdos */
+.custom-item strong {
+    font-size: 1.5rem;
+    color: #34495e;
+    transition: color 0.3s;
+}
+
+.custom-item strong:hover {
+    color: #2980b9;
+}
+
+.custom-item .text-muted {
+    color: #7f8c8d;
+}
+
+.custom-item em {
+    display: block;
+    margin-top: 10px;
+    font-style: italic;
+    color: #95a5a6;
+    font-size: 1rem;
+}
+
+/* Ícones */
+.member-icon, .address-icon, .gender-icon {
+    margin-right: 5px;
+    font-size: 1.5rem;
+    color: #2980b9;
+}
+
+/* Estilo Responsivo */
+@media (max-width: 768px) {
+    .custom-item {
+        flex: 0 0 100%; /* Em telas pequenas, cada item ocupa 100% da largura */
+    }
+}
+
+</style>
+</head>
+<body>
+    <div class="page-container">
+        <h1 class="main-title">Classes de Dizimistas</h1>
+
+        <!-- Membros Regulares -->
+        <div class="section">
+            <h2 class="section-title section-regular"><i class="bi bi-check-circle icon"></i>Dizimistas Regulares</h2>
+            <ul class="custom-list">
+                <% regulares.forEach((item, index) => { %>
+                    <li class="custom-item">
+                        <% if (index % 2 === 0) { %>
+                            <div style="text-align: left;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong> - <%= item.tempoDeMembresia %>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em>Tempo de membresia: Este membro é regular e está contribuindo ativamente!</em>
+                            </div>
+                        <% } else { %>
+                            <div style="text-align: right;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong> - <%= item.tempoDeMembresia %>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em>Tempo de membresia: Este membro é regular e está contribuindo ativamente!</em>
+                            </div>
+                        <% } %>
+                    </li>
+                <% }) %>
+                <% if (regulares.length === 0) { %>
+                    <li class="custom-item">Nenhum membro regular encontrado.</li>
+                <% } %>
+            </ul>
+        </div>
+
+        <!-- Membros Irregulares -->
+        <div class="section">
+            <h2 class="section-title section-irregular"><i class="bi bi-exclamation-circle icon"></i>Dizimistas Irregulares</h2>
+            <ul class="custom-list">
+                <% irregulares.forEach((item, index) => { %>
+                    <li class="custom-item">
+                        <% if (index % 2 === 0) { %>
+                            <div style="text-align: left;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong> - <%= item.tempoDeMembresia %>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em>Tempo de membresia: Este membro é irregular e sua contribuição é muito importante!</em>
+                            </div>
+                        <% } else { %>
+                            <div style="text-align: right;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong> - <%= item.tempoDeMembresia %>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em>Tempo de membresia: Este membro é irregular e sua contribuição é muito importante!</em>
+                            </div>
+                        <% } %>
+                    </li>
+                <% }) %>
+                <% if (irregulares.length === 0) { %>
+                    <li class="custom-item">Nenhum membro irregular encontrado.</li>
+                <% } %>
+            </ul>
+        </div>
+
+        <!-- Novos Membros -->
+        <div class="section">
+            <h2 class="section-title section-new"><i class="bi bi-person-plus icon"></i>Novos Dizimistas</h2>
+            <ul class="custom-list">
+                <% novos.forEach((item, index) => { %>
+                    <li class="custom-item">
+                        <% if (index % 2 === 0) { %>
+                            <div style="text-align: left;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em><b>Tempo de membresia</b>: Este é um novo membro que está a caminho de se tornar regular! Faz menos de 3 meses que começou a dizimar</em>
+                            </div>
+                        <% } else { %>
+                            <div style="text-align: right;">
+                                <strong><i class="bi bi-person member-icon"></i> <%= item.membro.nome %></strong>
+                                <br>
+                                <i class="bi bi-house address-icon"></i> Endereço: 
+                                <% if (item.endereco) { %>
+                                    <%= item.endereco.rua %>, <%= item.endereco.bairro %> - <%= item.endereco.comuna %>
+                                <% } else { %>
+                                    <span class="text-muted">Endereço não disponível</span>
+                                <% } %>
+                                <br>
+                                <i class="bi bi-gender-ambiguous gender-icon"></i> Gênero: <%= item.genero %>
+                                <br>
+                                <em><b>Tempo de membresia</b>: Este é um novo membro que está a caminho de se tornar regular! Faz menos de 3 meses que começou a dizimar</em>
+                            </div>
+                        <% } %>
+                    </li>
+                <% }) %>
+                <% if (novos.length === 0) { %>
+                    <li class="custom-item">Nenhum novo membro encontrado.</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+

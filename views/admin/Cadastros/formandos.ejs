@@ -1,0 +1,298 @@
+<%- include('../../partials/header.ejs'); %>
+
+
+    <style>
+        /* Importar fonte */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        /* Estilos gerais */
+        body {
+            font-family: 'Poppins', sans-serif;
+           
+            color: #333;
+            background: #e9f2f9;
+        }
+
+        /* Seção de boas-vindas */
+        .welcome-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0099ff, #66ccff);
+            color: #fff;
+            border-bottom: 5px solid #007acc;
+        }
+
+        .welcome-section h1 {
+            font-size: 3.5em;
+            margin: 0 0 20px;
+            font-weight: 700;
+        }
+
+        .welcome-section p {
+            font-size: 1.25em;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Seção de cartões */
+        .cards-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0099ff, #66ccff);
+            z-index: -1;
+            border-radius: 15px;
+            opacity: 0.1;
+        }
+
+        .card h3 {
+            font-size: 1.8em;
+            margin: 0 0 15px;
+            color: #0056b3;
+        }
+
+        .card p {
+            font-size: 1em;
+            margin: 0 0 20px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .open-modal {
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .open-modal:hover {
+            background-color: #005b99;
+            transform: scale(1.05);
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos para modais */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 2em;
+            color: #007acc;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #007acc;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #005b99;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin: 12px 0 6px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-content input, .modal-content textarea {
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .modal-content button {
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #005b99;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .cards-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Seção de boas-vindas -->
+    <section class="welcome-section">
+        <h1>Gerencie Suas Formações de Beleza</h1>
+        <p>Organize e administre suas formações de salão de beleza de maneira eficiente. Crie novas formações e insira formando no sistema com facilidade.</p>
+    </section>
+
+    <!-- Cartões com modais -->
+    <section class="cards-section">
+        <div class="card" id="create-formation-card">
+            <h3>📚 Criar Formação</h3>
+            <p>Adicione e configure novas formações para os profissionais de beleza.</p>
+            <button class="open-modal" data-modal="create-formation-modal">Criar Formação</button>
+        </div>
+        <div class="card" id="insert-trainee-card">
+            <h3>👤 Inserir Formando</h3>
+            <p>Inclua novos formandos e mantenha seu banco de dados atualizado.</p>
+            <button class="open-modal" data-modal="insert-trainee-modal">Inserir Formando</button>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div class="modal" id="create-formation-modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="create-formation-modal">&times;</span>
+            <h2>Criar Nova Formação</h2>
+            <form action="/criar-formacao" method="POST">
+                <label for="formation-name">Nome da Formação</label>
+                <input type="text" id="formation-name" name="nome" required>
+                <label for="formation-description">Valor da formação</label>
+                <input type="number" id="formation-name" name="valor" required>
+                <button type="submit">Salvar Formação</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="insert-trainee-modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="insert-trainee-modal">&times;</span>
+            <h2>Inserir Novo Formando</h2>
+            <form action="/criar-formando" method="POST">
+                <label for="nome">Nome do Formando:</label>
+                <input type="text" id="nome" name="nome" required>
+                
+                <label for="telefone">Telefone:</label>
+                <input type="text" id="telefone" name="telefone" required>
+                
+                <label for="formacao">Formação:</label>
+                <select name="formacaoId" id="formacao">
+                    <% formacao.forEach(formacao => { %>
+                        <option value="<%= formacao.id %>"><%= formacao.nome %></option>
+                    <% }) %>
+                </select>
+                
+                <button type="submit">Salvar Formando</button>
+            </form>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const openModalButtons = document.querySelectorAll('.open-modal');
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+            const modals = document.querySelectorAll('.modal');
+
+            openModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.getAttribute('data-modal');
+                    const modal = document.getElementById(modalId);
+                    modal.style.display = 'flex';
+                });
+            });
+
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.getAttribute('data-modal');
+                    const modal = document.getElementById(modalId);
+                    modal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+<%- include('../../partials/modalProcedimento.ejs'); %>
+<%- include('../../partials/modalProdutos.ejs'); %>
+
+<%- include('../../partials/footer.ejs'); %>

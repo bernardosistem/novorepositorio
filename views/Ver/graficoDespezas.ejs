@@ -1,0 +1,173 @@
+<%- include('../partials/header2.ejs'); %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* Estilo do container do gráfico */
+.graph-container {
+    padding: 20px; /* Reduzindo o espaço interno */
+    border: 3px solid #0056b3; /* Borda azul escura para mais contraste */
+    border-radius: 20px; /* Bordas arredondadas */
+    background: linear-gradient(135deg, #dfe9f3, #ffffff); /* Gradiente sutil e moderno */
+    max-width: 70%; /* Largura máxima em 70% do viewport */
+    margin: 0 auto; /* Centraliza o container */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Sombra mais suave */
+}
+
+/* Estilo do canvas */
+canvas#despesasChart {
+    background-color: #ffffff; /* Fundo branco para contraste */
+    border-radius: 15px; /* Bordas arredondadas */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Sombra intensa */
+    width: 100%; /* Largura total do container pai */
+    height: auto; /* Altura automática */
+    max-height: 500px; /* Altura máxima reduzida para 500px */
+    margin: 15px 0; /* Margens acima e abaixo */
+}
+
+/* Estilo do título */
+h1 {
+    text-align: center;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 30px; /* Diminuindo o tamanho do título */
+    color: #003399; /* Azul mais escuro para contraste */
+    margin-bottom: 15px; /* Ajustando margem inferior */
+    text-transform: uppercase;
+    letter-spacing: 2px; /* Espaçamento entre as letras ajustado */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra reduzida */
+}
+
+/* Tooltip do gráfico */
+.chartjs-tooltip {
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 10px; /* Ajustando o raio da borda */
+    color: white;
+    font-size: 14px; /* Diminuindo o tamanho do texto */
+    padding: 10px; /* Ajustando o padding */
+}
+
+/* Legenda do gráfico */
+.legend {
+    text-align: center;
+    margin-top: 20px; /* Ajustando espaço acima */
+}
+
+.legend-label {
+    display: inline-block;
+    margin-right: 15px; /* Ajustando o espaço entre itens */
+    font-size: 16px; /* Diminuindo o tamanho do texto */
+    font-family: 'Verdana', sans-serif;
+    color: #444;
+    padding: 5px 10px; /* Ajustando o padding */
+    border-radius: 5px;
+    background-color: #e0e0e0; /* Fundo claro */
+}
+
+/* Estilo para as barras do gráfico */
+.chartjs-render-monitor .bar {
+    border-radius: 8px; /* Bordas arredondadas mais evidentes */
+    transition: all 0.3s ease; /* Animação suave */
+}
+
+.chartjs-render-monitor .bar:hover {
+    opacity: 0.9;
+    transform: scale(1.05); /* Efeito de zoom levemente reduzido */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Sombra menor ao passar o mouse */
+}
+
+/* Estilo para o select */
+select {
+    appearance: none; /* Remove o estilo padrão do select */
+    -webkit-appearance: none; /* Remove o estilo no Safari */
+    -moz-appearance: none; /* Remove o estilo no Firefox */
+    padding: 10px 40px 10px 15px; /* Espaçamento interno */
+    border: 2px solid #0056b3; /* Borda azul escura */
+    border-radius: 5px; /* Bordas arredondadas */
+    background: linear-gradient(135deg, #ffffff, #f0f0f0); /* Gradiente de fundo */
+    color: #333; /* Cor do texto */
+    font-size: 16px; /* Tamanho da fonte */
+    font-family: 'Arial', sans-serif; /* Fonte do texto */
+    cursor: pointer; /* Cursor como ponteiro */
+    transition: border-color 0.3s; /* Transição suave para a borda */
+}
+
+/* Estilo para o select ao passar o mouse */
+select:hover {
+    border-color: #003399; /* Borda azul escura ao passar o mouse */
+}
+
+/* Estilo para a seta do select */
+select::after {
+    content: ''; /* Adiciona um ícone personalizado */
+    background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/chevron-down.svg') no-repeat center center; /* URL do ícone */
+    background-size: 15px; /* Tamanho do ícone */
+    position: absolute; /* Para posicionar o ícone */
+    right: 10px; /* Distância da direita */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%); /* Ajusta a posição do ícone */
+    pointer-events: none; /* Ignora eventos de mouse no ícone */
+}
+
+/* Estilo para o container do select */
+.container-select {
+    position: relative; /* Necessário para posicionar o ícone */
+    display: inline-block; /* Faz o select ocupar apenas o espaço necessário */
+}
+</style>
+</head>
+<body>
+<div style="margin-top: 200px;" class="page">
+    
+<h1>Gráfico de Despesas por Origem</h1>
+
+<!-- Select para escolher o período -->
+<select id="periodoSelect">
+    <option value="dia" <%= periodo === 'dia' ? 'selected' : '' %>>Dia</option>
+    <option value="semana" <%= periodo === 'semana' ? 'selected' : '' %>>Semana</option>
+    <option value="mes" <%= periodo === 'mes' ? 'selected' : '' %>>Mês</option>
+    <option value="trimestre" <%= periodo === 'trimestre' ? 'selected' : '' %>>Trimestre</option>
+    <option value="ano" <%= periodo === 'ano' ? 'selected' : '' %>>Ano</option>
+</select>
+
+<canvas id="despesasChart" width="400" height="200"></canvas>
+
+</div>
+<script>
+    const labels = <%- JSON.stringify(labels) %>;
+    const valores = <%- JSON.stringify(valores) %>;
+
+    // Encontrar o menor e maior valor
+    const minValor = Math.min(...valores);
+    const maxValor = Math.max(...valores);
+
+    // Configuração do gráfico
+    const ctx = document.getElementById('despesasChart').getContext('2d');
+    const despesasChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total de Despesas',
+                data: valores,
+                backgroundColor: valores.map(valor => {
+                    if (valor === maxValor) return 'red';   // Maior valor
+                    if (valor === minValor) return 'green'; // Menor valor
+                    return 'orange'; // Valores intermediários
+                }),
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Event listener para o select
+    document.getElementById('periodoSelect').addEventListener('change', function() {
+        const periodo = this.value;
+        window.location.href = `/grafico-despezas?periodo=${periodo}`;
+    });
+</script>

@@ -1,0 +1,339 @@
+<%- include('../partials/header2.ejs');%>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #6b78ff, #ffffff);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h2 {
+            font-size: 2.5rem;
+            color: #ffffff;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        .header .underline {
+            width: 100%;
+            max-width: 200px;
+            height: 4px;
+            background-color: #ffffff;
+            margin: 10px auto;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            
+        }
+
+        .container-form {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            flex: 0 0 600px;
+            margin-right: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .container-form.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-row input, .form-row select {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: border 0.3s;
+        }
+
+        .form-row input:focus, .form-row select:focus {
+            border-color: #6b78ff;
+            outline: none;
+        }
+
+        /* Botão para carregar foto */
+        .upload-button {
+            display: inline-block;
+            padding: 15px;
+            background-color: #6b78ff;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .upload-button i {
+            margin-right: 10px;
+        }
+
+        .upload-button:hover {
+            background-color: #4c3d99;
+        }
+
+        /* Estilo da imagem de pré-visualização */
+        .preview-image {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-top: 10px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #6b78ff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #4c3d99;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container-form {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            #lottie-animation {
+                margin-top: 20px;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        #lottie-animation {
+            width: 500px;
+            height: 500px;
+        }
+
+
+        /* Estilo para o contêiner dos departamentos */
+.departamentos-container {
+    margin-top: 20px; /* Espaço acima da seção */
+    padding: 20px; /* Espaço interno */
+    background-color: #f9f9f9; /* Cor de fundo */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para cada cartão de departamento */
+.departamento-card {
+    display: flex; /* Usa flexbox para alinhamento */
+    align-items: center; /* Centraliza verticalmente */
+    background-color: #ffffff; /* Cor de fundo do cartão */
+    border: 1px solid #ddd; /* Borda do cartão */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 10px; /* Espaço interno */
+    margin-bottom: 10px; /* Espaço abaixo de cada cartão */
+    transition: all 0.3s; /* Transição suave para hover */
+}
+
+.departamento-card:hover {
+    transform: translateY(-2px); /* Efeito de elevação ao passar o mouse */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Sombra mais intensa */
+}
+
+/* Estilo para os ícones */
+.departamento-card i {
+    margin-right: 10px; /* Espaço à direita do ícone */
+    color: #6b78ff; /* Cor do ícone */
+    font-size: 1.5em; /* Tamanho do ícone */
+}
+
+
+
+.departamentos-container {
+    margin-top: 20px; /* Espaço acima da seção */
+}
+
+.departamentos-row {
+    display: grid; /* Usando grid para layout */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 4 colunas responsivas */
+    gap: 15px; /* Espaçamento entre os cartões */
+}
+
+.departamento-card {
+    background: #f8f9fa; /* Cor de fundo do cartão */
+    border: 1px solid #ced4da; /* Borda do cartão */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 10px; /* Espaçamento interno */
+    text-align: center; /* Centralizar o texto */
+    transition: background 0.3s; /* Transição para hover */
+    position: relative; /* Para posicionar o checkbox */
+}
+
+.departamento-card:hover {
+    background: #e2e6ea; /* Cor ao passar o mouse */
+}
+
+.departamento-card input[type="checkbox"] {
+    display: inline-block; /* Mantenha o checkbox visível */
+    margin-right: 5px; /* Espaço à direita do checkbox */
+}
+
+.departamento-card label {
+    cursor: pointer; /* Cursor de ponteiro no label */
+}
+
+.departamento-card i {
+    display: block; /* Para alinhar o ícone com o label */
+    margin: 0 auto 5px; /* Espaçamento entre o ícone e o label */
+}
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>DADOS ECLESIAIS</h2>
+        <div class="underline"></div>
+        <p>Preencha o formulário abaixo para cadastrar um novo membro na plataforma.</p>
+    </div>
+
+    <div class="container">
+        <div class="container-form">
+            <form class="contact-form" action="/dados-eclesiais" method="POST">
+                <!-- Botão de upload de foto -->
+            
+                <!-- Outros campos -->
+                <div class="form-row">
+                    <input type="hidden" name="membroId" value="<%= membroId %>" required>
+                </div>
+                
+                <!-- Outros campos -->
+                <div class="form-row">
+                    <input type="text" name="situacao" placeholder="Situação" required>
+                </div>
+                
+                <div class="form-row">
+                    <input type="text" name="categoria" placeholder="Categoria" required>
+                    <input type="text" name="funcao" placeholder="Função" required>
+                </div>
+            
+                <div class="form-row">
+                    <input type="date" name="dataConsagracao" placeholder="Data de Consagração" required>
+                    <input type="date" name="dataBatismo" placeholder="Data de Batismo" required>
+                </div>
+            
+                <div class="form-row">
+                    <input type="text" name="igrejaMatriz" placeholder="Igreja Matriz" required>
+                    <input type="text" name="filhais" placeholder="Filiais" required>
+                </div>
+            
+                <div class="departamentos-container">
+                    <label>Selecione os Departamentos:</label>
+                    <div class="form-row departamentos-row">
+                        <% departamentos.forEach(departamento => { %>
+                            <div class="departamento-card">
+                                <input type="checkbox" name="departamentos" value="<%= departamento.id %>" id="departamento-<%= departamento.id %>">
+                                <i class="bi bi-people"></i> <!-- Use o ícone adequado para o departamento -->
+                                <label for="departamento-<%= departamento.id %>"><%= departamento.nomeDepartamento %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+                
+                
+
+            
+                <button type="submit">SEGUINTE</button>
+            </form>
+            
+        </div>
+
+        <div id="lottie-animation"></div>
+    </div>
+
+    <script>
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            path: '/img/user.json',
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+        });
+
+        // Transição do formulário
+        window.addEventListener('load', function () {
+            document.querySelector('.container-form').classList.add('show');
+        });
+
+        // Pré-visualização da foto
+        const fotoInput = document.getElementById('foto');
+        const previewImage = document.getElementById('preview');
+
+        fotoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

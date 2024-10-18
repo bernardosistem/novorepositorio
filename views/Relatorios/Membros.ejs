@@ -1,0 +1,471 @@
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <style>
+
+body {
+    background: linear-gradient(to bottom, #6b78ff, #ffffff);
+}
+
+
+.page{
+    margin-top: 200px;
+}
+
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 32px; /* Aumenta o tamanho do título */
+    position: relative; /* Necessário para posicionar o pseudo-elemento */
+}
+
+h1::after {
+    content: ""; /* Necessário para criar um elemento vazio */
+    display: block; /* Faz com que o pseudo-elemento ocupe espaço */
+    width: 50%; /* Largura da linha, pode ajustar conforme necessário */
+    height: 2px; /* Altura da linha */
+    background-color: rgba(255, 255, 255, 0.5); /* Cor da linha */
+    margin: 10px auto 0; /* Centraliza a linha e adiciona margem acima */
+}
+
+
+.card {
+    display: flex;
+    justify-content: center; /* Centraliza os cartões */
+    margin: 20px 0;
+}
+
+.botaos .card-button {
+    background-color: #ffffff; /* Fundo do cartão */
+    border: none; /* Remove borda */
+    border-top-left-radius: 15px; /* Bordas arredondadas na parte superior esquerda */
+    border-top-right-radius: 15px; /* Bordas arredondadas na parte superior direita */
+    border-bottom-left-radius: 0; /* Mantém bordas afiadas na parte inferior esquerda */
+    border-bottom-right-radius: 0; /* Mantém bordas afiadas na parte inferior direita */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); /* Sombra do cartão */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    transition: transform 0.3s, box-shadow 0.3s; /* Transição ao passar o mouse */
+    width: 450px; /* Aumenta a largura do botão */
+    height: 350px; /* Aumenta a altura do botão */
+    text-align: center; /* Centraliza o texto */
+    margin: 0 20px; /* Margem entre os cartões */
+    padding: 0; /* Remove padding interno do cartão */
+    overflow: hidden; /* Esconde parte da imagem que ultrapassa o botão */
+}
+
+.botaos .card-button:hover {
+    transform: translateY(-5px); /* Efeito de elevação ao passar o mouse */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); /* Aumenta a sombra ao passar o mouse */
+}
+
+.botaos .card-button img {
+    width: 100%; /* Define a largura da imagem para ocupar todo o botão */
+    height: calc(100% - 80px); /* Aumenta a altura da imagem para deixar mais espaço para o texto */
+    border-top-left-radius: 15px; /* Bordas arredondadas na parte superior da imagem */
+    border-top-right-radius: 15px; /* Bordas arredondadas na parte superior da imagem */
+    filter: brightness(0.8); /* Torna a imagem um pouco mais escura */
+    object-fit: cover; /* Garante que a imagem preencha a área disponível */
+    margin-bottom: 30px;
+}
+
+ .botaos .card-button span {
+    display: block; /* Faz com que o texto ocupe a linha toda */
+    color: #00796b; /* Cor do texto */
+    font-size: 24px; /* Ajusta o tamanho do texto */
+    margin-top: 10px; /* Margem acima do texto */
+    font-weight: bold; /* Deixa o texto em negrito */
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Adiciona sombra ao texto */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, opacity 0.3s;
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos para os botões dos modais */
+.btn {
+    background-color: #00796b; /* Cor de fundo dos botões */
+    color: white; /* Cor do texto */
+    padding: 10px 20px; /* Espaçamento interno */
+    border: none; /* Remove borda */
+    border-radius: 5px; /* Bordas arredondadas */
+    font-size: 16px; /* Tamanho da fonte */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    transition: background-color 0.3s, transform 0.3s; /* Transições para animações */
+}
+
+.btn:hover {
+    background-color: #005b4d; /* Cor de fundo ao passar o mouse */
+    transform: translateY(-3px); /* Efeito de elevação ao passar o mouse */
+}
+
+/* Estilos para os botões de selecionar tudo */
+.btn-secondary {
+    background-color: #e0e0e0; /* Cor de fundo */
+    color: #00796b; /* Cor do texto */
+    font-weight: bold; /* Texto em negrito */
+}
+
+.btn-secondary:hover {
+    background-color: #bdbdbd; /* Cor de fundo ao passar o mouse */
+    transform: translateY(-3px); /* Efeito de elevação ao passar o mouse */
+}
+
+/* Estilos para as opções de check */
+input[type="checkbox"] {
+    display: inline-block; /* Exibe a caixa de seleção */
+    width: 25px; /* Aumenta a largura da caixa de seleção */
+    height: 25px; /* Aumenta a altura da caixa de seleção */
+    margin-right: 10px; /* Espaço à direita da caixa de seleção */
+}
+
+input[type="checkbox"] + label {
+    position: relative; /* Necessário para o posicionamento do pseudo-elemento */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    font-size: 20px; /* Aumenta o tamanho do texto */
+    color: #00796b; /* Cor do texto */
+    transition: color 0.3s; /* Transição para cor */
+}
+
+input[type="checkbox"]:checked + label {
+    color: #004d40; /* Cor do texto ao marcar */
+    font-weight: bold; /* Deixa o texto em negrito ao marcar */
+}
+
+/* Animação e mudança de cor para as caixas de seleção ao marcar */
+input[type="checkbox"]:checked {
+    background-color: #00796b; /* Cor de fundo ao marcar */
+    transition: background-color 0.3s, transform 0.3s; /* Transição suave */
+}
+
+/* Estilos para o botão de gerar relatório */ 
+.btn-danger {
+    background-color: #e53935; /* Cor de fundo do botão */
+    color: white; /* Cor do texto */
+    padding: 12px 25px; /* Espaçamento interno */
+    border-radius: 5px; /* Bordas arredondadas */
+    font-size: 18px; /* Tamanho da fonte */
+    margin-left: auto; /* Automático para empurrar o botão para a direita */
+    margin-right: 500px; /* Margem à direita para espaçamento */
+    transition: background-color 0.3s, transform 0.3s; /* Transições para animações */
+    display: block; /* Torna o botão um bloco, permitindo o uso de margens automáticas */
+    max-width: 300px; /* Limita a largura máxima do botão para telas grandes */
+}
+
+.btn-danger:hover {
+    background-color: #c62828; /* Cor de fundo ao passar o mouse */
+    transform: translateY(-3px); /* Efeito de elevação ao passar o mouse */
+}
+
+
+
+    </style>
+</head>
+<body>
+  
+   <div class="page">
+    <div class="container">
+        <h1 >Relatórios</h1>
+        <div class="card">
+            <div class="botaos">
+                <button class="card-button" id="descritivoBtn">
+                    <img src="/img/membros.jpg" alt="Relatório Descritivo">
+                    <span>Relatório Descritivo</span>
+                </button>
+                <button class="card-button" id="estatisticoBtn">
+                    <img src="/img/estatistica.jpg" alt="Relatório Estatístico">
+                    <span>Relatório Estatístico</span>
+                </button>
+            </div>
+           
+        </div>
+    
+       <!-- Modal Relatório Descritivo -->
+<div id="descritivoModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Relatório Descritivo</h2>
+        <button id="porGeneroBtn" class="btn btn-primary btn-lg"><i class="bi bi-person-circle"></i> Por Gênero</button>
+        <button id="porCategoriaBtn" class="btn btn-primary btn-lg"><i class="bi bi-folder"></i> Por Categoria</button>
+        <button id="porFuncaoBtn" class="btn btn-primary btn-lg"><i class="bi bi-briefcase"></i> Por Função</button>
+    </div>
+</div>
+
+<!-- Modal Relatório Estatístico -->
+<div id="estatisticoModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Relatório Estatístico</h2>
+        <form id="estatisticoForm">
+            <label>
+                <input type="checkbox" name="estatistico" value="membrosPorFiliais" class="checkbox-custom"> Total de Membros por Filiais
+            </label><br>
+            <label>
+                <input type="checkbox" name="estatistico" value="membrosPorGenero" class="checkbox-custom"> Total de Membros por Gênero
+            </label><br>
+            <label>
+                <input type="checkbox" name="estatistico" value="membrosPorFuncao" class="checkbox-custom"> Total de Membros por Funções
+            </label><br>
+            <label>
+                <input type="checkbox" name="estatistico" value="membrosPorDepartamento" class="checkbox-custom"> Total de Membros por Departamento
+            </label><br>
+        </form>
+        
+        <button id="inserirEstatisticoBtn" class="btn btn-success btn-lg"><i class="bi bi-check-circle"></i> Inserir no Relatório</button>
+    </div>
+</div>
+
+<!-- Modal para seleção de Gênero -->
+<div id="generoModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Selecione Gênero</h2>
+        <button id="selecionarTudoGeneroBtn" class="btn btn-info btn-lg"><i class="bi bi-check-all"></i> Selecionar Tudo</button>
+        <form id="generoForm">
+            <% generos.forEach(genero => { %>
+                <label>
+                    <input type="checkbox" name="genero" value="<%= genero %>" class="checkbox-custom"> <%= genero %>
+                </label><br>
+            <% }) %>
+            <button type="button" id="inserirGeneroBtn" class="btn btn-success btn-lg"><i class="bi bi-check-circle"></i> Inserir no Relatório</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para seleção de Categoria -->
+<div id="categoriaModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Selecione Categoria</h2>
+        <button id="selecionarTudoCategoriaBtn" class="btn btn-info btn-lg"><i class="bi bi-check-all"></i> Selecionar Tudo</button>
+        <form id="categoriaForm">
+            <% categorias.forEach(categoria => { %>
+                <label>
+                    <input type="checkbox" name="categoria" value="<%= categoria %>" class="checkbox-custom"> <%= categoria %>
+                </label><br>
+            <% }) %>
+            <button type="button" id="inserirCategoriaBtn" class="btn btn-success btn-lg"><i class="bi bi-check-circle"></i> Inserir no Relatório</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para seleção de Função -->
+<div id="funcaoModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Selecione Função</h2>
+        <button id="selecionarTudoFuncaoBtn" class="btn btn-info btn-lg"><i class="bi bi-check-all"></i> Selecionar Tudo</button>
+        <form id="funcaoForm">
+            <% funcoes.forEach(funcao => { %>
+                <label>
+                    <input type="checkbox" name="funcao" value="<%= funcao %>" class="checkbox-custom"> <%= funcao %>
+                </label><br>
+            <% }) %>
+            <button type="button" id="inserirFuncaoBtn" class="btn btn-success btn-lg"><i class="bi bi-check-circle"></i> Inserir no Relatório</button>
+        </form>
+    </div>
+</div>
+
+<button id="gerarRelatorioBtn" class="btn btn-danger btn-lg"><i class="bi bi-file-earmark-text"></i> Gerar Relatório</button>
+
+        <script>
+            document.getElementById("inserirEstatisticoBtn").addEventListener("click", async function() {
+                const options = [];
+                // Coletar opções selecionadas do formulário
+                document.querySelectorAll('input[name="estatistico"]:checked').forEach((checkbox) => {
+                    options.push(checkbox.value);
+                });
+            
+                try {
+                    const response = await fetch("/api/relatorios/estatisticos", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ options })
+                    });
+            
+                    if (response.ok) {
+                        // Redirecionar para a página de relatórios
+                        window.location.href = "/relatorio-estatistico"; // URL correta para a página de relatórios
+                    } else {
+                        const errorData = await response.json();
+                        alert("Erro ao gerar relatório: " + (errorData.message || "Erro desconhecido"));
+                    }
+                } catch (error) {
+                    alert("Erro ao gerar relatório: " + error.message);
+                }
+            });
+        </script>
+        
+            
+
+
+
+
+        <script src="/js/script.js"></script>
+        <script>
+            let relatorioSelecionado = {
+                generos: [],
+                funcoes: [],
+                categorias: [],
+                estatisticos: []
+            };
+    
+            function adicionarAoRelatorio(tipo, valor) {
+                relatorioSelecionado[tipo].push(valor);
+                closeAllModals();
+            }
+    
+           
+    
+            document.getElementById('inserirGeneroBtn').onclick = () => {
+                const generosSelecionados = [...document.querySelectorAll('input[name="genero"]:checked')].map(input => input.value);
+                generosSelecionados.forEach(g => adicionarAoRelatorio('generos', g));
+            };
+    
+            document.getElementById('inserirFuncaoBtn').onclick = () => {
+                const funcoesSelecionadas = [...document.querySelectorAll('input[name="funcao"]:checked')].map(input => input.value);
+                funcoesSelecionadas.forEach(f => adicionarAoRelatorio('funcoes', f));
+            };
+    
+            document.getElementById('inserirCategoriaBtn').onclick = () => {
+                const categoriasSelecionadas = [...document.querySelectorAll('input[name="categoria"]:checked')].map(input => input.value);
+                categoriasSelecionadas.forEach(c => adicionarAoRelatorio('categorias', c));
+            };
+    
+            document.getElementById('gerarRelatorioBtn').onclick = async () => {
+                const response = await fetch('/gerar-relatorio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(relatorioSelecionado)
+                });
+    
+                if (!response.ok) {
+                    console.error('Erro ao gerar relatório:', await response.text());
+                    return;
+                }
+    
+                window.location.href = '/relatorio-gerado';
+            };
+    
+            function closeAllModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = "none";
+                });
+            }
+    
+            document.getElementById('selecionarTudoGeneroBtn').onclick = () => {
+                const checkboxes = document.querySelectorAll('#generoModal input[name="genero"]');
+                const checked = Array.from(checkboxes).some(checkbox => !checkbox.checked);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checked;
+                });
+            };
+    
+            document.getElementById('selecionarTudoCategoriaBtn').onclick = () => {
+                const checkboxes = document.querySelectorAll('#categoriaModal input[name="categoria"]');
+                const checked = Array.from(checkboxes).some(checkbox => !checkbox.checked);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checked;
+                });
+            };
+    
+            document.getElementById('selecionarTudoFuncaoBtn').onclick = () => {
+                const checkboxes = document.querySelectorAll('#funcaoModal input[name="funcao"]');
+                const checked = Array.from(checkboxes).some(checkbox => !checkbox.checked);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = checked;
+                });
+            };
+    
+            document.addEventListener('DOMContentLoaded', () => {
+                const descritivoBtn = document.getElementById('descritivoBtn');
+                const estatisticoBtn = document.getElementById('estatisticoBtn');
+                const descritivoModal = document.getElementById('descritivoModal');
+                const estatisticoModal = document.getElementById('estatisticoModal');
+    
+                descritivoBtn.onclick = () => descritivoModal.style.display = "block";
+                estatisticoBtn.onclick = () => estatisticoModal.style.display = "block";
+    
+                document.getElementById('porGeneroBtn').onclick = () => {
+                    document.getElementById('generoModal').style.display = "block";
+                };
+                document.getElementById('porCategoriaBtn').onclick = () => {
+                    document.getElementById('categoriaModal').style.display = "block";
+                };
+                document.getElementById('porFuncaoBtn').onclick = () => {
+                    document.getElementById('funcaoModal').style.display = "block";
+                };
+    
+                const closeModal = (modal) => {
+                    modal.style.display = "none";
+                };
+    
+                document.querySelectorAll('.close').forEach(span => {
+                    span.onclick = () => {
+                        closeModal(span.closest('.modal'));
+                    };
+                });
+    
+                window.onclick = (event) => {
+                    if (event.target.classList.contains('modal')) {
+                        closeModal(event.target);
+                    }
+                };
+            });
+        </script>
+    </div>
+   </div>
+    
+    

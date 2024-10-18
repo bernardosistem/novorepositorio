@@ -1,0 +1,236 @@
+<!-- ... Seu HTML anterior ... -->
+<%- include('../partials/header.ejs');%>
+
+<style>
+  
+</style>
+
+<div class="attractive-report-header">
+  <h1 style="color: #fff;" class="attractive-report-title">
+    <span class="money-bag-icon">
+      <img style="
+        width: 110px;
+        height: 85dpx;
+        " src="/img/dinheiro.png" alt="">
+    </span>    
+    Maximizando Lucros Através de Relatórios de Vendas</h1> <br>
+  <p class="attractive-report-subtitle">
+    
+    
+  
+    
+    "Tenha insights poderosos para impulsionar seu negócio!"
+    
+
+  </p>
+  <img style="width: 300px; height: 200px;" src="/img/1000kz.jpg" alt="">
+  <img style="width: 300px; height: 200px;" src="/img/100 EUR.jpg" alt="">
+  <img style="width: 300px; height: 200px;" src="/img/100 USD.jpg" alt="">
+</div>
+
+<div class="attractive-report-container">
+  <h2 class="attractive-report-heading">Relatórios de Venda</h2>
+  <hr>
+  <div class="attractive-report-form-group">
+      <label for="attractive-period" class="attractive-report-form-label">
+          <i class="far fa-calendar-alt"></i> Selecione o Período:</label>
+      <select id="attractive-period" class="attractive-report-form-select">
+          <option value="dia">Dia</option>
+          <option value="semana">Semana</option>
+          <option value="mes">Mês</option>
+          <option value="trimestre">Trimestre</option>
+          <option value="ano">Ano</option>
+      </select>
+  </div>
+  <div class="attractive-report-form-group">
+      <label for="attractive-procedure" class="attractive-report-form-label">
+          <i class="fas fa-cut"></i> Selecione o Procedimento:</label>
+      <select id="attractive-procedure" class="attractive-report-form-select">
+          <% proced.forEach(proced=>{ %>
+          <option value="<%= proced.title%>"><%= proced.title %></option>
+          <% }) %>
+      </select>
+  </div>
+  <button class="attractive-report-btn btn-green" id="btnGenerateAttractiveReportProcedure" onclick="generateAttractiveReportProcedure()">
+      <i class="fas fa-chart-line"></i>
+      Ver Resumo
+  </button>
+  <button class="attractive-report-btn btn-blue" id="btnGenerateAttractiveOverallProcedureReport" onclick="generateAttractiveOverallProcedureReport()">
+      <i class="fas fa-chart-pie"></i>
+      Ver Resumo Geral
+  </button>
+
+  <button class="attractive-report-btn btn-green" id="btnProcedureViewDetails" onclick="viewProcedureDetails()">
+      Ver Relatório
+  </button>
+  <button class="attractive-report-btn btn-blue" id="btnProcedureViewOverallDetails" onclick="viewOverallProcedureDetails()">
+      Ver Relatório Geral
+  </button>
+</div>
+
+
+<div id="reportResult" class="renamed-result-container">
+  <!-- O resultado do relatório será exibido aqui -->
+
+   <h5 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Seus ganhos serão exibidos aqui!</h5>
+     
+
+</div>
+<br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  // Função para enviar os dados ao backend e gerar o relatório por procedimento
+  function generateAttractiveReportProcedure() {
+      const period = document.getElementById('attractive-period').value;
+      const procedure = document.getElementById('attractive-procedure').value;
+
+      fetch('/admin/report/procedure', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ period, procedure }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById('reportResult').innerHTML = `Total de vendas: ${data.totalVendas} Kz`;
+      })
+      .catch(error => {
+          console.error('Erro ao gerar relatório por procedimento:', error);
+          document.getElementById('reportResult').innerHTML = 'Erro ao gerar relatório por procedimento.';
+      });
+  }
+
+  // Função para enviar os dados ao backend e gerar o relatório geral
+  function generateAttractiveOverallReport() {
+      const period = document.getElementById('attractive-period').value;
+
+      fetch('/admin/report/overall', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ period }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById('reportResult').innerHTML = `Total de vendas: ${data.totalVendas} Kz`;
+      })
+      .catch(error => {
+          console.error('Erro ao gerar relatório geral:', error);
+          document.getElementById('reportResult').innerHTML = 'Erro ao gerar relatório geral.';
+      });
+  }
+</script>
+
+
+
+<script>
+  // Função para enviar os dados ao backend e gerar a ficha de serviço
+  function viewProcedureDetails() {
+      const period = document.getElementById('attractive-period').value;
+      const procedure = document.getElementById('attractive-procedure').value;
+
+      fetch('/admin/report/procedureDetail', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ period, procedure }),
+      })
+      .then(response => response.text())
+      .then(html => {
+          document.open();
+          document.write(html);
+          document.close();
+      })
+      .catch(error => {
+          console.error('Erro ao gerar ficha de serviço:', error);
+          // Aqui você pode adicionar um tratamento de erro adequado, como exibir uma mensagem ao usuário
+      });
+  }
+
+  // Função para enviar os dados ao backend e gerar a ficha geral de serviços
+  function viewOverallProcedureDetails() {
+      const period = document.getElementById('attractive-period').value;
+
+      fetch('/admin/report/overallProcedureDetail', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ period }),
+      })
+      .then(response => response.text())
+      .then(html => {
+          document.open();
+          document.write(html);
+          document.close();
+      })
+      .catch(error => {
+          console.error('Erro ao gerar ficha geral de serviços:', error);
+          // Aqui você pode adicionar um tratamento de erro adequado, como exibir uma mensagem ao usuário
+      });
+  }
+</script>
+
+<%- include('../partials/footer.ejs'); %>
+
+
+
+<%- include('../partials/modalProcedimento.ejs');%>
+
+<%- include('../partials/footer.ejs'); %>

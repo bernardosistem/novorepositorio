@@ -1,0 +1,424 @@
+
+
+
+<style>
+  /* Estilos gerais do modal */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Estilos para o cabeçalho do modal */
+.custom-modal-header {
+  background-color: #343a40; /* Cor de fundo escura */
+  color: #fff; /* Texto branco */
+  border-bottom: 2px solid #495057; /* Borda mais clara */
+  padding: 20px;
+}
+
+.custom-modal-header .modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Estilos para o corpo do modal */
+.modal-body {
+  padding: 20px;
+  background-color: #f5f5f5; /* Cor de fundo clara */
+}
+
+/* Lista de produtos */
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.list-group-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.list-group-item i {
+  font-size: 1.6rem;
+  color: #ff6f61; /* Cor do ícone */
+}
+
+.list-group-item .product-info {
+  flex-grow: 1;
+  margin-left: 15px;
+}
+
+.list-group-item .product-info .product-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.list-group-item .product-info .product-quantity {
+  font-size: 1rem;
+  color: #888;
+}
+
+.list-group-item .price-container {
+  display: flex;
+  align-items: center;
+}
+
+.list-group-item .badge {
+  font-size: 1.2rem;
+  background-color: #28a745; /* Cor de fundo da badge */
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-right: 12px;
+}
+
+.list-group-item .btn-delete {
+  background-color: #dc3545; /* Cor de fundo do botão eliminar */
+  border-color: #dc3545; /* Cor da borda do botão eliminar */
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-left: 10px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.list-group-item .btn-delete:hover {
+  background-color: #c82333; /* Cor de fundo ao passar o mouse */
+  border-color: #bd2130; /* Cor da borda ao passar o mouse */
+}
+
+/* Estilos para o botão de cadastrar produtos */
+.btn-success {
+  background-color: #007bff; /* Cor de fundo do botão */
+  border-color: #007bff; /* Cor da borda do botão */
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border-radius: 12px;
+  transition: background-color 0.3s, border-color 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success:hover {
+  background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+  border-color: #004085; /* Cor da borda ao passar o mouse */
+}
+
+.btn-success i {
+  margin-right: 10px;
+}
+
+/* Estilos para o rodapé do modal */
+.custom-modal-footer {
+  background-color: #f1f1f1; /* Cor de fundo clara */
+  border-top: 2px solid #dee2e6; /* Borda mais clara */
+  padding: 15px;
+}
+
+.btn-secondary {
+  background-color: #6c757d; /* Cor de fundo do botão secundário */
+  border-color: #6c757d; /* Cor da borda do botão secundário */
+  color: #fff;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  padding: 10px 20px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268; /* Cor de fundo ao passar o mouse */
+  border-color: #545b62; /* Cor da borda ao passar o mouse */
+}
+
+/* Estilos para o modal de fundo escuro */
+.modal-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro com opacidade */
+}
+
+
+
+.product-status {
+    display: flex;
+    align-items: center;
+}
+
+.product-status .btn {
+    margin-left: 10px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.product-status .btn i {
+    margin-right: 5px;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.text-danger i {
+    margin-right: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    font-size: 0.875rem;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-title {
+    margin-bottom: 0;
+}
+
+.btn-close {
+    filter: invert(1);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+
+</style>
+
+<!-- Modal -->
+<div class="modal fade" id="produtosModal" tabindex="-1" aria-labelledby="produtosModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content rounded-3 shadow-lg">
+      <div class="modal-header custom-modal-header">
+        <h5 class="modal-title" id="produtosModalLabel">Lista de Produtos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+     
+
+<!-- Lista de Produtos -->
+<ul class="list-group list-group-flush">
+  <% produtos.forEach(produto => { %>
+    <li class="list-group-item d-flex align-items-center">
+      <i class="fas fa-cosmetic-bottle"></i>
+      <div class="product-info ms-3">
+        <div class="product-name"><%= produto.nome %></div>
+        <div class="product-quantity">
+          <% if (produto.quantidade <= 0) { %>
+            <div class="product-status">
+              <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Produto esgotado</span>
+              <button type="button" class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#reporEstoqueModal" data-produto-id="<%= produto.id %>" data-produto-nome="<%= produto.nome %>">
+                <i class="fas fa-box"></i> Repor Estoque
+              </button>
+            </div>
+          <% } else { %>
+            Quantidade: <%= produto.quantidade %>
+          <% } %>
+        </div>
+      </div>
+      <div class="price-container d-flex align-items-center ms-auto">
+        <span class="badge">Kz <%= produto.preco %></span>
+        <button type="button" class="btn btn-delete"><i class="fas fa-trash"></i></button>
+      </div>
+    </li>
+  <% }); %>
+</ul> 
+
+      
+        <!-- Botão de Cadastrar Produtos -->
+        <div class="d-flex justify-content-end mt-4">
+          <a href="/crate-produts" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i> Cadastrar Produtos
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal para Repor Estoque -->
+<div class="modal fade" id="reporEstoqueModal" tabindex="-1" aria-labelledby="reporEstoqueModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reporEstoqueModalLabel">Repor Estoque</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6 id="produtoNomeModal" class="mb-3">Nome do Produto</h6>
+        <form id="reporEstoqueForm">
+          <div class="mb-3">
+            <label for="quantidade" class="form-label">Quantidade a Repor</label>
+            <input type="number" class="form-control" id="quantidade" min="1" required>
+          </div>
+          <input type="hidden" id="produtoId">
+          <button type="submit" class="btn btn-primary">Atualizar Estoque</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const reporEstoqueModal = new bootstrap.Modal(document.getElementById('reporEstoqueModal'));
+  
+  document.querySelectorAll('.btn-primary[data-bs-toggle="modal"]').forEach(button => {
+    button.addEventListener('click', function () {
+      // Obtém os dados do produto do botão clicado
+      const produtoNome = this.getAttribute('data-produto-nome');
+      const produtoId = this.getAttribute('data-produto-id');
+      
+      // Atualiza o modal com o nome do produto e o ID
+      document.getElementById('produtoNomeModal').textContent = produtoNome;
+      document.getElementById('produtoId').value = produtoId;
+    });
+  });
+});
+
+</script>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Inicializar o modal
+    const modal = new bootstrap.Modal(document.getElementById('reporEstoqueModal'));
+
+    // Preencher o modal com detalhes do produto quando o botão for clicado
+    document.querySelectorAll('.btn-primary').forEach(button => {
+        button.addEventListener('click', function () {
+            const produtoId = this.getAttribute('data-produto-id');
+            const produtoNome = this.getAttribute('data-produto-nome');
+
+            document.getElementById('produtoId').value = produtoId;
+            document.getElementById('produtoNomeModal').textContent = produtoNome;
+        });
+    });
+
+    // Submeter o formulário de reposição de estoque
+    document.getElementById('reporEstoqueForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const produtoId = document.getElementById('produtoId').value;
+        const quantidade = document.getElementById('quantidade').value;
+
+        fetch(`/repor-estoque/${produtoId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quantidade })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Atualizar a interface com a nova quantidade ou recarregar a página
+                location.reload();
+            } else {
+                // Mostrar mensagem de erro
+                alert('Erro ao atualizar o estoque.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao atualizar o estoque.');
+        });
+    });
+});
+
+</script>
+<!-- Adicione esta parte ao seu script JS ou dentro de uma tag <script> -->
+
+  <script>
+    const btnProcurarClientes = document.getElementById('btnProcurarClientes');
+        const termoPesquisaInput = document.getElementById('termoPesquisa');
+        const searchResultsContainer = document.getElementById('searchResults');
+    
+        btnProcurarClientes.addEventListener('click', async () => {
+            const termoPesquisa = termoPesquisaInput.value.trim();
+    
+            if (termoPesquisa !== '') {
+                try {
+                    const resposta = await fetch(`/api/pesquisar?termoPesquisa=${encodeURIComponent(termoPesquisa)}`);
+                    const resultado = await resposta.json();
+    
+                    // Limpe os resultados anteriores
+                    searchResultsContainer.innerHTML = '';
+    
+                    // Verifique se há resultados de clientes
+                    if (resultado.clientes && resultado.clientes.length > 0) {
+                        const clientesHTML = resultado.clientes.map(cliente => `
+                            <div class="result-container">
+                                <h3 class="result-title"><i class="icon fas fa-user"></i> Cliente: <h4 class="client-serch">${cliente.nome}</h4></h3>
+                                <hr>
+                                <p class="result-details"> BI (NIF): ${cliente.BI}</p>
+                                <p class="result-details"> Bairro: ${cliente.bairro}</p>
+                                <p class="result-details"> Rua: ${cliente.rua}</p>
+                                <p class="result-details"> Data: ${cliente.data}</p>
+                                <p class="result-details"> Procedimento: ${cliente.procedimento}</p>
+                                <p class="result-details"> Pagamento: ${cliente.pagamento}</p>
+                                <!-- Adicione mais campos conforme necessário -->
+                            </div>
+                        `).join('');
+                        searchResultsContainer.innerHTML += `<h3 class="titulo">Resultados de Clientes:</h3>${clientesHTML}`;
+                    }
+    
+                    // Verifique se há resultados de procedimentos
+                    if (resultado.procedimentos && resultado.procedimentos.length > 0) {
+                        const procedimentosHTML = resultado.procedimentos.map(procedimento => `
+                            <div class="result-container">
+                                <h3 class="result-title"><i class="icon fas fa-cut"></i> Procedimento:<h4 class="client-serch-proced"> ${procedimento.title}</h4></h3>
+                                <hr>
+                                <p class="result-details"> Preço: ${procedimento.preco} Kz</p>
+                                <!-- Adicione mais campos conforme necessário -->
+                            </div>
+                        `).join('');
+                        searchResultsContainer.innerHTML += `<h3 class="titulo">Resultados de Procedimentos:</h3>${procedimentosHTML}<br><br><p>- - - - - - - - - - - - - - - - - - - - - - - - - -   ESSAS FORAM OS ÚNICOS RESULTADOS DA PESQUISA QUE CONSEGUIMOS - - - - - - - - - - -- - - - - - - - - - </p><hr>`;
+    
+                      }
+    
+                } catch (error) {
+                    console.error('Erro na solicitação de pesquisa:', error);
+                }
+            }
+        });
+        
+        </script>
+        

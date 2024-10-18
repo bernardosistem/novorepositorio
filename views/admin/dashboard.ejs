@@ -1,0 +1,543 @@
+<%- include('../partials/header.ejs'); %>
+<style>
+ /* Estilo geral da página do dashboard */
+.dashboard-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    background: linear-gradient(135deg, #f0f2f5, #c9d6e8); /* Gradiente de fundo moderno */
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Estilo para a seção de Resumo Geral */
+.summary {
+    background: #ffffff; /* Fundo branco para destaque */
+    padding: 20px;
+    border-radius: 15px; /* Bordas mais arredondadas */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+    border: 1px solid #e1e4e8; /* Borda sutil */
+    transition: box-shadow 0.3s ease-in-out; /* Transição suave para a sombra */
+}
+
+.summary:hover {
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15); /* Sombra mais intensa ao passar o mouse */
+}
+
+.summary h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.summary img {
+    width: 45px;
+    height: 45px;
+    margin-right: 15px;
+}
+
+.summary ul {
+    list-style: none;
+    padding: 0;
+}
+
+.summary li {
+    font-size: 18px;
+    color: #555;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.summary li:last-child {
+    border-bottom: none;
+}
+
+/* Estilo para a seção de Recent Activities */
+.recent-activities {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.activity-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e4e8;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.activity-section:hover {
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15);
+}
+
+.activity-section h2, .activity-section h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.activity-section img {
+    width: 50px;
+    height: 50px;
+    margin-right: 12px;
+}
+
+.activity-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-section li {
+    font-size: 16px;
+    color: #666;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.activity-section li:last-child {
+    border-bottom: none;
+}
+
+/* Estilo para a seção de Gráficos */
+.charts {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e4e8;
+    text-align: center;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.charts:hover {
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15);
+}
+
+.charts h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.charts img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.charts button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+/* Estilo dos botões */
+.action-button {
+    display: block;
+    padding: 15px 25px;
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #00b4d8, #0077b6); /* Gradiente de fundo */
+    border-radius: 10px;
+    text-decoration: none; /* Remove sublinhado do link */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra do botão */
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0) 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s ease;
+    border-radius: 50%;
+}
+
+.action-button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.action-button:hover {
+    background: linear-gradient(135deg, #0077b6, #00b4d8); /* Gradiente invertido ao passar o mouse */
+    transform: scale(1.05); /* Leve aumento ao passar o mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra mais intensa ao passar o mouse */
+}
+
+.action-button:active {
+    background: linear-gradient(135deg, #00509e, #003f5c); /* Gradiente mais escuro ao clicar */
+    transform: scale(0.98); /* Reduz a escala ao clicar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra reduzida ao clicar */
+}
+
+button:hover{
+    background: linear-gradient(135deg, #0056b3, #003d80);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para o modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75); /* Fundo escuro com opacidade ajustada */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+    position: relative;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-out; /* Animação para entrada do modal */
+    transform: scale(0.9);
+}
+
+.modal-content.show {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 32px;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #ff0000;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .recent-activities {
+        grid-template-columns: 1fr;
+    }
+}
+
+ /* Estilo para o select */
+ .filtro-periodo {
+            background-color: #ffffff; /* Cor de fundo branca */
+            border: 1px solid #ccc; /* Borda cinza clara */
+            border-radius: 4px; /* Bordas arredondadas */
+            padding: 10px; /* Espaçamento interno */
+            font-size: 16px; /* Tamanho da fonte */
+            color: #333; /* Cor do texto */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            transition: border-color 0.3s, box-shadow 0.3s; /* Transições suaves */
+            width: 200px; /* Largura fixa */
+            cursor: pointer; /* Cursor de ponteiro */
+        }
+
+        /* Estilo ao passar o mouse sobre o select */
+        .filtro-periodo:hover {
+            border-color: #888; /* Cor da borda ao passar o mouse */
+        }
+
+        /* Estilo ao focar no select */
+        .filtro-periodo:focus {
+            border-color: #007bff; /* Cor da borda ao focar */
+            box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.25); /* Sombra ao focar */
+            outline: none; /* Remove o contorno padrão */
+        }
+
+</style>
+
+
+
+<div class="dashboard-container">
+    <!-- Resumo Geral -->
+    <div class="summary">
+        <h2><img style="width: 150px; height: 100px;" class="img" src="/img/das-geral.png" alt=""> Resumo Geral</h2>
+        <ul>
+            <li>Total de Clientes: <%= totalClientes %></li>
+            <li>Total de Vendas: <%= totalVendas %> kz</li>
+            <li>Total de Despesas: <%= totalDespesas %> kz</li>
+            <li>Lucro Líquido: <%= lucroLiquido %> kz</li>
+            <li>Total de Serviços: <%= totalServicos %></li>
+            <li>Total de Produtos: <%= totalProdutos %></li>
+            <li>Total de Formações: <%= totalFormacoes %></li>
+        </ul>
+    </div>
+
+    <div class="recent-activities">
+        <div class="activity-section">
+            <h2> <img class="img" src="/img/das-money.png" alt=""> <br> Últimas Vendas</h2>
+            <ul>
+                <% ultimasVendas.forEach(venda => { %>
+                    <li>
+                        <%= venda.typeService %>, custou <%= venda.valor %> KZ, foi pago por <%= venda.metodoPagamento %>, e se efetuou em <%= venda.date.toLocaleDateString('pt-PT') %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    
+        <div class="activity-section">
+            <h3> <img class="img" src="/img/das-cliente.png" alt=""> <br> Últimos Clientes Registrados</h3>
+            <ul>
+                <% ultimosClientes.forEach(cliente => { %>
+                    <li>
+                        <%= cliente.nome %> - <%= cliente.data.toLocaleDateString('pt-PT') %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    
+        <div class="activity-section">
+            <h3> <img class="img" src="/img/das-serv.png" alt=""> <br>Últimas Atualizações de Serviços</h3>
+            <ul>
+                <% ultimosServicos.forEach(servico => { %>
+                    <li>
+                        <%= servico.title %> - <%= servico.updatedAt.toLocaleDateString('pt-PT') %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+        
+        <div class="activity-section">
+            <h3> <img class="img" src="/img/produtos.png" alt=""> <br> Últimos Produtos Adicionados</h3>
+            <ul>
+                <% ultimosProdutos.forEach(produto => { %>
+                    <li>
+                        <%= produto.nome %> - Preço: <%= produto.preco %> KZ, Adicionado em: <%= produto.updatedAt.toLocaleDateString('pt-PT') %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+        
+        <div class="activity-section">
+            <h3> <img class="img" src="/img/formacao.png" alt=""> <br> Últimas Formações Disponíveis</h3>
+            <ul>
+                <% ultimasFormacoes.forEach(formacao => { %>
+                    <li>
+                        <%= formacao.nome %> - Valor: <%= formacao.valor %> KZ, Atualizado em: <%= formacao.updatedAt.toLocaleDateString('pt-PT') %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+        
+        <!-- Ações Rápidas -->
+        <div class="activity-section">
+            <h2><img class="img" src="/img/link.png" alt=""> Ações Rápidas</h2>
+            <a href="/procediment/review" class="action-button" onclick="adicionarCliente()">Adicionar Novo Cliente</a>
+            <a href="/admin/client/list" class="action-button" onclick="registrarVenda()">Registrar Nova Venda</a>
+            <a href="/admin/create/new/proced" class="action-button" onclick="atualizarServico()">Atualizar Serviço</a>
+            <a href="/admin/create/new/produto" class="action-button" onclick="adicionarProduto()">Adicionar Novo Produto</a>
+            <a href="/admin/create/new/formacao" class="action-button" onclick="adicionarFormacao()">Adicionar Nova Formação</a>
+        </div>
+    
+        <!-- Atividade dos Funcionários -->
+        <div class="activity-section">
+            <h2><img class="img" src="/img/funcionarios.png" alt=""> Atividade dos Funcionários</h2>
+            <ul>
+                <% atividades.forEach(atividade => { %>
+                    <li><b><%= atividade.usuarioNome %></b>: <%= atividade.totalVendas %> vendas e <%= atividade.totalAtualizacoesServicos %> atualizações de serviços este mês.</li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+
+    
+   <!-- Seção de Gráficos -->
+<div class="charts">
+    <h2>Gráfico de Vendas</h2>
+    <img class="img2" src="/img/das-grafico.png" alt=""> <br>
+    <button onclick="abrirModal()">Ver Gráfico</button>
+</div>
+
+<!-- Modal para o gráfico -->
+<div id="graficoModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal()">&times;</span>
+        
+        <div class="filtros">
+            <div class="filtro-container">
+                <label for="filtroPeriodo" class="filtro-label">Selecione o Período:</label>
+                <select id="filtroPeriodo" class="filtro-periodo" onchange="carregarGrafico()">
+                    <option value="dia">Dia</option>
+                    <option value="semana">Semana</option>
+                    <option value="mes">Mês</option>
+                    <option value="trimestre">Trimestre</option>
+                    <option value="ano">Ano</option>
+                </select>
+            </div>
+
+            <div class="filtro-container">
+                <label for="filtroTipo" class="filtro-label">Selecione o Tipo:</label>
+                <select id="filtroTipo" class="filtro-tipo" onchange="carregarGrafico()">
+                    <option value="servico">Serviços</option>
+                    <option value="produto">Produtos</option>
+                    <option value="formacao">Formações</option>
+                </select>
+            </div>
+        </div>
+
+        <canvas id="graficoVendas" width="800" height="400"></canvas>
+    </div>
+</div>
+
+<style>
+  
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .filtros {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .filtro-container {
+        flex: 1;
+        margin: 0 10px;
+    }
+
+    .filtro-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .filtro-periodo, .filtro-tipo {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        color: #333;
+        background-color: #fff;
+    }
+
+    .filtro-periodo:focus, .filtro-tipo:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    canvas {
+        width: 100% !important; /* Garante que o canvas use 100% da largura do modal */
+        height: auto !important;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Função para abrir o modal e carregar o gráfico
+    function abrirModal() {
+        document.getElementById('graficoModal').style.display = 'flex'; // Mostra o modal
+        carregarGrafico(); // Carrega o gráfico com o período padrão
+    }
+
+    // Função para fechar o modal
+    function fecharModal() {
+        document.getElementById('graficoModal').style.display = 'none';
+    }
+
+    // Função para carregar o gráfico
+    function carregarGrafico() {
+        const periodo = document.getElementById('filtroPeriodo').value;
+        const tipo = document.getElementById('filtroTipo').value;
+
+        fetch(`/admin/grafico-vendas?periodo=${periodo}&tipo=${tipo}`)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('graficoVendas').getContext('2d');
+                
+                // Se já houver um gráfico, destrua-o antes de criar um novo
+                if (window.myChart) {
+                    window.myChart.destroy();
+                }
+
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels, // Labels são os nomes dos serviços, produtos ou formações
+                        datasets: [{
+                            label: `Total Vendido (${tipo.charAt(0).toUpperCase() + tipo.slice(1)})`,
+                            data: data.data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                ticks: {
+                                    autoSkip: false, // Para não pular labels
+                                    maxRotation: 0, // Define rotação máxima dos labels
+                                    minRotation: 0, // Define rotação mínima dos labels
+                                    // Para garantir a visibilidade, ajuste o tamanho da fonte, se necessário
+                                    font: {
+                                        size: 12
+                                    }
+                                },
+                                // Adiciona uma quebra de linha entre os rótulos se eles forem muitos
+                                afterFit: function(scale) {
+                                    scale.width = Math.min(scale.width, 500); // Ajuste conforme necessário
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar os dados do gráfico:', error);
+            });
+    }
+</script>

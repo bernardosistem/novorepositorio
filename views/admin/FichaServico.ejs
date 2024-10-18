@@ -1,0 +1,249 @@
+<%- include('../partials/header.ejs'); %>
+
+<style>
+    /* Estilos personalizados */
+    .details-container {
+        background-color: #f9f9f9;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        color: #333;
+        max-width: 800px;
+        margin: 50px auto;
+        text-align: center;
+        position: relative; /* Adicionamos posição relativa para facilitar posicionamento */
+    }
+
+    .sale-details {
+        background-color: #ffffff; /* Fundo branco para os detalhes de venda */
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .sale-details h2 {
+        color: #333;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .sale-details p {
+        margin: 15px 0;
+        color: #555;
+        font-size: 18px; /* Aumentamos o tamanho da fonte */
+    }
+
+    .sale-details ul {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 15px;
+    }
+
+    .sale-details ul li {
+        color: #333;
+        font-size: 16px; /* Aumentamos o tamanho da fonte */
+    }
+
+    .print-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 20px; /* Aumentamos o tamanho da fonte */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Adicionamos transição para o efeito de escala */
+        display: inline-block;
+        margin-top: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .print-button i {
+        margin-right: 10px;
+        font-size: 24px;
+        transition: transform 0.3s ease; /* Adicionamos transição para o efeito de rotação */
+    }
+
+    .print-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05); /* Aumentamos ligeiramente o tamanho ao passar o mouse */
+    }
+
+    .print-button:hover i {
+        transform: rotate(90deg); /* Giramos o ícone ao passar o mouse */
+    }
+
+    hr {
+        border: none;
+        height: 1px;
+        background-color: #ddd;
+        margin: 30px 0;
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #666;
+    }
+
+    .subtle-bg {
+        text-align: center;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 30px;
+    }
+
+    .subtle-bg p {
+        color: #777;
+    }
+
+    /* Estilo adicional para o botão de impressão ao passar o mouse */
+    .print-button:hover::after {
+        
+        display: block;
+        font-size: 18px; /* Aumentamos o tamanho da fonte */
+        margin-top: 5px;
+        color: white;
+    }
+
+    /* Animação suave para o subtítulo */
+    .subtle-bg p {
+        animation: fadeInUp 1s ease forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Estilizando a imagem */
+    .header-image {
+        display: block;
+        margin: 0 auto 20px; /* Centraliza a imagem e adiciona margem abaixo */
+        max-width: 200px; /* Defina a largura máxima conforme necessário */
+        border-radius: 50%; /* Tornamos a imagem circular */
+    }
+
+   /* Estilizando o botão de voltar */
+   .back-button {
+        background-color: #3498db; /* Cor de fundo azul */
+        color: white; /* Cor do texto */
+        border: none; /* Removendo a borda */
+        padding: 15px 30px; /* Adicionando preenchimento */
+        border-radius: 30px; /* Arredondando as bordas */
+        font-size: 18px; /* Tamanho da fonte */
+        cursor: pointer; /* Alterando o cursor ao passar por cima */
+        position: fixed; /* Posicionando fixo na página */
+        top: 160px; /* Distância do topo */
+        left: 290px; /* Distância da esquerda */
+        z-index: 9999; /* Garantindo que esteja acima de outros elementos */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Adicionando sombra */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Transição suave */
+    }
+
+    .back-button:hover {
+        background-color: #2980b9; /* Mudança de cor ao passar o mouse */
+        transform: scale(1.05); /* Aumenta ligeiramente ao passar o mouse */
+    }
+    .back-button i {
+        margin-right: 10px; /* Espaço à direita do ícone */
+    }
+    .service{
+        font-size: 24px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        text-decoration: none;
+    }
+</style>
+
+
+<div class="details-container">
+    <button class="back-button" onclick="window.location.reload();"><i class="fas fa-arrow-left"></i>Voltar</button>
+
+    <h1>Detalhes de Vendas por Serviço</h1>
+
+    <% if (totalVendas === 0) { %>
+        <p>Nenhuma venda encontrada para o período selecionado.</p>
+    <% } else { %>
+        <div class="sale-details">
+            <img src="/img/15A.jpg" alt="Descrição da Imagem" class="header-image">
+            <h2>Relatório por Procedimento</h2>
+            <h2 class="service">"<%= procedure %>"</h2>
+            <p><strong>Preço Unitário:</strong> <%= valorMedioVendas %> Kz</p>
+            <p><strong>Número de Vendas:</strong> <%= numeroVendas %></p>
+            <p><strong>Total:</strong> <%= totalVendas.toFixed(2) %> Kz</p>
+
+            <p><strong>Datas das Vendas:</strong></p>
+            <ul id="datas-vendas">
+                <% datasVendas.forEach(function(data) { %>
+                    <li><%= data %></li>
+                <% }); %>
+            </ul>
+
+            <p><strong>Valor Médio de Vendas:</strong> <%= valorMedioVendas %> Kz</p>
+            <p><strong>Porcentagem de Vendas para <%= procedure %> :</strong> <%= Math.min(100, Math.round(porcentagemVendas)) %>%</p>
+
+            <div class="subtle-bg">
+                <p>© 2024 Spaz Beauty-concept. Endereço do nosso salão: António Apolinário n.7 -3Frt Amadora código postal 2700-343 R/C. Telef. +351 938 773 444.</p>
+            </div>
+        </div>
+    <% } %>
+    <button class="print-button" onclick="compartilharDetalhes()"> <i class="fas fa-share-alt"></i> Partilhar </button>
+</div>
+
+<script>
+    function compartilharDetalhes() {
+        try {
+            // Obtendo dados diretamente da renderização do template
+            const procedure = "<%= procedure %>";
+            const valorMedioVendas = "<%= valorMedioVendas %>";
+            const numeroVendas = "<%= numeroVendas %>";
+            const totalVendas = "<%= totalVendas.toFixed(2) %>";
+
+            // Garantir que datasVendas é uma string que representa um array JavaScript
+            const datasVendas = JSON.parse('<%- JSON.stringify(datasVendas) %>');
+            console.log('Datas Vendas Parsed:', datasVendas);
+
+            // Formata a mensagem para o WhatsApp
+            const mensagem = `*Relatório de Vendas por Procedimento*\n\n` +
+                `*Procedimento:* "${procedure}"\n` +
+                `*Preço Unitário:* ${valorMedioVendas} Kz\n` +
+                `*Número de Vendas:* ${numeroVendas}\n` +
+                `*Total:* ${totalVendas} Kz\n\n` +
+                `*Datas das Vendas:*\n` +
+                `${datasVendas.join('\n')}\n\n` +
+                `*Valor Médio de Vendas:* ${valorMedioVendas} Kz\n` +
+                `*Porcentagem de Vendas para ${procedure}:* ${Math.min(100, Math.round(porcentagemVendas))}%`;
+
+            // Codifica a mensagem para URL
+            const mensagemEncoded = encodeURIComponent(mensagem);
+            const whatsappUrl = `https://wa.me/?text=${mensagemEncoded}`;
+            console.log('URL do WhatsApp:', whatsappUrl);
+
+            // Abre o WhatsApp com a mensagem
+            window.open(whatsappUrl, '_blank');
+        } catch (error) {
+            console.error('Erro ao compartilhar detalhes:', error);
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+<%- include('../partials/footer.ejs'); %>

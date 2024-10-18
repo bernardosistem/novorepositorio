@@ -1,0 +1,359 @@
+<%- include('../partials/header2.ejs'); %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(to bottom, #6b78ff, #ffffff);
+        color: #333;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    h2, h3 {
+        margin-top: 20px;
+        text-align: center;
+        color: #343a40;
+    }
+
+    .report-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .report {
+        border: 1px solid #dee2e6;
+        border-radius: 15px;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        flex: 1;
+        min-width: 400px;
+        max-width: 500px;
+    }
+
+    .report:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .card-item {
+        background: #e9f5ff;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 15px; 
+        display: flex;
+        align-items: center;
+        transition: background 0.3s;
+        width: calc(50% - 30px);
+    }
+
+    .card-item:hover {
+        background: #cfe7ff;
+    }
+
+    .card-icon {
+        font-size: 2em;
+        margin-right: 10px;
+        color: #007bff;
+    }
+
+    .total {
+        font-weight: bold;
+        text-align: center;
+        font-size: 1.2em;
+        margin-top: 15px;
+        color: #343a40; /* Alterado para um tom mais sóbrio */
+    }
+
+    
+    .summary {
+    background: linear-gradient(135deg, #f0f4f8, #ffffff);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    margin-top: 30px;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.summary h3 {
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    font-size: 1.8em;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.summary-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    background: linear-gradient(to bottom right, #007bff, #0056b3);
+    color: #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    flex: 1;
+    margin: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.summary-item:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to bottom right, #0056b3, #004494);
+}
+
+.summary-icon {
+    font-size: 2.5em;
+    color: #ffffff;
+    margin-bottom: 10px;
+    animation: bounce 1s infinite alternate;
+}
+
+.summary-item-lucro {
+    background: #28a745;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.summary-item-lucro:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background: #218838;
+}
+
+.summary-item-lucro .summary-icon {
+    color: #ffffff;
+    font-size: 2.5em;
+    margin-right: 10px;
+}
+
+.summary-item-lucro p {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-left: 10px;
+    color: #ffffff;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+
+
+/* Container para centralizar e posicionar os botões */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espaço entre os botões */
+    margin-top: 40px;
+}
+
+/* Estilo para o botão de compartilhar pelo WhatsApp */
+.btn-whatsapp {
+    background-color: #25d366;
+    color: #ffffff;
+    padding: 12px 24px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-whatsapp:hover {
+    background-color: #1da951;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para o botão de imprimir */
+.btn-print {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 12px 24px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-print:hover {
+    background-color: #23272b;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustando os ícones dentro dos botões */
+.button-icon {
+    font-size: 1.2em;
+}
+
+
+</style>
+</head>
+<body>
+    <div style="margin-top: 200px !important;" class="container mt-5">
+        <% if (dizimosResultado || ofertasResultado || despesasResultado) { %>
+            <div class="mt-5 text-center">
+                <h2><i class="bi bi-file-earmark-text header-icon"></i> Relatório Gerado</h2>
+                <div class="report-container">
+                    <% if (dizimosResultado && dizimosResultado.length > 0) { %>
+                        <div class="report">
+                            <h3><i class="bi bi-coin icon"></i> Dízimos</h3>
+                            <div class="d-flex flex-wrap">
+                                <% dizimosResultado.forEach(dizimo => { %>
+                                    <div class="card-item">
+                                        <i class="bi bi-person-badge card-icon"></i>
+                                        <span>Dizimista: <%= dizimo.dizimistaNome %> - <strong class="text-success">Total: <%= dizimo.totalValor %> Kz</strong></span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <hr>
+                            <p class="total"><strong>Total Geral de Dízimos:</strong> <%= totalDizimos %> Kz</p>
+                        </div>
+                    <% } %>
+
+                    <% if (ofertasResultado && ofertasResultado.length > 0) { %>
+                        <div class="report">
+                            <h3><i class="bi bi-piggy-bank icon"></i> Ofertas</h3>
+                            <div class="d-flex flex-wrap">
+                                <% ofertasResultado.forEach(oferta => { %>
+                                    <div class="card-item">
+                                        <i class="bi bi-cash-coin card-icon"></i>
+                                        <span>Valor: <%= oferta.valor %> Kz - <strong class="text-secondary">Data: <%= new Date(oferta.createdAt).toLocaleDateString() %></strong></span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <hr>
+                            <p class="total"><strong>Total de Ofertas:</strong> <%= totalOfertas %> Kz</p>
+                        </div>
+                    <% } %>
+
+                    <% if (despesasResultado && despesasResultado.length > 0) { %>
+                        <div class="report">
+                            <h3><i class="bi bi-receipt icon"></i> Despesas</h3>
+                            <div class="d-flex flex-wrap">
+                                <% despesasResultado.forEach(despesa => { %>
+                                    <div class="card-item">
+                                        <i class="bi bi-cash-coin card-icon"></i>
+                                        <span>Valor: <%= despesa.valor %> Kz - <strong class="text-secondary">Data: <%= new Date(despesa.createdAt).toLocaleDateString() %></strong></span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <hr>
+                            <p class="total"><strong>Total de Despesas:</strong> <%= totalDespesas %> Kz</p>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="summary">
+                    <h3><i class="bi bi-graph-up icon"></i> Resumo Final</h3>
+                    <div class="summary-container">
+                        <div class="summary-item">
+                            <i class="bi bi-cash summary-icon"></i>
+                            <p><strong>Total de Dízimos:</strong> <%= totalDizimos %> Kz</p>
+                        </div>
+                        <div class="summary-item">
+                            <i class="bi bi-piggy-bank summary-icon"></i>
+                            <p><strong>Total de Ofertas:</strong> <%= totalOfertas %> Kz</p>
+                        </div>
+                        <div class="summary-item">
+                            <i class="bi bi-cart4 summary-icon"></i>
+                            <p><strong>Total de Despesas:</strong> <%= totalDespesas %> Kz</p>
+                        </div>
+                    </div>
+                    <div class="summary-item-lucro">
+                        <i class="bi bi-graph-up-arrow summary-icon"></i>
+                        <p><strong>Lucro:</strong> <%= totalDizimos + totalOfertas - totalDespesas %> Kz</p>
+                    </div>
+                    
+                </div>
+                <div class="button-container">
+                    <button class="btn-whatsapp">
+                        <i class="bi bi-whatsapp button-icon"></i> Compartilhar pelo WhatsApp
+                    </button>
+                    <button class="btn-print">
+                        <i class="bi bi-printer button-icon"></i> Imprimir
+                    </button>
+                </div>
+                
+                
+            </div>
+        <% } else { %>
+            <p class="empty-message">Nenhum dado disponível para gerar o relatório.</p>
+        <% } %>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.js"></script>
+</body>
+</html>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script>
+    // Função para gerar o PDF e compartilhar pelo WhatsApp
+    function compartilharWhatsApp() {
+        const element = document.querySelector('.report-container');
+        const options = {
+            margin:       0,
+            filename:     'relatorio.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        
+        html2pdf().from(element).set(options).toPdf().get('pdf').then(function (pdf) {
+            // Converte o PDF para Blob
+            const blob = pdf.output('blob');
+
+            // Cria uma URL para o Blob
+            const fileUrl = URL.createObjectURL(blob);
+
+            // Abre o WhatsApp para compartilhar o PDF
+            const link = `https://wa.me/?text=Veja o relatório em anexo&attachment=${fileUrl}`;
+            window.open(link, '_blank');
+        });
+    }
+
+    // Adiciona o evento ao botão
+    document.querySelector('.btn-whatsapp').addEventListener('click', compartilharWhatsApp);
+</script>

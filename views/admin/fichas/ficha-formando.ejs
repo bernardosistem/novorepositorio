@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha do Formando</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 5rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        header {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1030;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .container {
+            margin-top: 6rem;
+        }
+        .formando-details {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border-top: 5px solid #007bff;
+        }
+        .formando-details h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .formando-details h2::before {
+            content: "\f06c"; /* Font Awesome icon for 'info' */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1.75rem;
+            color: #007bff;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .formando-details .row {
+            margin-bottom: 1rem;
+        }
+        .formando-details p {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            padding-left: 2.5rem;
+        }
+        .formando-details p i {
+            color: #ffffff;
+            background-color: #007bff;
+            border-radius: 50%;
+            padding: 0.75rem;
+            margin-right: 1rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .formando-details p i:hover {
+            background-color: #0056b3;
+            color: #ffffff;
+        }
+        .location {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        .location h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #007bff;
+        }
+        .location p {
+            margin-bottom: 0.75rem;
+            font-size: 1.125rem;
+        }
+        .location a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .location a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #343a40;
+            color: #ffffff;
+            border-radius: 0.75rem;
+        }
+        footer a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .formando-details p {
+                font-size: 1rem;
+                padding-left: 1.5rem;
+            }
+            .formando-details p i {
+                font-size: 1rem;
+                padding: 0.5rem;
+                margin-right: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../partials/header.ejs'); %>
+
+    <main class="container">
+        <section class="formando-details">
+            <h2>Dados do Formando</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><i class="fa-solid fa-user"></i><strong>Nome:</strong> <%= formando.nome %></p>
+                    <p><i class="fa-solid fa-phone"></i><strong>Telefone:</strong> <%= formando.telefone %></p>
+                </div>
+                <div class="col-md-6">
+                    <p><i class="fa-solid fa-graduation-cap"></i><strong>Formação:</strong> <%= formacao.nome %></p>
+                    <p><i class="fa-solid fa-money-bill-wave"></i><strong>Valor da Formação:</strong> Kz <%= formacao.valor %></p>
+                </div>
+            </div>
+
+            <!-- Seção de Localização da Organização -->
+            <section class="location">
+                <h3>Localização da Nossa Organização</h3>
+                <p><i class="fa-solid fa-map-marker-alt"></i><strong>Endereço:</strong> Rua Exemplo, 123, Bairro Central, Cidade, Estado, Brasil</p>
+                <p><i class="fa-solid fa-phone"></i><strong>Telefone:</strong> (11) 1234-5678</p>
+                <p><i class="fa-solid fa-envelope"></i><strong>Email:</strong> <a href="mailto:contato@organizacao.com">contato@organizacao.com</a></p>
+                <p><i class="fa-solid fa-globe"></i><strong>Website:</strong> <a href="https://www.organizacao.com" target="_blank">www.organizacao.com</a></p>
+            </section>
+        </section>
+
+        <footer>
+            <a href="/"><i class="fa-solid fa-arrow-left"></i> Voltar para a Página Principal</a>
+        </footer>
+    </main>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

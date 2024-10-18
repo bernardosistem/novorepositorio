@@ -1,0 +1,112 @@
+<%- include('../partials/header2.ejs'); %>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Contribuições por Departamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #6b78ff, #ffffff);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            background-color: #007bff; /* Cor de fundo */
+            color: white; /* Cor do texto */
+            border: none; /* Remover borda */
+            border-radius: 5px; /* Bordas arredondadas */
+            padding: 10px 15px; /* Espaçamento interno */
+            text-decoration: none; /* Remover sublinhado */
+            transition: background-color 0.3s; /* Transição suave */
+        }
+        .back-button i {
+            margin-right: 5px; /* Espaço entre ícone e texto */
+        }
+        .back-button:hover {
+            background-color: #0056b3; /* Cor ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <a style="margin-top: 200px !important;" href="/quotas-previews" class="back-button">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+    
+    <h1>Gráfico de Contribuições por Departamento - Ano <%= new Date().getFullYear() %></h1>
+    
+    <div  style="margin-top: 200px !important;" class="chart-container">
+        <canvas id="graficoDepartamentos"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const departamentos = <%- JSON.stringify(departamentos) %>;
+
+        const ctx = document.getElementById('graficoDepartamentos').getContext('2d');
+        const labels = departamentos.map(dep => dep.nome);
+        const data = departamentos.map(dep => dep.total);
+
+        const grafico = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total de Contribuições',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total (R$)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Departamentos'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

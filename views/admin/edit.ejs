@@ -1,0 +1,145 @@
+<%- include('../partials/header.ejs');%>
+
+<section id="p" class="hero">
+    <div id="animation-container">
+        <h2>
+            <span style="
+                position: relative;
+                left: 100px;
+                font-size: 40px;
+                display: block;
+                font-family: Arial, Helvetica, sans-serif;
+                
+                " id="welcome-text"></span>
+            <span id="journey-text"></span>
+            <span id="discover-text"></span>
+            <span id="learn-text"></span>
+            <span id="evolve-text"></span>
+            <span id="with-us-text"></span>
+        </h2>
+</div>
+        </section>
+
+
+<div class="container mt-5">
+    <img style="width: 250px; height: 190px;" src="/img/user-circle.png" alt="">
+    <h3 style="margin-left: 18px;"><b><%= user.nome %></b></h3>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <img style="margin-left: 170px ;" src="/img/user.png" alt="">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">Editar os meus dados</h3>
+                </div>
+
+                <div class="card-body" id="cadastro-form">
+          <form method="POST" action="/editar">
+                        <!-- ... Conteúdo do formulário de cadastro ... -->
+                        <input type="hidden" name="id" value="<%= user.id %>">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label"><b>Nome</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    
+                            <img style="width: 30px;height: 36px;" src="/img/user.png" alt="">
+                                </span>
+                                <input value="<%= user.nome%>" type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero" class="form-label"><b>Telefone</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-phone me-2"></i>                                </span>
+                                <input value="<%= user.telefone %>" type="text" class="form-control" id="numero" name="telefone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="senha" class="form-label"><b>Senha</b></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                   <img style="width: 30px;height: 36px;" src="/img/chave.png" alt="">
+                                </span>
+                                <input value="user.senha" type="password" class="form-control" id="senha" name="senha" required>
+                            </div>
+                        </div>
+                        <button style="
+                        position: relative;
+                        left: 300px;
+                        width: 240px;
+                        height: 70px;
+                        top: 120px;
+                        border-radius: 20px;
+                        " onclick="simularRequisicao()" data-bs-toggle="modal" data-bs-target="#processingModal" type="submit" class="btn btn-primary update">
+                     <img style="width: 50px; height: 40px; position: relative; right: 12px;" src="/img/atualizar.png" alt="">
+                         <span style="font-size: 25px;">  Atualizar</span></button>
+                    </form>
+                </div>
+
+
+                <div>
+                    <img style="
+                        width: 300px;
+                        height: 400px;
+                        position: relative;
+                        " src="/img/ilustration.jpg" alt="">
+                </div>
+
+               
+                    
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+const welcomeText = document.getElementById('welcome-text');
+const journeyText = document.getElementById('journey-text');
+const discoverText = document.getElementById('discover-text');
+const learnText = document.getElementById('learn-text');
+const evolveText = document.getElementById('evolve-text');
+const withUsText = document.getElementById('with-us-text');
+const journeyParagraph = document.getElementById('journey-paragraph');
+
+//  o texto  para a animação
+const welcomeTextContent = 'Olá, Sinta-se a vontade para alteirar teu nome, telefone ou senha! ';
+const journeyTextContent = '';
+const discoverTextContent = '';
+const learnTextContent = '';
+const evolveTextContent = '';
+const withUsTextContent = '';
+
+
+
+
+// Função para animar o texto
+function typeText(element, text, delay) {
+    element.style.opacity = 1;
+    for (let i = 0; i < text.length; i++) {
+        setTimeout(function () {
+            element.innerHTML += text[i];
+            if (i === text.length - 1) {
+                element.classList.add('visible');
+            }
+        }, i * delay);
+    }
+}
+
+typeText(welcomeText, welcomeTextContent, 80);
+typeText(journeyText, journeyTextContent, 500);
+typeText(discoverText, discoverTextContent, 500);
+typeText(learnText, learnTextContent, 500);
+typeText(evolveText, evolveTextContent, 500);
+typeText(withUsText, withUsTextContent, 500);
+
+journeyParagraph.textContent = '"Prepare-se para o sucesso! Desenvolva suas habilidades e alcance o ápice acadêmico!';
+setTimeout(() => {
+    journeyParagraph.classList.add('visible', 'fade-in');
+}, 8000); // Aguarda 1 segundo antes de adicionar as classes 'visible' e 'fade-in'
+});
+
+
+                </script>
+
+<%- include('../partials/modalProcedimento.ejs');%>
+
+<%- include('../partials/footer.ejs');%>
+

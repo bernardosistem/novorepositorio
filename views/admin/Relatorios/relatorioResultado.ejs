@@ -1,0 +1,190 @@
+<%- include('../../partials/header.ejs'); %>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+    .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+    }
+    .header, .footer {
+        text-align: center;
+        padding: 10px;
+        background: #333;
+        color: #fff;
+    }
+    .header h1 {
+        margin: 0;
+    }
+    .invoice {
+        border: 1px solid #ddd;
+        padding: 20px;
+        background: #fff;
+        margin-top: 20px;
+    }
+    .invoice table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .invoice table th, .invoice table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+    .invoice table th {
+        background: #f4f4f4;
+    }
+    .invoice .total-row {
+        font-weight: bold;
+    }
+    .invoice .footer {
+        text-align: right;
+    }
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .btn {
+        font-size: 1.2em;
+        font-weight: 600;
+        border-radius: 35px;
+        padding: 14px 32px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-transform: uppercase;
+    }
+    .btn-print {
+        background: linear-gradient(135deg, #ff6f61, #ff3d00);
+    }
+    .btn-print i {
+        margin-right: 8px;
+    }
+    .btn-print:hover {
+        background: linear-gradient(135deg, #ff3d00, #c62828);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .btn-share {
+        background: linear-gradient(135deg, #1e90ff, #4169e1);
+    }
+    .btn-share i {
+        margin-right: 8px;
+    }
+    .btn-share:hover {
+        background: linear-gradient(135deg, #4169e1, #0000ff);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Relatório de Vendas de Serviços, Produtos e Formaçōes</h1>
+            <p>Relatório de Vendas</p>
+        </div>
+
+        <div class="invoice">
+            <h2>Serviços Selecionados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>Preço Unitário</th>
+                        <th>Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% servicesDetails.forEach(service => { %>
+                        <tr>
+                            <td><%= service.title %></td>
+                            <td>Kz <%= service.preco.toFixed(2) %></td>
+                            <td>Kz <%= service.valor.toFixed(2) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2">Total de Vendas de Serviços</td>
+                        <td>Kz <%= totalServiceSales.toFixed(2) %></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h2>Produtos Selecionados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Preço Unitário</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% productsDetails.forEach(product => { %>
+                        <tr>
+                            <td><%= product.nome %></td>
+                            <td>Kz <%= product.preco.toFixed(2) %></td>
+                            <td>Kz <%= product.total.toFixed(2) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2">Total de Vendas de Produtos</td>
+                        <td>Kz <%= totalProductSales.toFixed(2) %></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h2>Formaçōes Selecionadas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Formação</th>
+                        <th>Valor Unitário</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% formacoesDetails.forEach(formacao => { %>
+                        <tr>
+                            <td><%= formacao.nome %></td>
+                            <td>Kz <%= formacao.valor.toFixed(2) %></td>
+                            <td>Kz <%= formacao.total.toFixed(2) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2">Total de Vendas de Formaçōes</td>
+                        <td>Kz <%= totalFormacaoSales.toFixed(2) %></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="footer">
+                <p><strong>Total de Vendas:</strong> Kz <%= totalSales.toFixed(2) %></p>
+                <p><strong>Total de Despesas:</strong> Kz <%= totalExpenses.toFixed(2) %></p>
+                <p><strong>Lucro Líquido:</strong> Kz <%= profit.toFixed(2) %></p>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn btn-print" onclick="window.print()"><i class="fa fa-print"></i> Imprimir</button>
+            <button id="btn-share" class="btn btn-share"><i class="fa fa-share-alt"></i> Partilhar</button>
+        </div>
+    </div>
+
+
+    

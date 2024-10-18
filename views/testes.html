@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegação Lateral</title>
+    <link rel="stylesheet" href="../public/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/Font-Awesome-6.x/Font-Awesome-6.x/css/all.min.css">
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1045;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #1e5799, #2989d8);
+            overflow-x: hidden;
+            transition: width 0.5s, background 0.5s;
+            padding-top: 60px;
+            box-shadow: 3px 0 5px rgba(0,0,0,0.2);
+        }
+
+        .sidenav a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 24px;
+            color: #fff;
+            display: block;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+            transform: scale(1.1);
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        .sidenav .closebtn:hover {
+            color: #ccc;
+        }
+
+        .sidenav a i {
+            margin-right: 10px;
+            font-size: 28px;
+            transition: transform 0.3s;
+        }
+
+        .sidenav a:hover i {
+            transform: rotate(360deg);
+        }
+
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1040;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #openNav {
+            z-index: 1050;
+        }
+
+        .main-content {
+            transition: margin-left 0.5s;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .carousel {
+            margin-top: 20px;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: auto;
+        }
+
+       
+
+        .welcome-title {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .welcome-title h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <h1>Bem-vindo ao Meu Site</h1>
+    </div>
+
+    <div class="container mt-4 text-center">
+        <button id="openNav" class="btn btn-primary">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn">&times;</a>
+        <img style="border-radius: 50%; height: 80px; width: 70px;" src="../public/img/2.jpg" alt="logo"><hr>
+        <a href="#"><i class="fas fa-home"></i> Home</a>
+        <a href="#"><i class="fas fa-info-circle"></i> Agendar cliente</a>
+        <a href="#"><i class="fas fa-cogs"></i> Serviços</a>
+        <a href="#"><i class="fas fa-envelope"></i> Contato</a>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div class="background-image"></div>
+    
+    <div class="main-content">
+        <div class="welcome-title">
+            <h2>Bem-vindo ao Spaz</h2>
+        </div>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
+                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
+                            <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
+                        </ol>
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="../public/img/9.png" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="../public/img/3.png" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="../public/img/2.jpg" class="d-block w-100" alt="...">
+                            </div>
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer text-center">
+        <p>&copy; 2023 Meu Site. Todos os direitos reservados.</p>
+    </div>
+
+    <script src="../public/SEP-JQUERY/jquery-3.7.1.min.js"></script>
+    <script src="../public/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#openNav').click(function() {
+                $('#mySidenav').css('width', '250px');
+                $('#overlay').css('display', 'block').css('opacity', '1');
+                $('.main-content').css('margin-left', '250px');
+            });
+
+            $('.closebtn, #overlay').click(function() {
+                $('#mySidenav').css('width', '0');
+                $('#overlay').css('opacity', '0').on('transitionend', function() {
+                    $(this).css('display', 'none');
+                });
+                $('.main-content').css('margin-left', '0');
+            });
+        });
+    </script>
+</body>
+</html>
