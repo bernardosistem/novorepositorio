@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Seleção de Estilo de Cartão</title>
+    <style>
+  /* Estilos gerais */
+body {
+    background: linear-gradient(to bottom, #6b78ff, #ffffff);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Contêiner dos cartões responsivo */
+.container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os cartões se ajustem em múltiplas linhas */
+    justify-content: center;
+    gap: 20px; /* Espaçamento entre os cartões */
+}
+
+.card {
+    border: none; /* Removendo bordas dos cartões */
+    border-radius: 16px; /* Aumentando o raio das bordas */
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+    padding: 20px;
+    margin: 20px 0;
+    width: calc(220% - 90px); /* Largura dos cartões com margem */
+    max-width: 600px; /* Largura máxima dos cartões */
+    position: relative; /* Para animações de efeito */
+}
+
+/* Efeito de hover */
+.card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilos para o logotipo do cartão */
+.logo-card {
+    max-width: 80px;
+    margin: 15px auto;
+    display: block;
+}
+
+/* Estilos para a foto do membro */
+.foto-membro {
+    width: 100%;
+    height: auto;
+    border-radius: 16px; /* Aumentando o raio das bordas */
+    object-fit: cover;
+    margin: 15px auto;
+    border: 4px solid #fff; /* Borda branca para destaque */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra para a foto */
+}
+
+/* Layout 1 */
+.layout1 {
+    background-color: white;
+    color: #333;
+    border-radius: 16px; /* Aumentando o raio das bordas */
+    padding: 20px;
+    position: relative; /* Para a fita */
+    transition: background-color 0.3s, transform 0.3s; /* Transição para cor de fundo */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+.layout1:hover {
+    background-color: #f9f9f9; /* Cor de fundo ao passar o mouse */
+    transform: translateY(-3px); /* Levantar o cartão levemente */
+}
+
+.layout1 .header-card {
+    font-size: 2.8em; /* Aumentando o tamanho da fonte */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Fita no Layout 1 */
+.layout1 .fita {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #007bff; /* Cor da fita */
+    color: white; /* Cor do texto na fita */
+    padding: 5px 10px;
+    border-radius: 5px;
+    transform: rotate(45deg); /* Fita em ângulo */
+    font-size: 1em; /* Tamanho da fonte na fita */
+}
+
+/* Layout 4 */
+.layout4 {
+    background: linear-gradient(to right, #00b894, #00b894); /* Gradiente verde */
+    color: #fff; /* Texto branco */
+    border-radius: 16px; /* Aumentando o raio das bordas */
+    padding: 20px;
+    transition: background 0.3s ease-in-out; /* Transição para cor de fundo */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+}
+
+.layout4:hover {
+    background: linear-gradient(to right, #00ff84, #00b894); /* Alteração do gradiente ao passar o mouse */
+    transform: translateY(-3px); /* Levantar o cartão levemente */
+}
+
+.layout4 .header-card {
+    font-size: 2.8em; /* Aumentando o tamanho da fonte */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Layout 5 */
+.layout5 {
+    background: linear-gradient(to right, #6a5acd, #00bfff); /* Gradiente azul */
+    color: #fff; /* Texto branco */
+    border-radius: 16px; /* Aumentando o raio das bordas */
+    padding: 20px;
+    transition: background 0.3s ease-in-out; /* Transição para cor de fundo */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+}
+
+.layout5:hover {
+    background: linear-gradient(to right, #7b6fdc, #00c1ff); /* Alteração do gradiente ao passar o mouse */
+    transform: translateY(-3px); /* Levantar o cartão levemente */
+}
+
+.layout5 .header-card {
+    font-size: 2.8em; /* Aumentando o tamanho da fonte */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Estilo dos textos dos cartões */
+.card-text {
+    font-size: 1.2em; /* Aumentando o tamanho da fonte */
+    color: #555;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Footer Card */
+.footer-card {
+    font-size: 1em; /* Aumentando o tamanho da fonte */
+    text-align: center;
+    color: #fff; /* Cor do texto branco */
+    font-weight: bold; /* Texto em negrito */
+}
+
+/* Estilo dos footers dos cartões 2 e 3 */
+.layout4 .footer-card,
+.layout5 .footer-card {
+    color: #fff; /* Garantindo que os footers dos cartões 2 e 3 sejam brancos */
+}
+
+/* Ajuste nos botões */
+.card-action .btn {
+    margin-top: 15px;
+    display: block;
+    width: 100%;
+    padding: 12px; /* Aumentando o padding */
+    border-radius: 8px; /* Aumentando o raio das bordas dos botões */
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 1em; /* Aumentando o tamanho da fonte */
+    border: none; /* Removendo bordas dos botões */
+}
+
+.card-action .btn:hover {
+    transform: scale(1.05); /* Efeito de zoom ao passar o mouse */
+}
+
+.btn.blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn.green {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn.red {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Remover cor de fundo da div atrás dos cartões */
+.container {
+    background-color: transparent; /* Garantindo que o fundo seja transparente */
+}
+
+ /* Estilos para o logotipo do cartão */
+ .logo-card {
+            max-width: 80px;
+            margin: 15px auto;
+            display: block;
+            position: absolute; /* Posiciona o logotipo no canto superior esquerdo */
+            top: 15px;
+            left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col s12 m4">
+                <h4>Selecione um Estilo</h4>
+                <div class="card-panel layout1" onclick="aplicarEstilo('layout1')">
+                    <span>Layout 1</span>
+                </div>
+                <div class="card-panel layout4" onclick="aplicarEstilo('layout4')">
+                    <span>Layout 4</span>
+                </div>
+                <div class="card-panel layout5" onclick="aplicarEstilo('layout5')">
+                    <span>Layout 5</span>
+                </div>
+            </div>
+
+            <div class="col s12 m8">
+                <div id="cartao" class="card p-4">
+                    <!-- Layout 1 -->
+                    <div id="layout1" class="card-content hide layout1">
+                        <img src="logo.png" alt="Logotipo" class="logo-card" id="logoCard1">
+                        <input type="file" id="uploadLogo1" style="display:none" accept="image/*" onchange="previewLogo(event, 'logoCard1')">
+                        
+                        <div class="header-card">A ASSEMBLEIA DE DEUS PENTECOSTAL</div>
+                        <div class="divider"></div>
+                        <h6>CARTÃO DE MEMBRO NÚMERO <%= membro.numero_membro %></h6>
+                        <h6>Ministério Nova Jerusalém</h6>
+                        <h6>Centro Divina Providência</h6>
+                        <div class="row">
+                            <div class="col s4">
+                                <img src="/<%= membro.foto_membro %>" alt="Foto do Membro" class="foto-membro">
+                            </div>
+                            <div class="col s8">
+                                <p><i class="material-icons icon">person</i> <strong>Nome:</strong> <%= membro.nome %></p>
+                                <p><i class="material-icons icon">category</i> <strong>Categoria:</strong> <%= dadosEclesiais.categoria %></p>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <a href="#" id="uploadLogoBtn1" class="btn waves-effect waves-light" onclick="document.getElementById('uploadLogo1').click();">Carregar Logotipo <i class="material-icons right">upload</i></a>
+                        </div>
+                        <div class="footer-card">Pede-se às autoridades civis e militares e a população em geral que protejam o utente deste cartão.</div>
+                    </div>
+
+                    <!-- Layout 4 -->
+                    <div id="layout4" class="card-content hide layout4">
+                        <img src="logo.png" alt="Logotipo" class="logo-card">
+                        <div class="header-card">A ASSEMBLEIA DE DEUS PENTECOSTAL</div>
+                        <h6>CARTÃO DE MEMBRO NÚMERO <%= membro.numero_membro %></h6>
+                        <h6>Ministério Nova Jerusalém</h6>
+                        <h6>Centro Divina Providência</h6>
+                        <div class="row">
+                            <div class="col s4">
+                                <img src="/<%= membro.foto_membro %>" alt="Foto do Membro" class="foto-membro">
+                            </div>
+                            <div class="col s8">
+                                <p><i class="material-icons icon">person</i> <strong>Nome:</strong> <%= membro.nome %></p>
+                                <p><i class="material-icons icon">category</i> <strong>Categoria:</strong> <%= dadosEclesiais.categoria %></p>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <a href="#" id="uploadLogoBtn" class="btn waves-effect waves-light">Carregar Logotipo <i class="material-icons right">upload</i></a>
+                        </div>
+                        <div class="footer-card">Pede-se às autoridades civis e militares e a população em geral que protejam o utente deste cartão.</div>
+                    </div>
+
+                    <!-- Layout 5 -->
+                    <div id="layout5" class="card-content hide layout5">
+                        <img src="logo.png" alt="Logotipo" class="logo-card" id="logoCard1">
+                        <input type="file" id="uploadLogo1" style="display:none" accept="image/*" onchange="previewLogo(event, 'logoCard1')">
+                        
+                        <div class="header-card">A ASSEMBLEIA DE DEUS PENTECOSTAL</div>
+                        <h6>CARTÃO DE MEMBRO NÚMERO <%= membro.numero_membro %></h6>
+                        <h6>Ministério Nova Jerusalém</h6>
+                        <h6>Centro Divina Providência</h6>
+                        <div class="row">
+                            <div class="col s4">
+                                <img src="/<%= membro.foto_membro %>" alt="Foto do Membro" class="foto-membro">
+                            </div>
+                            <div class="col s8">
+                                <p><i class="material-icons icon">person</i> <strong>Nome:</strong> <%= membro.nome %></p>
+                                <p><i class="material-icons icon">category</i> <strong>Categoria:</strong> <%= dadosEclesiais.categoria %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-action">
+                            <a href="#" id="uploadLogoBtn1" class="btn waves-effect waves-light" onclick="document.getElementById('uploadLogo1').click();">Carregar Logotipo <i class="material-icons right">upload</i></a>
+                        </div>
+                        <div class="footer-card">Pede-se às autoridades civis e militares e a população em geral que protejam o utente deste cartão.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function aplicarEstilo(layout) {
+            // Ocultar todos os layouts
+            document.querySelectorAll('.card-content').forEach(function (el) {
+                el.classList.add('hide');
+            });
+            // Mostrar o layout selecionado
+            document.getElementById(layout).classList.remove('hide');
+        }
+    </script>
+</body>
+</html>
+
+<script>
+    function aplicarEstilo(layout) {
+        document.querySelectorAll('.card-content').forEach(card => {
+            card.classList.add('hide');
+        });
+        document.getElementById(layout).classList.remove('hide');
+    }
+
+    function previewLogo(event, logoId) {
+        const logo = document.getElementById(logoId);
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logo.src = e.target.result; // Atualiza o src do logotipo
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bernet@</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #e0f7fa, #ffffff); /* Gradiente de fundo suave */
+            font-family: 'Arial', sans-serif; /* Fonte mais elegante */
+            overflow-x: hidden; /* Evita overflow horizontal */
+        }
+
+      
+        .navbar {
+    position: fixed; /* Manter a navbar fixa no topo */
+    top: 0;
+    left: 0; /* Adiciona left: 0 para garantir que a navbar comece no lado esquerdo */
+    width: 100%; /* Define a largura total da navbar */
+    z-index: 1000;
+    background: linear-gradient(135deg, #003366, #00509e);
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s ease;
+    margin: 0; /* Garante que não haja margens externas */
+}
+
+@media (min-width: 992px) {
+    .navbar {
+        height: 160px;
+    }
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: #ffffff;
+    font-size: 2rem; /* Aumenta o tamanho da fonte */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar-brand img {
+    width: 150px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-toggler-icon {
+    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba(255, 255, 255, 1)" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+}
+
+.nav-link {
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 15px;
+    font-size: 1.2rem;
+    position: relative;
+    padding: 0.75rem 1rem;
+    transition: color 0.3s ease;
+}
+
+/* Ajustes responsivos para dispositivos móveis */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.5rem; /* Diminuir o tamanho da fonte no mobile */
+    }
+
+    .navbar-brand img {
+        width: 100px; /* Reduzir o tamanho do logo no mobile */
+    }
+
+    .nav-link {
+        font-size: 1rem; /* Diminuir o tamanho da fonte dos links no mobile */
+        padding: 0.5rem 0.75rem; /* Ajustar o padding no mobile */
+        margin: 0 5px;
+    }
+
+    .navbar {
+        height: auto; /* Ajusta a altura da navbar no mobile */
+        padding: 10px 0;
+    }
+}
+
+
+.btn-custom {
+    margin: 10px; /* Margem entre os botões */
+    padding: 12px 24px; /* Espaçamento interno dos botões */
+    font-size: 1.5rem; /* Tamanho da fonte dos botões */
+    border-radius: 5px; /* Bordas arredondadas */
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Transição suave */
+    display: inline-flex; /* Para alinhar ícones e texto */
+    align-items: center; /* Centraliza verticalmente */
+    text-decoration: none; /* Remove sublinhado */
+}
+
+.btn-enter {
+    background-color: #00509e; /* Azul mais escuro */
+    color: #ffffff; /* Cor do texto */
+}
+
+.btn-register {
+    background-color: #0080ff; /* Azul mais claro */
+    color: #ffffff; /* Cor do texto */
+}
+
+.btn-custom:hover {
+    transform: scale(1.1); /* Efeito de aumento ao passar o mouse */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra ao passar o mouse */
+}
+
+.btn-custom i {
+    margin-right: 8px; /* Espaço entre ícone e texto do botão */
+}
+
+@media (max-width: 576px) { /* Para dispositivos móveis */
+    .btn-custom {
+        padding: 8px 16px; /* Reduzir o padding */
+        font-size: 1.2rem; /* Diminuir o tamanho da fonte */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.content {
+    position: relative;
+    z-index: 2;
+    transition: margin-top 0.3s ease;
+    padding-top: 80px;
+    text-align: center;
+    flex: 1; /* Permite que a área de conteúdo cresça para ocupar o espaço disponível */
+}
+
+h1 {
+    color: #ffffff;
+    margin: 50px 0;
+    font-size: 3rem; /* Tamanho padrão */
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+p {
+    font-size: 1.2rem; /* Tamanho padrão */
+    color: #ffffff;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+@media (max-width: 576px) { /* Para dispositivos móveis */
+    h1 {
+        font-size: 2rem; /* Reduzir o tamanho do título */
+        margin: 30px 0; /* Ajustar a margem */
+    }
+
+    p {
+        font-size: 1rem; /* Reduzir o tamanho do parágrafo */
+    }
+}
+
+
+
+
+
+
+
+
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* Altera a altura para cobrir toda a área do telemóvel */
+    object-fit: cover;
+    z-index: -1;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+
+/* Estilo para a imagem da comunidade */
+.community-photo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.community-img {
+    width: 150px; /* Tamanho padrão para desktop */
+    height: 150px;
+    border-radius: 50%; /* Torna a imagem circular */
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    /* Em desktops, aumenta o tamanho da imagem */
+    .community-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .community-photo {
+        position: absolute;
+        top: 0;
+        right: 10%; /* Ajuste conforme o layout desejado */
+    }
+}
+
+@media (max-width: 767px) {
+    /* Em dispositivos móveis, reduz o tamanho da imagem */
+    .community-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .community-photo {
+        position: relative;
+        margin-bottom: 15px;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+     <!-- Vídeo de fundo -->
+    <video autoplay muted loop class="video-background">
+        <source src="/img/BERNET5.mp4" type="video/mp4">
+        Seu navegador não suporta o vídeo.
+    </video>
+
+    <!-- Sobreposição escura -->
+    <div class="overlay"></div>
+
+ <!-- Navegação -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/img/logo3.png" alt="Logo">
+            Bernet@
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="nav-container">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/"><i class="bi bi-house"></i> Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil"><i class="bi bi-person"></i> Perfil</a>
+                    </li>
+                    <!-- Menu Gestão Administrativa com submenus e ícone de configurações -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestaoAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear"></i> Gestão Administrativa
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestaoAdmin">
+                            <li><a class="dropdown-item" href="/formulario-de-membros"><i class="bi bi-person-plus"></i> Adicionar Membro</a></li>
+                            <li><a class="dropdown-item" href="/emissao-cartoes"><i class="bi bi-card-text"></i> Emissão de Cartões</a></li>
+                            <!-- Submenu Relatórios com sub-submenus e ícone -->
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#" id="navbarDropdownRelatorios">
+                                    <i class="bi bi-file-earmark-text"></i> Relatórios
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownRelatorios">
+                                    <li><a class="dropdown-item" href="/relatorios/descritivo"><i class="bi bi-graph-up"></i> Descritivo</a></li>
+                                    <li><a class="dropdown-item" href="/relatorios"><i class="bi bi-bar-chart-line"></i> Estatístico</a></li>
+                                    <li><a class="dropdown-item" href="/relatorios/geral"><i class="bi bi-file-earmark"></i> Geral</a></li>
+                                </ul>
+                            </li>
+                            <!-- Novo submenu Adicionar Departamento -->
+                            <li><a class="dropdown-item" href="/departamento-pagina"><i class="bi bi-building"></i> Adicionar Departamento</a></li>
+                        </ul>
+                    </li>
+                    <!-- Menu Gestão Financeira com submenus e ícone de dinheiro -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestaoFinanceira" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-currency-dollar"></i> Gestão Financeira
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestaoFinanceira">
+                            <li><a class="dropdown-item" href="/ofertas-pagina"><i class="bi bi-wallet2"></i> Inserir Ofertas</a></li>
+                            <li><a class="dropdown-item" href="/dizimos-pagina"><i class="bi bi-cash-coin"></i> Inserir Dízimo</a></li>
+                            <li><a class="dropdown-item" href="/quotas-pagina"><i class="bi bi-bank"></i> Inserir Quotas</a></li>
+                            <li><a class="dropdown-item" href="/despesas-page"><i class="bi bi-cart"></i> Efetuar Despesa</a></li>
+                            <li><a class="dropdown-item" href="/financas-page"><i class="bi bi-bar-chart"></i> Relatórios</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notificacoes"><i class="bi bi-bell"></i> Notificações
+                            <span class="badge rounded-pill bg-danger text-white" style="position: relative; top: -10px; left: -5px;">
+                                <%= notificacoes %>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Script para manter submenus abertos -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Alvo de todos os elementos com submenu
+        document.querySelectorAll('.dropdown-submenu .dropdown-toggle').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                let submenu = this.nextElementSibling;
+                
+                // Fecha outros submenus abertos
+                document.querySelectorAll('.dropdown-menu .show').forEach(function (openSubmenu) {
+                    if (openSubmenu !== submenu) {
+                        openSubmenu.classList.remove('show');
+                    }
+                });
+
+                // Alterna visibilidade do submenu
+                submenu.classList.toggle('show');
+            });
+        });
+    });
+</script>
+
+<style>
+/* Ajustes para submenus */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+}
+</style>
+
+
+  <!-- Conteúdo principal -->
+<div style="margin-top: 200px;" class="content text-center">
+    <div class="community-photo">
+        <% if (fotoUrl) { %>
+            <!-- Exibe a foto se existir -->
+            <img src="<%= fotoUrl %>" alt="Foto da Comunidade" class="community-img">
+        <% } %>
+    </div>
+
+    <h1>Sistema de Gestão de Igrejas</h1>
+    <p>Um novo e melhor jeito de gerenciar sua igreja!</p>
+
+    <div class="d-flex justify-content-center">
+        <a href="/login" class="btn-custom btn-enter">
+            <i class="bi bi-arrow-right"></i> Entrar
+        </a>
+        <a href="comunity-page-create" class="btn-custom btn-register">
+            <i class="bi bi-pencil"></i> Registrar-se
+        </a>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

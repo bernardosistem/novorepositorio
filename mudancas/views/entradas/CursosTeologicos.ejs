@@ -1,0 +1,339 @@
+<%- include('../partials/header2.ejs'); %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+<style>
+ body {
+    font-family: 'Poppins', sans-serif; /* Fonte moderna e limpa */
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(to bottom, #f0f7ff, #ffffff); /* Gradiente suave */
+    color: #333; /* Cor de texto padrão */
+}
+
+.header {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin: 0; /* Remove margens padrão do título */
+    font-size: 3.5rem; /* Aumenta o tamanho do título */
+    color: #003d7a; /* Cor do texto do título */
+    background-color: #e1eaff; /* Fundo suave com leve gradiente */
+    padding: 20px; /* Espaçamento interno */
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 4px 20px rgba(0, 61, 122, 0.2); /* Sombra profunda */
+    transition: all 0.3s ease; /* Efeito de transição suave */
+}
+
+h2:hover {
+    transform: translateY(-5px) scale(1.02); /* Efeito de elevação ao passar o mouse */
+    color: #0056b3; /* Muda a cor ao passar o mouse */
+}
+
+.underline {
+    height: 5px;
+    width: 120px;
+    background-color: #0056b3; /* Cor da sublinha */
+    margin: 10px 0;
+    border-radius: 5px; /* Bordas arredondadas na sublinha */
+}
+
+.container {
+    display: flex; /* Usar Flexbox para layout */
+    flex-direction: row; /* Alinha itens na horizontal */
+    align-items: flex-start; /* Alinha itens no início */
+    gap: 40px; /* Espaçamento entre itens */
+    margin-top: 30px;
+}
+
+#lottie-animation {
+    width: 100%; /* Define a largura total para a animação */
+    max-width: 480px; /* Tamanho máximo da animação */
+    margin: 0 auto; /* Centraliza a animação */
+    border-radius: 15px; /* Bordas arredondadas na animação */
+    /* Sombra removida conforme solicitado */
+}
+
+.container-form {
+    flex: 1; /* O formulário ocupará o restante do espaço */
+    background-color: #ffffff; /* Fundo do formulário */
+    padding: 30px; /* Espaçamento interno do formulário */
+    border-radius: 20px; /* Bordas arredondadas */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra do formulário */
+    transition: all 0.3s ease; /* Efeito de transição suave */
+}
+
+.container-form:hover {
+    transform: translateY(-5px); /* Elevação ao passar o mouse */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); /* Aumenta a sombra ao passar o mouse */
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column; /* Alinha os campos em coluna */
+    gap: 25px; /* Espaçamento entre campos */
+}
+
+.form-row {
+    display: flex; /* Usar Flexbox para os campos do formulário */
+    justify-content: space-between; /* Alinha os campos nas extremidades */
+    flex-wrap: wrap; /* Permite que os campos quebrem a linha em telas pequenas */
+}
+
+.input-field {
+    flex: 1; /* O campo ocupa o espaço disponível */
+    min-width: 200px; /* Largura mínima para garantir visibilidade em telas pequenas */
+    margin-right: 15px; /* Espaçamento à direita */
+}
+
+.input-field:last-child {
+    margin-right: 0; /* Remove margem do último campo */
+}
+
+.upload-button {
+    display: flex;
+    align-items: center;
+    background-color: #6c63ff; /* Cor de fundo do botão */
+    color: #fff;
+    padding: 15px; /* Aumenta o espaçamento */
+    border-radius: 10px; /* Bordas arredondadas */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Efeito de transição */
+    font-size: 1.1rem; /* Aumenta o tamanho do texto */
+}
+
+.upload-button:hover {
+    background-color: #575757; /* Cor ao passar o mouse */
+    transform: scale(1.05); /* Aumenta o botão ao passar o mouse */
+}
+
+.preview-image {
+    margin-top: 10px;
+    border-radius: 50%; /* Corta a imagem em formato circular */
+    width: 140px; /* Tamanho da pré-visualização */
+    height: 140px; /* Tamanho da pré-visualização */
+    object-fit: cover; /* Corta a imagem corretamente */
+    border: 4px solid #6c63ff; /* Borda na imagem */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra na imagem */
+}
+
+input, select {
+    padding: 15px; /* Aumenta o espaçamento interno nos campos */
+    border-radius: 10px; /* Bordas arredondadas */
+    border: 1px solid #cfd8dc; /* Borda leve */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Efeito de transição */
+}
+
+input:focus, select:focus {
+    border-color: #6c63ff; /* Cor da borda ao focar */
+    outline: none; /* Remove contorno padrão */
+    box-shadow: 0 0 5px rgba(108, 99, 255, 0.5); /* Sombra ao focar */
+}
+
+button {
+    background-color: #0056b3; /* Cor do botão */
+    color: white;
+    padding: 15px; /* Aumenta o espaçamento */
+    border: none;
+    border-radius: 10px; /* Bordas arredondadas */
+    cursor: pointer;
+    font-size: 1.1rem; /* Aumenta o tamanho do texto do botão */
+    transition: background-color 0.3s, transform 0.2s; /* Efeito de transição */
+}
+
+button:hover {
+    background-color: #003d7a; /* Cor ao passar o mouse */
+    transform: scale(1.05); /* Aumenta o botão ao passar o mouse */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Alinha itens na vertical */
+    }
+
+    h2 {
+        font-size: 2.5rem; /* Diminui o tamanho do título */
+    }
+
+    #lottie-animation {
+        width: 100%; /* Mantém a largura total */
+        max-width: 350px; /* Ajusta o tamanho máximo para dispositivos menores */
+    }
+
+    button {
+        font-size: 0.9rem; /* Diminui o tamanho do texto do botão */
+    }
+}
+
+@media (max-width: 576px) {
+    h2 {
+        font-size: 2rem; /* Diminui ainda mais o tamanho do título */
+    }
+
+    input, select {
+        min-width: 100%; /* Garantindo que os campos preencham o espaço disponível */
+    }
+
+    button {
+        font-size: 0.8rem; /* Tamanho do botão ainda menor */
+    }
+}
+
+
+        /* Estilo para o contêiner dos departamentos */
+        .departamentos-container {
+    margin-top: 20px; /* Espaço acima da seção */
+    padding: 20px; /* Espaço interno */
+    background-color: #f9f9f9; /* Cor de fundo */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para cada cartão de departamento */
+.departamento-card {
+    display: flex; /* Usa flexbox para alinhamento */
+    align-items: center; /* Centraliza verticalmente */
+    background-color: #ffffff; /* Cor de fundo do cartão */
+    border: 1px solid #ddd; /* Borda do cartão */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 10px; /* Espaço interno */
+    margin-bottom: 10px; /* Espaço abaixo de cada cartão */
+    transition: all 0.3s; /* Transição suave para hover */
+}
+
+.departamento-card:hover {
+    transform: translateY(-2px); /* Efeito de elevação ao passar o mouse */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Sombra mais intensa */
+}
+
+/* Estilo para os ícones */
+.departamento-card i {
+    margin-right: 10px; /* Espaço à direita do ícone */
+    color: #6b78ff; /* Cor do ícone */
+    font-size: 1.5em; /* Tamanho do ícone */
+}
+
+
+
+.departamentos-container {
+    margin-top: 20px; /* Espaço acima da seção */
+}
+
+.departamentos-row {
+    display: grid; /* Usando grid para layout */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 4 colunas responsivas */
+    gap: 15px; /* Espaçamento entre os cartões */
+}
+
+.departamento-card {
+    background: #f8f9fa; /* Cor de fundo do cartão */
+    border: 1px solid #ced4da; /* Borda do cartão */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 10px; /* Espaçamento interno */
+    text-align: center; /* Centralizar o texto */
+    transition: background 0.3s; /* Transição para hover */
+    position: relative; /* Para posicionar o checkbox */
+}
+
+.departamento-card:hover {
+    background: #e2e6ea; /* Cor ao passar o mouse */
+}
+
+.departamento-card input[type="checkbox"] {
+    display: inline-block; /* Mantenha o checkbox visível */
+    margin-right: 5px; /* Espaço à direita do checkbox */
+}
+
+.departamento-card label {
+    cursor: pointer; /* Cursor de ponteiro no label */
+}
+
+.departamento-card i {
+    display: block; /* Para alinhar o ícone com o label */
+    margin: 0 auto 5px; /* Espaçamento entre o ícone e o label */
+}
+
+
+
+
+</style>
+</head>
+<body>
+    <div style="margin-top: 200px;" class="header">
+        <h2>CURSOS TEOLÓGICOS</h2>
+        <div class="underline"></div>
+        <p>Preencha o formulário abaixo para cadastrar um novo membro na plataforma.</p>
+    </div>
+
+    <div class="container">
+        <div id="lottie-animation"></div>
+        <div class="container-form">
+             
+
+<form class="contact-form" action="/dados-ensino-medio" method="POST">
+    <!-- Botão de upload de foto -->
+   
+
+    <!-- Outros campos -->
+    <div class="form-row">
+        
+<input type="hidden"  name="membroId" value="<%= membroId %>" required>
+                       
+                   </div>
+    
+    <!-- Outros campos -->
+    <div class="form-row">
+        
+<input type="text" name="curso_medio" placeholder="Cursos teológicos" required>
+        
+    </div>
+    
+    <div class="form-row">
+        
+        <input type="text" name="instituicao_ensino" placeholder="Onde se formou" required>
+    </div>
+    <div class="form-row">
+        <input type="text" name="ano" placeholder="ano" required>
+        
+    </div>
+   
+    <button type="submit">SEGUINTE</button>
+</form>
+        </div>
+    </div>
+    
+    <script>
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            path: '/img/user.json',
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+        });
+    
+        // Transição do formulário
+        window.addEventListener('load', function () {
+            document.querySelector('.container-form').classList.add('show');
+        });
+    
+        // Pré-visualização da foto
+        const fotoInput = document.getElementById('foto');
+        const previewImage = document.getElementById('preview');
+    
+        fotoInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block'; // Exibe a imagem
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.style.display = 'none'; // Oculta a imagem se nenhum arquivo for selecionado
+            }
+        });
+    </script>
+</body>

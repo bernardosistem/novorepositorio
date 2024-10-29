@@ -1,0 +1,621 @@
+<%- include('../partials/header2.ejs');%>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to right, #e6f7ff, #ffffff);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    margin-top: 40px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3rem; /* Título maior */
+    margin-bottom: 30px;
+    color: #0056b3;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada */
+    letter-spacing: 2px; /* Espaçamento entre letras */
+    text-transform: uppercase; /* Letras maiúsculas */
+}
+
+.alert {
+    margin-bottom: 20px;
+    border-radius: 12px; /* Bordas arredondadas */
+    background-color: rgba(52, 152, 219, 0.85); /* Fundo da notificação */
+    color: #ffffff;
+    font-weight: bold;
+    padding: 15px; /* Mais espaço interno */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra leve */
+    transition: background-color 0.3s; /* Transição suave ao passar o mouse */
+}
+
+.alert:hover {
+    background-color: rgba(52, 152, 219, 1); /* Muda o fundo ao passar o mouse */
+}
+
+.row {
+    margin-bottom: 30px; /* Espaçamento entre linhas de cartões */
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa); /* Fundo suave com gradiente */
+    overflow: hidden; /* Corta o conteúdo que sair das bordas */
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Eleva o cartão ao passar o mouse */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.card-body {
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espaciamento entre ícone e texto */
+    background-color: #ffffff; /* Fundo branco para o corpo do cartão */
+    border-radius: 20px;
+    position: relative;
+}
+
+.card-icon {
+    font-size: 60px; /* Aumentando o ícone */
+    color: #007bff; /* Cor do ícone */
+    transition: transform 0.3s, color 0.3s;
+}
+
+.card-icon:hover {
+    transform: scale(1.2); /* Aumenta o ícone ao passar o mouse */
+    color: #0056b3; /* Muda a cor do ícone ao passar o mouse */
+}
+
+.card-title {
+    font-size: 1.8rem; /* Título maior */
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #343a40; /* Cor do título */
+    text-transform: uppercase; /* Títulos em maiúsculas */
+}
+
+.card-value {
+    font-size: 1.5rem; /* Valor maior */
+    font-weight: 400;
+    color: #28a745; /* Cor do valor */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+canvas {
+    margin-top: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s; /* Efeito ao passar o mouse */
+}
+
+canvas:hover {
+    transform: scale(1.05); /* Aumenta o gráfico ao passar o mouse */
+}
+
+/* Animação para cartões */
+@keyframes cardBounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: cardBounce 2s infinite; /* Animação contínua nos cartões */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Estilo geral do formulário */
+form {
+    background-color: #fff;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 40px auto;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+form:hover {
+    transform: scale(1.01);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+label {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+    color: #555;
+}
+
+select {
+    margin: 15px 0;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    border-color: #555;
+    outline: none;
+}
+
+/* Estilo para os botões */
+button {
+    background-color: #6c63ff;
+    color: #ffffff;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    margin-right: 10px;
+    box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+}
+
+button:hover {
+    background-color: #5a54e0;
+    box-shadow: 0 8px 20px rgba(90, 84, 224, 0.3);
+    transform: scale(1.03);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+button#marcarTodos,
+button#desmarcarTodos {
+    background-color: #4CAF50;
+    margin-right: 10px;
+}
+
+button#marcarTodos:hover,
+button#desmarcarTodos:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para o fieldset e legend */
+fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #6c63ff;
+    padding-bottom: 5px;
+}
+
+/* Estilo para os cartões de checkbox */
+.checkbox-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: #f1f1f1;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+    margin: 10px;
+    width: calc(48% - 20px);
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.checkbox-card:hover {
+    background-color: #e9e9e9;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+    transform: scale(1.3);
+}
+
+/* Disposição flexível para os cartões de checkbox */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    form {
+        padding: 30px;
+    }
+
+    button {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .checkbox-card {
+        width: 100%;
+    }
+}
+
+
+</style>
+</head>
+<body>
+    <div style="margin-top: 200px;" class="container">
+        <h1>Relatório Geral</h1>
+
+        <!-- Exibir notificações, se houver -->
+        <div>
+            <% if (notificacoes.length > 0) { %>
+                <div class="alert alert-info" role="alert">
+                    <ul>
+                        <% notificacoes.forEach(function(notificacao) { %>
+                            <li><%= notificacao %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="row">
+            <!-- Cartão de Total de Ofertas -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-wallet card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Total de Ofertas</h5>
+                            <p class="card-value">Kz <%= totalOfertas.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Total de Dízimos -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-cash-stack card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Total de Dízimos</h5>
+                            <p class="card-value">Kz <%= totalDizimos.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Total de Despesas -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-clipboard-data card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Total de Despesas</h5>
+                            <p class="card-value">Kz <%= totalDespesas.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Cartão de Saldo -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-piggy-bank card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Saldo</h5>
+                            <p class="card-value">Kz <%= saldo.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Meta de Arrecadação -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-graph-up card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Meta de Arrecadação</h5>
+                            <p class="card-value">Kz <%= metaArrecadacao.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Porcentagem de Arrecadação -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-percent card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Porcentagem Arrecadação</h5>
+                            <p class="card-value"><%= (porcentagemArrecadacao || 0).toFixed(2) %>%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Cartão de Meta de Despesas -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-graph-down card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Meta de Despesas</h5>
+                            <p class="card-value">Kz <%= metaDespesas.toFixed(2) %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Porcentagem de Despesas -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-percent card-icon"></i>
+                        <div>
+                            <h5 class="card-title">Porcentagem Despesas</h5>
+                            <p class="card-value"><%= (porcentagemDespesas || 0).toFixed(2) %>%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas para o gráfico -->
+        <div>
+            <!-- Select para escolher o período -->
+            <select id="periodoSelect">
+                <option value="dia">Dia</option>
+                <option value="semana">Semana</option>
+                <option value="mes">Mês</option>
+                <option value="trimestre">Trimestre</option>
+                <option value="ano">Ano</option>
+            </select>
+        
+            <!-- Canvas para o gráfico -->
+            <canvas id="relatorioGeralGrafico" width="400" height="200"></canvas>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Obtendo os dados iniciais do servidor
+            const totalOfertas = <%= totalOfertas %>;
+            const totalDizimos = <%= totalDizimos %>;
+            const totalDespesas = <%= totalDespesas %>;
+        
+            const ctx = document.getElementById('relatorioGeralGrafico').getContext('2d');
+            const relatorioGeralGrafico = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ofertas', 'Dízimos', 'Despesas'],
+                    datasets: [{
+                        label: 'Valores',
+                        data: [totalOfertas, totalDizimos, totalDespesas],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.5)',
+                            'rgba(46, 204, 113, 0.5)',
+                            'rgba(231, 76, 60, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Relatório Geral de Ofertas e Despesas'
+                        }
+                    }
+                }
+            });
+        
+            // Evento para atualizar o gráfico com base no período selecionado
+            document.getElementById('periodoSelect').addEventListener('change', async function() {
+                const periodo = this.value;
+                // Fetch dos dados filtrados com base no período
+                const response = await fetch(`/api/relatorio-geral-grafico?periodo=${periodo}`);
+                const data = await response.json();
+                
+                // Atualizando os dados do gráfico
+                relatorioGeralGrafico.data.datasets[0].data = [data.totalOfertas, data.totalDizimos, data.totalDespesas];
+                relatorioGeralGrafico.update();
+            });
+        </script>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<div>
+    <div>
+        <form id="formRelatorioGeral" class="container-form">
+            <label for="periodo">
+                <i class="bi bi-calendar-event"></i> Selecione o Período:
+            </label>
+            <select id="periodo" name="periodo" required>
+                <option value="dia">Dia</option>
+                <option value="semana">Semana</option>
+                <option value="mes">Mês</option>
+                <option value="trimestre">Trimestre</option>
+                <option value="ano">Ano</option>
+            </select>
+
+            <fieldset>
+                <legend>
+                    <i class="bi bi-list-check"></i> Selecione os Itens para o Relatório:
+                </legend>
+                <div class="checkbox-container">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="itens" value="dizimos">
+                        <i class="bi bi-cash-coin"></i> Dízimos
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="itens" value="ofertas">
+                        <i class="bi bi-gift"></i> Ofertas
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="itens" value="despesas">
+                        <i class="bi bi-wallet"></i> Despesas
+                    </label>
+                  
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="itens" value="geral">
+                        <i class="bi bi-file-earmark-text"></i> Geral
+                    </label>
+                </div>
+
+                <div class="button-container">
+                    <button type="button" id="marcarTodos" class="btn-action">
+                        <i class="bi bi-check-all"></i> Marcar Tudo
+                    </button>
+                    <button type="button" id="desmarcarTodos" class="btn-action">
+                        <i class="bi bi-x-circle"></i> Desmarcar Tudo
+                    </button>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="btn-submit">
+                <i class="bi bi-file-earmark-text"></i> Gerar Relatório
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('marcarTodos').addEventListener('click', function () {
+            document.querySelectorAll('input[name="itens"]').forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('desmarcarTodos').addEventListener('click', function () {
+            document.querySelectorAll('input[name="itens"]').forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        });
+
+        document.getElementById('formRelatorioGeral').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Evita o comportamento padrão de envio do formulário
+
+            const periodo = document.getElementById('periodo').value;
+            const checkboxes = document.querySelectorAll('input[name="itens"]:checked');
+            const itensSelecionados = Array.from(checkboxes).map(cb => cb.value);
+
+            if (itensSelecionados.length === 0) {
+                alert('Por favor, selecione pelo menos um item para o relatório.');
+                return;
+            }
+
+            // Enviando a requisição para o servidor
+            const response = await fetch(`/api/relatorio-geral`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ periodo, itensSelecionados })
+            });
+
+            if (response.ok) {
+                // Redireciona para a página Geral após o envio do formulário
+                window.location.href = '/Geral'; // Atualize o caminho se necessário
+            } else {
+                alert('Erro ao gerar o relatório. Tente novamente.');
+            }
+        });
+    </script>
+</div>

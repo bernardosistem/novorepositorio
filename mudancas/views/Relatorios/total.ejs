@@ -1,0 +1,544 @@
+<%- include('../partials/header2.ejs');%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+   
+</head>
+<body>
+
+<style>
+    body{
+        background: linear-gradient(to bottom, #6b78ff, #ffffff);
+    }
+.page {
+    margin-top: 150px !important;
+}
+
+.report-section {
+    flex: 1 1 300px; /* Permite um tamanho mínimo para os cartões */
+    background: linear-gradient(135deg, #ffffff, #e6f0ff); /* Alteração de cor para uma melhor aparência */
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    padding: 25px;
+    margin: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden; /* Adiciona um efeito de contêiner */
+}
+
+.report-section:hover {
+    transform: scale(1.05);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
+
+.report-section h2 {
+    font-size: 24px; /* Tamanho da fonte aumentado */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.report-item {
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s, border 0.2s;
+    font-size: 17px;
+    background-color: #f8f9fa;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0; /* Margem superior e inferior */
+    position: relative; /* Para animação */
+    overflow: hidden; /* Para animação de transição */
+}
+
+.report-item:hover {
+    background-color: #e3f2fd;
+    transform: translateX(8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1; /* Para manter o item acima dos outros */
+}
+
+.report-item .total {
+    font-weight: bold;
+    color: #007bff;
+    background: #e3f2fd;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+.footer {
+    width: 100%;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+    padding: 15px;
+    background-color: #ffffff;
+    border-top: 2px solid #007bff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+    margin: 0;
+    color: #555;
+}
+
+/* Flex para o container geral */
+.container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem em várias linhas */
+    gap: 25px; /* Espaçamento entre os itens */
+    justify-content: space-between; /* Distribui os itens de maneira uniforme */
+    padding: 20px;
+}
+
+.report-section ul {
+    display: flex; /* Mantém o layout flexível */
+    flex-direction: row; /* Garante que os itens estejam lado a lado */
+    flex-wrap: wrap; /* Permite que os itens quebrem em várias linhas, se necessário */
+    gap: 10px; /* Espaçamento entre os itens */
+    padding: 0;
+    list-style: none;
+}
+
+.report-section ul li {
+    flex: 1 1 calc(50% - 10px); /* Define que cada item ocupe 50% menos o espaçamento */
+    display: flex; /* Mantém o layout flexível para o conteúdo interno */
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: space-between; /* Espaçamento entre o ícone e o texto */
+    background-color: #f8f9fa; /* Cor de fundo */
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.3s; /* Adicionando animação ao hover */
+}
+
+.report-section ul li:hover {
+    background-color: #e3f2fd; /* Alterando a cor do fundo no hover */
+    transform: translateY(-2px); /* Leve elevação ao passar o mouse */
+}
+
+
+.modal-content {
+    border-radius: 15px; /* Bordas arredondadas para o modal */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Sombra ao redor do modal */
+    border: none; /* Remove borda padrão */
+}
+
+.modal-header {
+    border-bottom: none; /* Remove a borda inferior do cabeçalho */
+    background-color: #007bff; /* Cor de fundo do cabeçalho */
+    color: #fff; /* Cor do texto no cabeçalho */
+    border-radius: 15px 15px 0 0; /* Arredondamento no topo */
+    padding: 20px; /* Padding maior para o cabeçalho */
+}
+
+.modal-title {
+    font-size: 1.5rem; /* Tamanho da fonte maior */
+    font-weight: bold; /* Negrito para o título */
+}
+
+.btn-close {
+    background-color: transparent; /* Botão de fechar transparente */
+    border: none; /* Remove borda padrão do botão */
+    color: #fff; /* Cor do ícone de fechar */
+    font-size: 1.5rem; /* Tamanho do ícone */
+}
+
+.modal-body {
+    padding: 20px; /* Padding aumentado para o corpo do modal */
+}
+
+.member-details {
+    display: flex; /* Flexbox para a disposição lado a lado */
+    align-items: center; /* Alinha verticalmente no centro */
+}
+
+.member-photo {
+    border-radius: 50%; /* Forma circular para a foto */
+    width: 120px; /* Largura fixa */
+    height: 120px; /* Altura fixa */
+    object-fit: cover; /* Cobre o espaço sem distorcer */
+    
+    margin-right: 20px; /* Espaçamento à direita da foto */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Sombra ao redor da foto */
+}
+
+.member-info {
+    flex: 1; /* Faz a informação ocupar o espaço restante */
+}
+
+.detail-row {
+    display: flex; /* Flexbox para alinhamento */
+    align-items: center; /* Centraliza verticalmente */
+    margin-bottom: 10px; /* Espaçamento entre linhas */
+}
+
+.detail-label {
+    font-weight: bold; /* Negrito para os rótulos */
+    margin-right: 10px; /* Espaçamento entre rótulo e valor */
+    color: #007bff; /* Cor do texto do rótulo */
+}
+
+.icon-detail {
+    margin-right: 8px; /* Espaçamento entre ícone e texto */
+    color: #007bff; /* Cor dos ícones */
+}
+
+.modal-footer {
+    border-top: none; /* Remove a borda superior do rodapé */
+    padding: 15px; /* Padding no rodapé */
+    display: flex; /* Flexbox para o rodapé */
+    justify-content: flex-end; /* Alinha o botão à direita */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Cor do botão de fechar */
+    color: #fff; /* Cor do texto no botão */
+    border-radius: 5px; /* Bordas arredondadas para o botão */
+    transition: background-color 0.3s; /* Animação de transição */
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Cor ao passar o mouse */
+}
+
+
+/* Estilo do container principal */
+.grafico {
+    max-width: 800px; /* Limita a largura do container */
+    margin: 0 auto; /* Centraliza o container na página */
+    padding: 30px; /* Espaçamento interno aumentado */
+    border-radius: 12px; /* Bordas arredondadas */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Sombra mais sutil */
+    background: #ffffff; /* Fundo branco para contraste */
+}
+
+/* Estilo do título */
+h1 {
+    text-align: center; /* Centraliza o título */
+    margin-bottom: 20px; /* Espaçamento abaixo do título */
+    color: #3c5a99; /* Cor do título */
+    font-size: 2.5rem; /* Tamanho da fonte do título */
+}
+
+/* Estilo do label do select */
+label {
+    font-weight: bold; /* Negrito para o label */
+    display: flex; /* Usar flex para alinhar ícones e texto */
+    align-items: center; /* Alinha verticalmente os itens */
+}
+
+/* Estilo do select */
+.form-control {
+    border: 2px solid #3c5a99; /* Borda azul */
+    border-radius: 4px; /* Bordas arredondadas */
+    padding: 10px; /* Espaçamento interno */
+    transition: border-color 0.3s; /* Efeito de transição na borda */
+}
+
+.form-control:focus {
+    border-color: #2a3e6d; /* Borda azul mais escura ao focar */
+    box-shadow: 0 0 5px rgba(42, 62, 109, 0.5); /* Sombra ao focar */
+}
+
+/* Estilo do container do gráfico */
+.chart-container {
+    margin-top: 40px; /* Espaçamento acima do gráfico */
+    position: relative; /* Para posição absoluta do canvas */
+    height: 400px; /* Altura do gráfico */
+    border-radius: 8px; /* Bordas arredondadas */
+    overflow: hidden; /* Esconde partes do gráfico que saem do container */
+    background: #f7f9fc; /* Fundo suave para o container do gráfico */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    padding: 15px; /* Espaçamento interno no gráfico */
+    
+}
+
+/* Estilo do canvas */
+canvas {
+    width: 100% !important; /* Garantir que o canvas ocupa 100% da largura */
+    height: auto !important; /* Altura automática para manter a proporção */
+    display: block; /* Bloqueia o canvas para evitar margens indesejadas */
+}
+
+
+</style>
+
+<div class="container page flex-grow-1 p-4">
+    <% if (resultadosEstatisticos.filiais.length > 0) { %>
+        <div class="report-section">
+            <h2><i class="bi bi-building icon"></i> Membros por Filiais</h2>
+            <ul class="list-unstyled">
+                <% resultadosEstatisticos.filiais.forEach(f => { %>
+                    <li class="report-item" title="Total de membros: <%= f.total %>" 
+                        onclick="fetchMembers('filial', '<%= f.filiais %>')">
+                        <%= f.filiais %>: 
+                        <span class="total"><%= f.total %> membro(os)</span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <% if (resultadosEstatisticos.generos.length > 0) { %>
+        <div class="report-section">
+            <h2><i class="bi bi-gender-ambiguous icon"></i> Membros por Gênero</h2>
+            <ul class="list-unstyled">
+                <% resultadosEstatisticos.generos.forEach(g => { %>
+                    <li class="report-item" title="Total de membros: <%= g.total %>" 
+                        onclick="fetchMembers('genero', '<%= g.genero %>')">
+                         <%= g.genero %>: 
+                        <span class="total"><%= g.total %> membro(os)</span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <% if (resultadosEstatisticos.funcoes.length > 0) { %>
+        <div class="report-section">
+            <h2><i class="bi bi-person-badge-fill icon"></i> Membros por Função</h2>
+            <ul class="list-unstyled">
+                <% resultadosEstatisticos.funcoes.forEach(func => { %>
+                    <li class="report-item" title="Total de membros: <%= func.total %>" 
+                        onclick="fetchMembers('funcao', '<%= func.funcao %>')">
+                         <%= func.funcao %>: 
+                        <span class="total"><%= func.total %> membro(os)</span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <% if (membrosPorDepartamento.length > 0) { %>
+        <div class="report-section">
+            <h2><i class="bi bi-diagram-3 icon"></i> Membros por Departamento</h2>
+            <ul class="list-unstyled">
+                <% membrosPorDepartamento.forEach(departamento => { %>
+                    <li class="report-item" title="Total de membros: <%= departamento.total %>" 
+                        onclick="fetchMembers('departamento', '<%= departamento.id %>')">
+                        <%= departamento.nomeDepartamento %>: 
+                        <span class="total"><%= departamento.total %> membro(os)</span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+    
+    
+    
+    <div class="grafico">
+        <h1><i class="bi bi-bar-chart"></i> Gráfico Estatístico</h1>
+        <div class="form-group">
+            <label for="dataSelect">
+                <i class="bi bi-filter-circle"></i> Selecione o tipo de dados:
+            </label>
+            <select id="dataSelect" class="form-control" onchange="updateChart()">
+                <option value="genero">Gênero</option>
+                <option value="funcao">Função</option>
+                <option value="categoria">Categoria</option>
+                <option value="filiais">Filiais</option>
+                <option value="departamento">Departamentos</option> <!-- Nova opção adicionada -->
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    
+    
+</div>
+    
+   <!-- Modal -->
+<div class="modal fade" id="membersModal" tabindex="-1" aria-labelledby="membersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="membersModalLabel">Detalhes dos Membros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="membersList">
+                <div class="member-details">
+                    <img src="${membro.foto_membro || 'default.jpg'}" class="member-photo" alt="Foto de ${membro.nome}">
+                    <div class="member-info">
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-user icon-detail"></i>Nome:</span> ${membro.nome}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-birthday-cake icon-detail"></i>Data de Nascimento:</span> ${new Date(membro.data_nascimento).toLocaleDateString()}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-heart icon-detail"></i>Estado Civil:</span> ${membro.estado_civil}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-flag icon-detail"></i>Nacionalidade:</span> ${membro.nacionalidade}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-map-marker-alt icon-detail"></i>Naturalidade:</span> ${membro.naturalidade}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-id-badge icon-detail"></i>Função:</span> ${membro.funcao || 'N/A'}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-building icon-detail"></i>Filial:</span> ${membro.filiais || 'N/A'}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        async function fetchMembers(tipo, valor) {
+            const response = await fetch('/api/membros', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ tipo, valor })
+            });
+
+            if (response.ok) {
+                const membros = await response.json();
+                displayMembers(membros);
+            } else {
+                console.error('Erro ao buscar membros');
+            }
+        }
+
+        function displayMembers(membros) {
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '';
+
+            if (membros.length === 0) {
+                membersList.innerHTML = '<p>Nenhum membro encontrado.</p>';
+                const membersModal = new bootstrap.Modal(document.getElementById('membersModal'));
+                membersModal.show();
+                return;
+            }
+
+            membros.forEach(membro => {
+                membersList.innerHTML += `
+                    <div class="text-center">
+                        <img src="${membro.foto_membro || 'default.jpg'}" class="member-photo" alt="Foto de ${membro.nome}">
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-user icon-detail"></i>Nome:</span> ${membro.nome}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-birthday-cake icon-detail"></i>Data de Nascimento:</span> ${new Date(membro.data_nascimento).toLocaleDateString()}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-heart icon-detail"></i>Estado Civil:</span> ${membro.estado_civil}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-flag icon-detail"></i>Nacionalidade:</span> ${membro.nacionalidade}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fas fa-map-marker-alt icon-detail"></i>Naturalidade:</span> ${membro.naturalidade}
+                        </div>
+                       
+                    </div>
+                    <hr>
+                `;
+            });
+
+            const membersModal = new bootstrap.Modal(document.getElementById('membersModal'));
+            membersModal.show();
+        }
+    </script>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+<script>
+    // Atribuindo valores de forma segura para evitar erros
+    const generos = <%- JSON.stringify(generos || []) %>;
+    const funcoes = <%- JSON.stringify(funcoes || []) %>;
+    const categorias = <%- JSON.stringify(categorias || []) %>;
+    const filiais = <%- JSON.stringify(filiais || []) %>;
+    const departamentos = <%- JSON.stringify(membrosPorDepartamento || []) %>; // Adicionando departamentos
+
+    let currentData = generos; // Dados iniciais são os de gênero
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: currentData.map(item => item.genero || item.funcao || item.categoria || item.filiais || item.nomeDepartamento),
+            datasets: [{
+                label: 'Total de Membros',
+                data: currentData.map(item => item.total),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    function updateChart() {
+        const selectedValue = document.getElementById('dataSelect').value;
+
+        switch (selectedValue) {
+            case 'genero':
+                currentData = generos;
+                break;
+            case 'funcao':
+                currentData = funcoes;
+                break;
+            case 'categoria':
+                currentData = categorias;
+                break;
+            case 'filiais':
+                currentData = filiais;
+                break;
+            case 'departamento': // Novo caso para departamentos
+                currentData = departamentos;
+                break;
+        }
+
+        myChart.data.labels = currentData.map(item => item.genero || item.funcao || item.categoria || item.filiais || item.nomeDepartamento);
+        myChart.data.datasets[0].data = currentData.map(item => item.total);
+        myChart.update();
+    }
+</script>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<%- include('../partials/footer.ejs');%>

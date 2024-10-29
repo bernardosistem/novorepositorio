@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações</title>
+    <link rel="stylesheet" href="/path/para/seu/css">
+</head>
+<body>
+    <h1>Notificações</h1>
+    <ul>
+        <% if (mensagens.length > 0) { %>
+            <% mensagens.forEach(mensagem => { %>
+                <li><%= mensagem %></li>
+            <% }) %>
+        <% } else { %>
+            <li>Não há notificações.</li>
+        <% } %>
+    </ul>
+</body>
+</html>

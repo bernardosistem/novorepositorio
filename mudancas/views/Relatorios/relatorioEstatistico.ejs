@@ -1,0 +1,24 @@
+<body>
+    <div class="container">
+        <h1>Relatório Estatístico de Membros</h1>
+        <h2>Membros por Filiais</h2>
+        <ul>
+            <% resultadosEstatisticos.membrosPorFiliais.forEach(f => { %>
+                <li><%= f.filiais %>: <%= f.total %></li>
+            <% }) %>
+        </ul>
+        <h2>Membros por Gênero</h2>
+        <ul>
+            <% resultadosEstatisticos.membrosPorGenero.forEach(g => { %>
+                <li><%= g.genero %>: <%= g.total %></li>
+            <% }) %>
+        </ul>
+        <h2>Membros por Função</h2>
+        <ul>
+            <% resultadosEstatisticos.membrosPorFuncao.forEach(f => { %>
+                <li><%= f.funcao %>: <%= f.total %></li>
+            <% }) %>
+        </ul>
+        <a href="/relatorios">Voltar para Relatórios</a>
+    </div>
+</body>

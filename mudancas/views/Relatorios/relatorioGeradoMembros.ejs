@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Membros</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Seu CSS -->
+</head>
+
+<style>
+
+    /* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #e2e6ea);
+    color: #4a4a4a;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e1e1e1;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 30px;
+    font-size: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+th, td {
+    padding: 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: rgba(0, 123, 255, 0.15);
+}
+
+th {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+td {
+    font-size: 1.1rem;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+a:hover {
+    transform: translateY(-4px);
+    background: linear-gradient(45deg, #218838, #28a745);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    a {
+        width: 100%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>Relatório de Membros</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Numero de Membro</th>
+                    <th>Nome</th>
+                    <th>Gênero</th>
+                    <th>Função</th>
+                    <th>Categoria</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% membros.forEach(membro => { %>
+                    <tr>
+                        <td><%= membro.numero_membro %></td>
+                        <td><%= membro.nome %></td>
+                        <td><%= membro.genero %></td>
+                        <td><%= membro.funcao || 'Não especificada' %></td>
+                        <td><%= membro.categoria || 'Não especificada' %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <a href="/relatorios">Voltar para Relatórios</a>
+    </div>
+</body>

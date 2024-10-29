@@ -1,0 +1,206 @@
+<%- include('../partials/header2.ejs');%>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+    .page {
+        margin-top: 200px;
+        padding: 40px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .page:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 70vh; /* Aumentando a altura do gráfico */
+        margin: auto;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .title-container {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    h1 {
+        color: #007bff;
+        font-weight: bold;
+        font-size: 2.5rem;
+        text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.2);
+        animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    p.lead {
+        color: #555;
+        font-size: 1.3rem;
+        animation: slideIn 1s ease-in;
+    }
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .bi-bar-chart-fill {
+        color: #28a745;
+        margin-bottom: 10px;
+    }
+    .bg-success {
+        background-color: rgba(40, 167, 69, 0.1) !important; /* Verde claro */
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    /* Estilizando os ticks do gráfico */
+    .chartjs-render-monitor {
+        transition: transform 0.2s;
+    }
+    /* Efeitos ao passar o mouse */
+    .chartjs-render-monitor:hover {
+        transform: scale(1.05);
+    }
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .chart-container {
+            width: 90%; /* Ajusta a largura em dispositivos menores */
+        }
+    }
+
+      /* Estilo do botão de voltar */
+      .btn-voltar {
+            position: fixed;
+            top: 10px; /* Distância do topo da tela */
+            left: 20px; /* Distância da esquerda da tela */
+            z-index: 1000; /* Para garantir que fique acima de outros elementos */
+            background-color: #007bff; /* Cor de fundo do botão */
+            color: white; /* Cor do texto do botão */
+            border: none; /* Remove borda */
+            border-radius: 5px; /* Bordas arredondadas */
+            padding: 10px 15px; /* Espaçamento interno */
+            font-size: 16px; /* Tamanho da fonte */
+            transition: background-color 0.3s; /* Transição para mudança de cor */
+        }
+        .btn-voltar:hover {
+            background-color: #0056b3; /* Cor do botão ao passar o mouse */
+        }
+</style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="title-container">
+                <h1 class="display-4">Desempenho de Dízimos dos Membros</h1>
+                <i class="bi bi-bar-chart-fill" style="font-size: 3rem;"></i>
+                <p class="lead">Visualize as contribuições dos membros em dízimos de forma interativa</p>
+            </div>
+    
+            <div class="chart-container bg-success">
+                <canvas id="dizimosChart"></canvas>
+            </div>
+            
+            <script>
+                // Dados do gráfico
+                const membros = <%- JSON.stringify(membros) %>;
+                const labels = membros.map(membro => membro.nome);
+                const data = membros.map(membro => membro.totalDizimos);
+    
+                const ctx = document.getElementById('dizimosChart').getContext('2d');
+                const dizimosChart = new Chart(ctx, {
+                    type: 'bar', // Tipo de gráfico: 'bar', 'line', etc.
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total de Dízimos (R$)',
+                            data: data,
+                            backgroundColor: 'rgba(40, 167, 69, 0.6)', // Cor verde
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            borderWidth: 1,
+                            hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)', // Cor ao passar o mouse
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Valor (R$)',
+                                    font: {
+                                        size: 16
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Membros',
+                                    font: {
+                                        size: 16
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+
+    <a class="btn-voltar" href="/dizimos-choose-preview">
+        <i class="bi bi-arrow-left-circle"></i> Voltar
+    </a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

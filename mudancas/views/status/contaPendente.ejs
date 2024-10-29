@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conta Pendente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <style>
+        /* Fundo com gradiente */
+        body {
+            background: linear-gradient(145deg, #f3f8ff, #ffffff);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+            padding: 0 10px;
+        }
+
+        /* Caixa principal */
+        .content-box {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .content-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animação */
+        #lottie-animation {
+            width: 220px; /* Aumenta o tamanho da animação */
+            height: 220px;
+            margin: 0 auto 20px;
+        }
+
+        /* Título */
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Parágrafos */
+        p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        /* Botão de suporte */
+        .btn-support {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #4caf50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-support:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .btn-support i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* Link de ajuda */
+        .footer-help {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .footer-help a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .footer-help a:hover {
+            color: #2980b9;
+        }
+
+        /* Estilo dos ícones */
+        .icon-blue { color: #3498db; }
+        .icon-green { color: #4caf50; }
+        .icon-orange { color: #e67e22; }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .content-box {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .btn-support {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            #lottie-animation {
+                width: 140px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-box">
+        <!-- Animação Lottie -->
+        <div id="lottie-animation"></div>
+
+        <!-- Conteúdo principal -->
+        <h1><i class="bi bi-emoji-frown icon-blue"></i> Sua conta está pendente</h1>
+        <p><i class="bi bi-info-circle icon-green"></i> Obrigado por se cadastrar! Sua conta está sendo revisada pela nossa equipe.</p>
+        <p><i class="bi bi-hourglass-split icon-orange"></i> Aguarde a aprovação para que você possa acessar todos os recursos.</p>
+        <p><i class="bi bi-envelope-check icon-blue"></i> Assim que sua conta for aprovada, você será notificado.</p>
+        
+        <!-- Botão de suporte -->
+        <a href="/" class="btn-support"><i class="bi bi-headset icon-green"></i> voltar</a>
+        
+        <!-- Link de ajuda -->
+        <div class="footer-help">
+            <p>Precisa de ajuda? <a href="/ajuda">Visite nossa página de ajuda</a>.</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da animação Lottie com um tema de “acesso negado”
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: '/img/user.json' // Animação de acesso negado com tristeza
+        });
+    </script>
+</body>
+</html>

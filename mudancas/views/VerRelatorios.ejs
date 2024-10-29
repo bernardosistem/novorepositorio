@@ -1,0 +1,196 @@
+<%- include('./partials/header.ejs'); %>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+       
+        
+        color: #fff;
+    }
+
+    .container {
+        
+        border-radius: 20px;
+    padding: 50px 20px;
+    margin: 50px auto;
+    background: linear-gradient(135deg, #448AFF, #2962FF);
+    color: #fff;
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    animation: shine 5s infinite alternate;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 48px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+        text-align: center;
+        font-size: 20px;
+    line-height: 1.5;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    hr {
+    border-top: 2px solid #fff;
+    width: 50%;
+    margin: 20px auto;
+  }
+
+  .relatório {
+    color: #fff;
+    font-size: 70px;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    animation: floatIcon 5s infinite alternate;
+  }
+
+  @keyframes shine {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(1.3);
+    }
+  }
+
+  @keyframes floatIcon {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    margin: 10px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    outline: none;
+    background: linear-gradient(45deg, #2196F3, #3F51B5);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  .btn i {
+    margin-right: 10px;
+    transition: transform 0.4s ease;
+  }
+  .btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.5);
+    color: #fff
+  }
+  span:hover img {
+    transform: rotate(360deg);
+    color:#fff
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    border-radius: 50%;
+    z-index: 0;
+    animation: ripple 1.5s linear infinite;
+  }
+  .btn:hover::before {
+    width: 300%;
+    height: 300%;
+    opacity: 0;
+  }
+  @keyframes ripple {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.5;
+    }
+    100% {
+      width: 200%;
+      height: 200%;
+      opacity: 0;
+    }
+  }
+
+
+    .btn span {
+        vertical-align: middle;
+    }
+
+    .relatório {
+        width: 80px;
+        height: 60px;
+    }
+
+    .tipos{
+
+        width: 60px;
+        height: 60px;
+
+    }
+
+    .money {
+        position: absolute;
+        right: 20px;
+        top: 400px;
+        width: 400px;
+    }
+</style>
+</header>
+
+<div class="container">
+<h1>Bem-vindo aos Relatórios <img class="relatório" src="/img/estatistica.png" alt=""></h1>
+<img class="money" src="/img/pilha-de-dinheiro.png" alt="">
+<p>Escolha o relatório que deseja visualizar:</p>
+
+<div class="btn-container">
+    <hr><hr>
+    <a href="/admin/relatorios" class="btn">
+       
+        <span> procedimentos <img class="tipos" src="/img/dinheiro.png" alt=""></span>
+    </a>
+    <a href="/verRelatorio-pagamento" class="btn">
+       
+        <span>Método de Pagamento <img class="tipos" src="/img/terminal-pos.png" alt=""></span>
+    </a>
+    <a href="/ver-relatorios-despesas" class="btn">
+        
+        <span>Despesas  <img class="tipos" src="/img/despesas.png" alt=""></span>
+    </a>
+</div>
+</div>
+
+
+
+        <%- include('./partials/footer.ejs'); %>
+

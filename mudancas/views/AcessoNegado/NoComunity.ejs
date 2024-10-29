@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecione uma Comunidade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <style>
+        /* Fundo */
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* Container principal */
+        .container-box {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .container-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animação Lottie */
+        #lottie-animation {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px;
+        }
+
+        /* Título */
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .container-box {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            #lottie-animation {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-box">
+        <!-- Animação Lottie -->
+        <div id="lottie-animation"></div>
+
+        <!-- Conteúdo principal -->
+        <h1><i class="bi bi-geo-alt icon-blue"></i> Por favor selecione uma comunidade</h1>
+    </div>
+
+    <script>
+        // Configuração da animação Lottie para uma animação temática de localização ou seleção
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets4.lottiefiles.com/packages/lf20_m4us9bxt.json' // Animação de localização ou seleção
+        });
+    </script>
+</body>
+</html>

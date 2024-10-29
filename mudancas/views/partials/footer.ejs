@@ -1,0 +1,92 @@
+
+ 
+
+
+
+
+
+
+<!-- Adiciona html2canvas e jsPDF via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+  
+    <script src="/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Exemplo de requisição assíncrona (AJAX) com JavaScript puro -->
+  <!-- Exemplo de requisição assíncrona (AJAX) sem jQuery -->
+  <script>
+    function simularRequisicao() {
+      // Simula uma requisição assíncrona (pode ser substituído pelo seu código real)
+      setTimeout(function () {
+        // Fecha o modal quando a requisição é concluída (simulação de sucesso)
+        var modal = new bootstrap.Modal(document.getElementById('processingModal'));
+        modal.hide();
+        
+        // Exibe um alerta após o fechamento do modal
+        setTimeout(function () {
+          
+        }, 0); // Aguarda que o modal seja totalmente fechado antes de exibir o alerta
+      }, 3000); // Tempo de simulação (ajuste conforme necessário)
+    }
+  </script>
+
+
+
+
+    <script>
+      function toggleForms() {
+          const cadastroForm = document.getElementById('cadastro-form');
+          const loginForm = document.getElementById('login-form');
+  
+          cadastroForm.classList.toggle('d-none');
+          loginForm.classList.toggle('d-none');
+  
+          // Altera o título com base no formulário exibido
+          const tituloCadastro = "Cadastro de Funcionário";
+          const tituloLogin = "Login";
+          document.getElementById('form-title').innerText =
+              cadastroForm.classList.contains('d-none') ? tituloLogin : tituloCadastro;
+      }
+  </script>
+  
+  
+  
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const submenus = document.querySelectorAll(".submenu");
+      submenus.forEach((submenu) => {
+        const parentNavItem = submenu.closest(".nav-item");
+        parentNavItem.addEventListener("mouseover", function () {
+          submenu.style.display = "block";
+        });
+        parentNavItem.addEventListener("mouseout", function () {
+          submenu.style.display = "none";
+        });
+      });
+    });
+  </script>
+  
+  
+  
+  
+  
+  
+  
+   
+  
+   
+  
+  
+  
+    
+  
+  </body>
+  
+  
+  </html>

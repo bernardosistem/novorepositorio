@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cores Salteadas</title>
+    <link href="../public/bootstrap-5.3.2-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/Font-Awesome-6.x/Font-Awesome-6.x/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .container {
+            max-width: 1140px;
+        }
+
+        /* Header Navigation */
+        .navbar {
+            background-color: #343a40;
+            margin-bottom: 0;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #f8f9fa;
+        }
+
+        .navbar-nav .nav-link {
+            color: #f8f9fa;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ff7f50;
+        }
+
+        /* Main Banner */
+        .main-banner {
+            background-image: url('../public/img/9.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 150px 0;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .main-banner h1 {
+            position: relative;
+            z-index: 2;
+            font-size: 4em;
+            margin: 0;
+            text-transform: uppercase;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* About Us Section */
+        .about-us {
+            padding: 60px 0;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .about-us h2 {
+            margin-top: 0;
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+
+        .about-us img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .about-us img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-us p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .about-us .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #ff7f50;
+        }
+
+        .about-us .service {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .about-us .service h3 {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ff7f50;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #f8f9fa;
+        }
+
+        /* Additional Styles */
+        .btn-primary {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #e56942;
+            border-color: #e56942;
+        }
+
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(to right, transparent, #ff7f50, transparent);
+            margin: 30px 0;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+
+        .services h2 {
+            margin-top: 0;
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+
+        .services .service {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .services .service h3 {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        .services .service p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .services .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #ff7f50;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 60px 0;
+            background-color: #ffffff;
+        }
+
+        .testimonials h2 {
+            margin-top: 0;
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+
+        .testimonial {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .testimonial p {
+            font-size: 1.1em;
+            font-style: italic;
+            color: #555;
+        }
+
+        .testimonial .client-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+
+        .contact h2 {
+            margin-top: 0;
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-form .form-control {
+            border-radius: 0;
+        }
+
+        .contact-form .btn-primary {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .contact-form .btn-primary:hover {
+            background-color: #e56942;
+            border-color: #e56942;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Cores Salteadas</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Início</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about-us">Sobre Nós</a></li>
+                <li class="nav-item"><a class="nav-link" href="#services">Os Nossos Serviços</a></li>
+                <li class="nav-item"><a class="nav-link" href="#testimonials">Testemunhos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Banner -->
+    <header class="main-banner">
+        <div class="container text-center">
+            <h1>Salão de Beleza</h1>
+        </div>
+    </header>
+
+    <!-- About Us Section -->
+    <section class="about-us" id="about-us">
+        <div class="container">
+            <h2>Sobre Nós</h2>
+            <div class="section-divider"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="../public/img/2.jpg" class="img-fluid" alt="Sobre Nós">
+                </div>
+                <div class="col-md-6">
+                    <p>Rita Coelho<br>Proprietária e Cabeleireira</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel urna nec odio interdum faucibus...</p>
+                    <a href="#" class="btn btn-primary">Saiba Mais</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2>Os Nossos Serviços</h2>
+            <div class="section-divider"></div>
+            <div class="row">
+                <div class="col-md-4 service">
+                    <i class="fas fa-cut icon"></i>
+                    <h3>Corte de Cabelo</h3>
+                    <p>Oferecemos cortes de cabelo modernos e clássicos para todos os gostos e idades.</p>
+                </div>
+                <div class="col-md-4 service">
+                    <i class="fas fa-paint-brush icon"></i>
+                    <h3>Coloração</h3>
+                    <p>Técnicas de coloração inovadoras para um look vibrante e personalizado.</p>
+                </div>
+                <div class="col-md-4 service">
+                    <i class="fas fa-spa icon"></i>
+                    <h3>Tratamentos</h3>
+                    <p>Tratamentos capilares que revitalizam e fortalecem o seu cabelo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>Testemunhos</h2>
+            <div class="section-divider"></div>
+            <div class="row">
+                <div class="col-md-4 testimonial">
+                    <p>"Adorei o serviço! Meu cabelo nunca esteve tão bonito."</p>
+                    <p class="client-name">Maria Silva</p>
+                </div>
+                <div class="col-md-4 testimonial">
+                    <p>"Profissionais atenciosos e um ambiente agradável."</p>
+                    <p class="client-name">João Pereira</p>
+                </div>
+                <div class="col-md-4 testimonial">
+                    <p>"O melhor salão da cidade! Recomendo a todos."</p>
+                    <p class="client-name">Ana Costa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2>Contacto</h2>
+            <div class="section-divider"></div>
+            <div class="contact-form">
+                <form action="#" method="POST">
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensagem</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Cores Salteadas. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../public/SEP-JQUERY/jquery-3.7.1.min.js"></script>
+    <script src="../public/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

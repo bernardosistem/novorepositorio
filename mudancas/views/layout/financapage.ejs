@@ -1,0 +1,126 @@
+<%- include('../partials/header2.ejs');%>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        background: linear-gradient(to bottom, #6b78ff, #ffffff);
+    }
+    .card {
+        margin: 15px; /* Espaçamento entre os cartões */
+        overflow: hidden;
+        border: none;
+        border-radius: 15px; /* Bordas arredondadas */
+        transition: transform 0.3s, box-shadow 0.3s; /* Suaviza a animação */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra nos cartões */
+        width: 100%; /* Largura em 100% para se adaptar */
+        max-width: 300px; /* Largura máxima dos cartões */
+        height: 320px; /* Altura dos cartões */
+        text-decoration: none; /* Remove o sublinhado do link */
+        color: inherit; /* Mantém a cor do texto */
+    }
+    .card:hover {
+        transform: scale(1.05); /* Efeito de zoom ao passar o mouse */
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3); /* Sombra mais intensa ao passar o mouse */
+    }
+    .card img {
+        width: 100%;
+        height: 200px; /* Aumenta a altura da imagem */
+        object-fit: cover;
+        filter: brightness(0.7); /* Escurece a imagem */
+        border-top-left-radius: 15px; /* Bordas arredondadas na parte superior */
+        border-top-right-radius: 15px;
+    }
+    .card-title {
+        color: #ffffff; /* Cor do texto em branco */
+        text-align: center;
+        margin-top: 10px;
+        font-size: 1.4rem; /* Tamanho da fonte */
+        font-weight: bold; /* Fonte em negrito */
+    }
+    .card-body {
+        background-color: #6b78ff; /* Cor de fundo atraente */
+        padding: 15px;
+        border-bottom-left-radius: 15px; /* Bordas arredondadas na parte inferior */
+        border-bottom-right-radius: 15px;
+    }
+
+    .page {
+        margin-top: 180px !important;
+    }
+
+    /* Media query para telas menores */
+    @media (max-width: 576px) {
+        .card {
+            max-width: 100%; /* Cartões ocupam toda a largura */
+            height: auto; /* Altura automática */
+        }
+        .card-title {
+            font-size: 1.2rem; /* Reduz o tamanho da fonte para títulos */
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="page">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <!-- Cartão 1 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/ofertas-page" class="card">
+                        <img src="/img/ofertas/ofertas.jpg" alt="Ofertas">
+                        <div class="card-body">
+                            <h5 class="card-title">Ofertas</h5>
+                        </div>
+                    </a>
+                </div>
+                <!-- Cartão 2 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/dizimos-choose-preview" class="card">
+                        <img src="/img/dizimos.jpg" alt="Dízimos">
+                        <div class="card-body">
+                            <h5 class="card-title">Dízimos</h5>
+                        </div>
+                    </a>
+                </div>
+                <!-- Cartão 3 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/dizimistas-preview" class="card">
+                        <img src="/img/dizimistas.jpg" alt="Dizimistas">
+                        <div class="card-body">
+                            <h5 class="card-title">Dizimistas</h5>
+                        </div>
+                    </a>
+                </div>
+                <!-- Cartão 4 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/relatorio-geral-page" class="card">
+                        <img src="/img/geral.jpg" alt="Ações de Graça">
+                        <div class="card-body">
+                            <h5 class="card-title">Geral</h5>
+                        </div>
+                    </a>
+                </div>
+                <!-- Cartão 5 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/despesas-previews" class="card">
+                        <img src="/img/despesas.jpg" alt="Despesas">
+                        <div class="card-body">
+                            <h5 class="card-title">Despesas</h5>
+                        </div>
+                    </a>
+                </div>
+                <!-- Cartão 6 -->
+                <div class="col-6 col-sm-4">
+                    <a href="/quotas-previews" class="card">
+                        <img src="/img/quotas.jpg" alt="Quotas">
+                        <div class="card-body">
+                            <h5 class="card-title">Quotas</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

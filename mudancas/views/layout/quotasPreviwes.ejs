@@ -1,0 +1,112 @@
+<%- include('../partials/header2.ejs'); %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body {
+        background-color: #f0f2f5;
+    }
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin: 40px 0;
+    }
+    .custom-card, .custom-link-card {
+        width: 380px;
+        padding: 30px;
+        border-radius: 15px;
+        border: none;
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .custom-link-card:hover {
+        transform: scale(1.1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #0d6efd;
+    }
+    .icon {
+        font-size: 45px;
+        color: #0d6efd;
+        margin-bottom: 20px;
+    }
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin-bottom: 15px;
+    }
+    .card-text {
+        font-size: 16px;
+        color: #0d6efd;
+    }
+    .form-container {
+        margin-top: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .form-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin-bottom: 20px;
+    }
+    .form-icon {
+        font-size: 20px;
+        margin-right: 10px;
+        color: #0d6efd;
+    }
+</style>
+</head>
+<body>
+    <div style="margin-top: 200px;" class="container">
+        <div class="card-container">
+           
+
+<!-- Cartões sobre Quotas dos Departamentos -->
+<div class="custom-card">
+    <div class="icon"><i class="bi bi-people-fill"></i></div>
+    <h5 class="card-title">Total de Departamentos Contribuintes</h5>
+    <p class="card-text"><%= totalDepartamentos %> departamentos contribuindo</p>
+</div>
+<div class="custom-card">
+    <div class="icon"><i class="bi bi-cash-stack"></i></div>
+    <h5 class="card-title">Total de Quotas Arrecadadas</h5>
+    <p class="card-text">Kz <%= totalQuotas.toFixed(2) %> em quotas arrecadadas</p>
+</div>
+<div class="custom-card">
+    <div class="icon"><i class="bi bi-calendar-check"></i></div>
+    <h5 class="card-title">Quotas Pagas Este Trimestre</h5>
+    <p class="card-text"><%= quotasPagasTrimestre %> quotas pagas</p>
+</div>
+
+
+            <a href="/quotas-status" class="custom-link-card">
+                <div class="icon"><i class="bi bi-check-circle"></i></i></div>
+                <h5 class="card-title">Status trimestral de Quotas dos departamentos</h5>
+                <p class="card-text">Análise trimestral dos departamentosque já pagaram as suas quotas e os que ainda não pagaram .</p>
+            </a>
+            <a href="/grafico-quotas" class="custom-link-card">
+                <div class="icon">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h5 class="card-title">Crescimento das quotas por departamentos no ano corrente</h5>
+                <p class="card-text"></p>
+            </a>
+            
+        </div>
+    </div>
+    
+            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

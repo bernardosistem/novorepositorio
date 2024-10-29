@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Descritivo</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Adicione o caminho correto para seu CSS -->
+    <style>
+        /* Estilos básicos para o modal */
+        .modal {
+            display: none; /* Ocultar o modal por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); /* Fundo escuro */
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Estilo para a lista de dados */
+        .checkbox-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Relatório Descritivo dos Membros</h1>
+
+    <div>
+        <button onclick="showData('generos')">Gêneros</button>
+        <button onclick="showData('idades')">Idades</button>
+        <button onclick="showData('estadosCivil')">Estado Civil</button>
+        <button onclick="showData('bis')">BIs</button>
+        <button onclick="showData('naturalidades')">Naturalidades</button>
+        <button onclick="showData('provincias')">Províncias</button>
+        <button onclick="showData('situacoes')">Situação</button>
+        <button onclick="showData('categorias')">Categoria</button>
+        <button onclick="showData('funcoes')">Função</button>
+        <button onclick="showData('datasConsagracao')">Data de Consagração</button>
+        <button onclick="showData('datasBatismo')">Data de Batismo</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="checkbox-list" id="modalData"></div>
+            <button id="insertButton" onclick="insertSelected()">Inserir no Relatório os Marcados</button>
+        </div>
+    </div>
+
+    <button id="generateReport" onclick="generateReport()" style="display: none;">Gerar Relatório</button>
+
+   
+
+    <script>
+        // Dados a serem exibidos no modal
+        const data = {
+            generos: <%- JSON.stringify(generos) %>,
+            idades: <%- JSON.stringify(idades) %>,
+            estadosCivil: <%- JSON.stringify(estadosCivil) %>,
+            bis: <%- JSON.stringify(bis) %>,
+            naturalidades: <%- JSON.stringify(naturalidades) %>,
+            provincias: <%- JSON.stringify(provincias) %>,
+            situacoes: <%- JSON.stringify(situacoes) %>,
+            categorias: <%- JSON.stringify(categorias) %>,
+            funcoes: <%- JSON.stringify(funcoes) %>,
+            // Formatação das datas
+            datasConsagracao: <%- JSON.stringify(datasConsagracao.map(date => new Date(date).toLocaleDateString('pt-BR'))) %>,
+            datasBatismo: <%- JSON.stringify(datasBatismo.map(date => new Date(date).toLocaleDateString('pt-BR'))) %>
+        };
+    
+        // Array para armazenar os dados selecionados
+        const selectedItems = [];
+    
+        // Função para mostrar o modal
+        function showData(category) {
+            const modal = document.getElementById("myModal");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalData = document.getElementById("modalData");
+            const insertButton = document.getElementById("insertButton");
+    
+            modalTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1); // Capitaliza a primeira letra
+            modalData.innerHTML = ''; // Limpa dados anteriores
+    
+            data[category].forEach((item, index) => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <input type="checkbox" id="${category}-${index}" value="${item}" onchange="toggleSelection('${item}')">
+                    <label for="${category}-${index}">${item}</label>
+                `;
+                modalData.appendChild(div);
+            });
+    
+            modal.style.display = "block"; // Exibe o modal
+            insertButton.style.display = "block"; // Mostra o botão de inserir
+        }
+    
+        // Função para alternar a seleção dos itens
+        function toggleSelection(item) {
+            const index = selectedItems.indexOf(item);
+            if (index === -1) {
+                selectedItems.push(item);
+            } else {
+                selectedItems.splice(index, 1);
+            }
+            document.getElementById("generateReport").style.display = selectedItems.length > 0 ? "block" : "none"; // Mostra o botão se houver itens selecionados
+        }
+        function generateReport() {
+    // Verifica se há itens selecionados antes de redirecionar
+    if (selectedItems.length === 0) {
+        alert("Por favor, selecione pelo menos um item para gerar o relatório.");
+        return;
+    }
+
+    // Monta a query string com base nos itens selecionados
+    const queryParameters = selectedItems.map(item => {
+        // Ajuste aqui para enviar o valor correto baseado no tipo de dado
+        return `${item}=${encodeURIComponent(obterValorSelecionadoPara(item))}`;
+    }).join('&');
+
+    window.location.href = `/mostrar-relatorio-descritivo?itens=${encodeURIComponent(JSON.stringify(selectedItems))}&${queryParameters}`;
+}
+
+// Função fictícia para obter o valor selecionado com base no item
+function obterValorSelecionadoPara(item) {
+    // Lógica para retornar o valor apropriado para o item
+    // Isso depende da sua implementação, mas pode envolver buscar no DOM ou um array de valores selecionados.
+}
+
+    
+        // Função para fechar o modal
+        function closeModal() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none"; // Oculta o modal
+        }
+    
+        // Fecha o modal se o usuário clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+    
+    <script src="/js/scripts.js"></script> <!-- Adicione o caminho correto para seu JS -->
+    

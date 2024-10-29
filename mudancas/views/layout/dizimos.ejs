@@ -1,0 +1,183 @@
+<%- include('../partials/header2.ejs'); %>
+<style>
+    body {
+        background: linear-gradient(to bottom right, #e0f7fa, #ffffff); /* Fundo gradiente suave */
+        font-family: 'Arial', sans-serif; /* Fonte geral */
+    }
+
+    .header {
+        text-align: center;
+        padding: 20px 0;
+        background-color: #007bff; /* Azul forte */
+        color: white;
+        border-radius: 0 0 15px 15px; /* Bordas arredondadas na parte inferior */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        margin-bottom: 30px; /* Espaço entre o cabeçalho e o gráfico */
+    }
+
+    .grafico-container {
+        max-width: 1000px; /* Aumenta a largura do gráfico */
+        margin: 0 auto; /* Centraliza o contêiner */
+        padding: 30px;
+        background-color: #ffffff; /* Fundo branco para destacar o gráfico */
+        border-radius: 15px; /* Bordas arredondadas mais suaves */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
+        transition: transform 0.3s ease; /* Animação ao passar o mouse */
+    }
+
+    .grafico-container:hover {
+        transform: translateY(-5px); /* Levanta o contêiner ao passar o mouse */
+    }
+
+    .grafico-titulo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem; /* Tamanho da fonte maior */
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #28a745; /* Verde Bootstrap */
+    }
+
+    .grafico-titulo i {
+        margin-right: 10px;
+        font-size: 2rem; /* Ícone maior */
+    }
+
+    canvas {
+        border-radius: 10px; /* Bordas arredondadas do gráfico */
+    }
+
+    /* Adiciona um padrão de fundo ao contêiner */
+    .background-pattern {
+        background-image: url('https://www.transparenttextures.com/patterns/white-wall.png'); /* Padrão sutil */
+        background-size: cover;
+        border-radius: 15px; /* Para combinar com o gráfico */
+        padding: 20px; /* Espaçamento interno */
+    }
+
+    /* Estilo do botão de voltar */
+    .btn-voltar {
+        position: fixed;
+        top: 10px; /* Distância do topo da tela */
+        left: 20px; /* Distância da esquerda da tela */
+        z-index: 1000; /* Para garantir que fique acima de outros elementos */
+        background-color: #007bff; /* Cor de fundo do botão */
+        color: white; /* Cor do texto do botão */
+        border: none; /* Remove borda */
+        border-radius: 5px; /* Bordas arredondadas */
+        padding: 10px 15px; /* Espaçamento interno */
+        font-size: 16px; /* Tamanho da fonte */
+        transition: background-color 0.3s; /* Transição para mudança de cor */
+    }
+    .btn-voltar:hover {
+        background-color: #0056b3; /* Cor do botão ao passar o mouse */
+    }
+</style>
+
+<!-- Estrutura HTML do gráfico -->
+<div class="header">
+    <h1>Crescimento dos Dízimos</h1>
+    <p>Acompanhe o crescimento dos dízimos ao longo do ano corrente.</p>
+</div>
+
+<div class="grafico-container background-pattern">
+    <div class="grafico-titulo">
+        <i class="bi bi-graph-up"></i> Crescimento dos Dízimos - Ano Corrente
+    </div>
+    <canvas id="graficoDizimos"></canvas>
+</div>
+
+<!-- Inclua o Bootstrap Icons e o Chart.js -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Receber os dados passados pelo backend
+    var labels = <%- JSON.stringify(labels) %>;
+    var valores = <%- JSON.stringify(valores) %>;
+
+    // Configurar o gráfico
+    const ctx = document.getElementById('graficoDizimos').getContext('2d');
+    const graficoDizimos = new Chart(ctx, {
+        type: 'line', // Tipo de gráfico de linha
+        data: {
+            labels: labels, // Nomes dos meses
+            datasets: [{
+                label: 'Crescimento dos Dízimos (Ano Corrente)',
+                data: valores, // Valores dos dízimos para cada mês
+                fill: true, // Preencher a área abaixo da linha
+                backgroundColor: 'rgba(40, 167, 69, 0.2)', // Cor de preenchimento
+                borderColor: 'rgba(40, 167, 69, 1)', // Cor da linha
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(40, 167, 69, 1)', // Cor dos pontos
+                pointBorderColor: '#ffffff', // Borda dos pontos
+                pointRadius: 5, // Tamanho dos pontos
+                tension: 0.4 // Suavizar a linha
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Valor (R$)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#28a745'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Meses',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#28a745'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        color: '#28a745'
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#28a745',
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 12
+                    },
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }
+            }
+        }
+    });
+</script>
+
+
+<a class="btn-voltar" href="/dizimos-choose-preview">
+    <i class="bi bi-arrow-left-circle"></i> Voltar
+</a>

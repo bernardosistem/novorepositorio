@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo de Dizimistas do Mês</title>
+    <%- include('../partials/header2.ejs'); %>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6b78ff, #a0c4ff);
+            font-family: 'Roboto', sans-serif;
+            padding: 40px;
+            color: #333;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .page-container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #495057;
+            font-weight: 800;
+            font-size: 2.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(to right, #6b78ff, #a0c4ff);
+            -webkit-background-clip: text;
+            color: transparent;
+            border-bottom: 4px solid #6b78ff;
+            padding-bottom: 10px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            border-radius: 30px;
+            border: 2px solid #6b78ff;
+            padding: 12px 50px 12px 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(107, 120, 255, 0.2);
+        }
+
+        .search-bar:focus {
+            border-color: #495057;
+            box-shadow: 0 0 15px rgba(107, 120, 255, 0.5);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #6b78ff;
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-radius: 15px;
+            border: none;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .list-group-item:hover {
+            background-color: #dfe6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        .icon {
+            margin-right: 8px;
+            font-size: 1.5rem;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .badge-custom {
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            border-radius: 20px;
+            background-color: #6b78ff;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .badge-custom:hover {
+            background-color: #495057;
+        }
+
+        .badge-custom i {
+            margin-right: 5px;
+        }
+
+        /* Animações para os itens */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Animações ao carregar a página */
+        .list-group-item {
+            animation: pop 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div style="margin-top: 120px;" class="page-container">
+        <h1 class="title">Resumo de Dizimistas do Mês</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="form-control search-bar" placeholder="Pesquisar dizimista...">
+            <i class="bi bi-search search-icon"></i>
+        </div>
+        <ul class="list-group" id="dizimistasList">
+            <% dizimaram.forEach(function(membro) { %>
+                <li class="list-group-item">
+                    <span class="font-weight-bold">
+                        <i class="bi bi-person-circle icon text-primary"></i> 
+                        <%= membro.nome %>
+                    </span>
+                    <span class="status text-success">
+                        <i class="bi bi-check-circle-fill icon"></i>
+                        DIZIMOU
+                    </span>
+                </li>
+            <% }); %>
+            <% naoDizimaram.forEach(function(membro) { %>
+                <li class="list-group-item">
+                    <span class="font-weight-bold">
+                        <i class="bi bi-person-circle icon text-primary"></i> 
+                        <%= membro.nome %>
+                    </span>
+                    <span class="status text-danger">
+                        <i class="bi bi-x-circle-fill icon"></i>
+                        AINDA NÃO DIZIMOU
+                    </span>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+
+    <!-- Bootstrap JS e dependências Popper.js e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Função para filtrar os dizimistas
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const listItems = document.querySelectorAll('.list-group-item');
+
+            listItems.forEach(function(item) {
+                const name = item.textContent.toLowerCase();
+                if (name.includes(searchValue)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
