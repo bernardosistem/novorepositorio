@@ -3,7 +3,6 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
 
 const Membro = sequelize.define('Membro', {
-  
   numero_membro: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -55,5 +54,6 @@ const Membro = sequelize.define('Membro', {
     allowNull: true,
   },
 });
+
 
 module.exports = Membro;

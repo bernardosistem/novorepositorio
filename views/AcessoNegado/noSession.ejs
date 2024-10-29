@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Negado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+    <style>
+        /* Fundo com gradiente suave */
+        body {
+            background: linear-gradient(135deg, #f0f2f5, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* Caixa principal */
+        .container-box {
+            background: #fff;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .container-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animação Lottie */
+        #lottie-animation {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 20px;
+        }
+
+        /* Título */
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Texto */
+        p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Botão de redirecionamento */
+        .btn-login {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            font-size: 1rem;
+            background-color: #d9534f;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-login:hover {
+            background-color: #c9302c;
+            transform: scale(1.05);
+        }
+
+        .btn-login i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .container-box {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .btn-login {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            #lottie-animation {
+                width: 140px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-box">
+        <!-- Animação Lottie -->
+        <div id="lottie-animation"></div>
+
+        <!-- Conteúdo principal -->
+        <h1><i class="bi bi-shield-lock icon-blue"></i> Acesso Negado</h1>
+        <p><i class="bi bi-exclamation-triangle-fill icon-red"></i> Você não está autenticado. Por favor, faça login para acessar esta página.</p>
+
+        <!-- Botão para login -->
+        <a href="/login" class="btn-login"><i class="bi bi-box-arrow-in-right"></i> Ir para Login</a>
+    </div>
+
+    <script>
+        // Configuração da animação Lottie para “acesso negado”
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets3.lottiefiles.com/packages/lf20_q77jpumk.json' // Animação de acesso negado
+        });
+    </script>
+</body>
+</html>

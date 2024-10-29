@@ -37,9 +37,11 @@ const CursosTeologicos = require('../DadosMembros/CursoTeologico');
 const Contatos = require('../DadosMembros/Contactos');
 const Enderecos = require('../DadosMembros/Endereco');
 const DadosAcademicos = require('../DadosMembros/DadosAcademicos');
-
+const MembroCommunity = require("../comunity/MembroComunity")
 
 const moment = require('moment'); // Adicione esta linha no topo do arquivo
+
+const verificarStatusAprovado  = require("../middlewere/userPendentes");
 
 // Exemplo de inserção de dados no seu código
 const createdAt = moment().toDate();
@@ -50,7 +52,7 @@ const updatedAt = createdAt;
 
 
 // Rota para renderizar o formulário de membros
-router.get('/formulario-de-membros', async (req, res) => {
+router.get('/formulario-de-membros', verificarStatusAprovado, async (req, res) => {
     try {
         // Obter o último membro cadastrado
         const ultimoMembro = await Membro.findOne({
@@ -73,7 +75,6 @@ router.get('/formulario-de-membros', async (req, res) => {
         res.status(500).send("Erro ao carregar o formulário");
     }
 });
-
 
 
 
@@ -106,7 +107,16 @@ router.post('/membros', upload.single('foto_membro'), async (req, res) => {
             foto_membro: fotoPath
         });
 
-        // Redireciona para a página de cadastro de dados eclesiais
+        // Pega o ComunityId da sessão
+        const comunityId = req.session.utilizador?.comunityId;
+
+        if (comunityId) {
+            await MembroCommunity.create({
+                MembroId: membro.id,
+                ComunityId: comunityId
+            });
+        }
+
         res.redirect(`/dados-academicos/cadastrar/${membro.id}`);
     } catch (error) {
         console.error(error);

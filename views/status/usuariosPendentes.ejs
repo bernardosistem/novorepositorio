@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários Pendentes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #6b78ff, #ffffff); /* Cor de fundo suave */
+        }
+        .card {
+            border: none; /* Removendo a borda do cartão */
+            border-radius: 10px; /* Arredondamento do cartão */
+            margin-bottom: 15px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s; /* Efeito de transição */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra do cartão */
+            background: linear-gradient(135deg, #ffffff, #e2e6ea); /* Fundo gradiente do cartão */
+            font-size: 0.9rem; /* Tamanho da fonte padrão */
+        }
+        @media (max-width: 576px) {
+            .card {
+                font-size: 0.75rem; /* Diminuir tamanho da fonte em telas muito pequenas */
+                padding: 10px; /* Reduzir o preenchimento do cartão */
+            }
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Leve movimento para cima ao passar o mouse */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra mais forte no hover */
+        }
+        .card-title {
+            font-size: 1.2rem; /* Aumentando o tamanho do título */
+            font-weight: bold; /* Negrito para destaque */
+            color: #007bff; /* Cor do título */
+        }
+        .highlighted-status {
+            background-color: #e31c30; /* Fundo vermelho marcante para a palavra "Pendente" */
+            color: #fff; /* Cor do texto em branco para melhor contraste */
+            padding: 4px 8px; /* Espaçamento interno */
+            border-radius: 5px; /* Arredondar os cantos do fundo */
+            font-weight: bold; /* Negrito para chamar mais atenção */
+            display: inline-block; /* Para que o fundo fique restrito ao texto */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+            margin-top: 10px; /* Espaçamento superior */
+        }
+        .btn-success {
+            width: 100%; /* Botão ocupa toda a largura */
+            transition: background-color 0.3s; /* Transição suave para a cor do botão */
+            font-weight: bold; /* Negrito para o texto do botão */
+        }
+        .btn-success:hover {
+            background-color: #218838; /* Cor de fundo mais escura ao passar o mouse */
+        }
+        .highlighted-status-container {
+            background-color: rgba(220, 53, 69, 0.1); /* Fundo suave para o status dentro do cartão */
+            border-radius: 5px; /* Arredondar os cantos */
+            padding: 10px; /* Espaçamento interno */
+            margin-top: 10px; /* Margem superior */
+        }
+        .btn-back {
+            background-color: #007bff; /* Cor de fundo do botão */
+            color: white; /* Cor do texto */
+            border-radius: 5px; /* Arredondamento do botão */
+            transition: background-color 0.3s, transform 0.3s; /* Transições suaves */
+            font-weight: bold; /* Texto em negrito */
+        }
+        .btn-back:hover {
+            background-color: #0056b3; /* Cor mais escura ao passar o mouse */
+            transform: translateY(-3px); /* Efeito de movimento ao passar o mouse */
+        }
+    </style>
+</head>
+<body style="margin-top: 200px;" class="container py-5">
+
+    <h1 style="color: #fff;" class="text-center mb-4">Usuários com Status Pendente</h1>
+
+    <!-- Botão de Voltar -->
+    <div class="text-center mb-4">
+        <a href="/" class="btn btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Voltar
+        </a>
+    </div>
+
+    <!-- Barra de Pesquisa -->
+    <div class="mb-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Pesquise pelo nome do usuário..." onkeyup="filterUsers()">
+    </div>
+    
+    <div class="row" id="userCards">
+        <% usuarios.forEach(usuario => { %>
+            <% usuario.status2s.forEach(status => { %>
+                <div class="col-lg-4 col-md-6 col-sm-6 col-12 user-card">
+                    <div class="card">
+                        <h5 class="card-title">
+                            <i class="bi bi-person-circle"></i> <%= usuario.pnome %> <%= usuario.unome %>
+                        </h5>
+                        <p><strong>Status:</strong> 
+                            <div class="highlighted-status-container">
+                                <% if (status.status === 'Pendente') { %>
+                                    <span class="highlighted-status">Pendente</span>
+                                <% } else { %>
+                                    <%= status.status %>
+                                <% } %>
+                            </div>
+                        </p>
+                        <p><strong>Data de Criação:</strong> <%= status.createdAt.toLocaleDateString() %></p>
+
+                        <!-- Botão para Aprovar o Usuário -->
+                        <form action="/aprovar-usuario" method="POST">
+                            <input type="hidden" name="usuarioId" value="<%= usuario.id %>">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Aprovar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <% }) %>
+        <% }) %>
+    </div>
+
+    <script>
+        function filterUsers() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const cards = document.querySelectorAll('.user-card');
+
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    card.style.display = ""; // Mostra o cartão se o nome contiver o texto da pesquisa
+                } else {
+                    card.style.display = "none"; // Esconde o cartão se não corresponder
+                }
+            });
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</body>
+</html>

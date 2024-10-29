@@ -488,7 +488,7 @@ input[type="checkbox"] {
             document.getElementById('periodoSelect').addEventListener('change', async function() {
                 const periodo = this.value;
                 // Fetch dos dados filtrados com base no período
-                const response = await fetch(`/api/relatorio-geral?periodo=${periodo}`);
+                const response = await fetch(`/api/relatorio-geral-grafico?periodo=${periodo}`);
                 const data = await response.json();
                 
                 // Atualizando os dados do gráfico

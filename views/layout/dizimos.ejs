@@ -1,6 +1,4 @@
 <%- include('../partials/header2.ejs'); %>
-
-<!-- Adicione o CSS na sua página ou em um arquivo CSS separado -->
 <style>
     body {
         background: linear-gradient(to bottom right, #e0f7fa, #ffffff); /* Fundo gradiente suave */
@@ -58,23 +56,23 @@
         padding: 20px; /* Espaçamento interno */
     }
 
-     /* Estilo do botão de voltar */
-     .btn-voltar {
-            position: fixed;
-            top: 10px; /* Distância do topo da tela */
-            left: 20px; /* Distância da esquerda da tela */
-            z-index: 1000; /* Para garantir que fique acima de outros elementos */
-            background-color: #007bff; /* Cor de fundo do botão */
-            color: white; /* Cor do texto do botão */
-            border: none; /* Remove borda */
-            border-radius: 5px; /* Bordas arredondadas */
-            padding: 10px 15px; /* Espaçamento interno */
-            font-size: 16px; /* Tamanho da fonte */
-            transition: background-color 0.3s; /* Transição para mudança de cor */
-        }
-        .btn-voltar:hover {
-            background-color: #0056b3; /* Cor do botão ao passar o mouse */
-        }
+    /* Estilo do botão de voltar */
+    .btn-voltar {
+        position: fixed;
+        top: 10px; /* Distância do topo da tela */
+        left: 20px; /* Distância da esquerda da tela */
+        z-index: 1000; /* Para garantir que fique acima de outros elementos */
+        background-color: #007bff; /* Cor de fundo do botão */
+        color: white; /* Cor do texto do botão */
+        border: none; /* Remove borda */
+        border-radius: 5px; /* Bordas arredondadas */
+        padding: 10px 15px; /* Espaçamento interno */
+        font-size: 16px; /* Tamanho da fonte */
+        transition: background-color 0.3s; /* Transição para mudança de cor */
+    }
+    .btn-voltar:hover {
+        background-color: #0056b3; /* Cor do botão ao passar o mouse */
+    }
 </style>
 
 <!-- Estrutura HTML do gráfico -->
@@ -104,13 +102,13 @@
     const graficoDizimos = new Chart(ctx, {
         type: 'line', // Tipo de gráfico de linha
         data: {
-            labels: labels, // Nomes dos meses filtrados do ano corrente
+            labels: labels, // Nomes dos meses
             datasets: [{
                 label: 'Crescimento dos Dízimos (Ano Corrente)',
-                data: valores, // Valores dos dízimos para cada mês do ano corrente
+                data: valores, // Valores dos dízimos para cada mês
                 fill: true, // Preencher a área abaixo da linha
-                backgroundColor: 'rgba(40, 167, 69, 0.2)', // Cor de preenchimento (verde com transparência)
-                borderColor: 'rgba(40, 167, 69, 1)', // Cor da linha (verde)
+                backgroundColor: 'rgba(40, 167, 69, 0.2)', // Cor de preenchimento
+                borderColor: 'rgba(40, 167, 69, 1)', // Cor da linha
                 borderWidth: 2,
                 pointBackgroundColor: 'rgba(40, 167, 69, 1)', // Cor dos pontos
                 pointBorderColor: '#ffffff', // Borda dos pontos
@@ -121,10 +119,10 @@
         options: {
             scales: {
                 y: {
-                    beginAtZero: true, // Começar o eixo y do zero
+                    beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Valor (R$)', // Título do eixo y
+                        text: 'Valor (R$)',
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -132,13 +130,13 @@
                         color: '#28a745'
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)' // Linha de grade leve
+                        color: 'rgba(0, 0, 0, 0.1)'
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Meses', // Título do eixo x
+                        text: 'Meses',
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -146,14 +144,14 @@
                         color: '#28a745'
                     },
                     grid: {
-                        color: 'rgba(0, 0, 0, 0.1)' // Linha de grade leve
+                        color: 'rgba(0, 0, 0, 0.1)'
                     }
                 }
             },
             plugins: {
                 legend: {
-                    display: true, // Exibir a legenda do gráfico
-                    position: 'top', // Posição da legenda
+                    display: true,
+                    position: 'top',
                     labels: {
                         font: {
                             size: 14
@@ -162,8 +160,8 @@
                     }
                 },
                 tooltip: {
-                    enabled: true, // Ativar tooltip ao passar o mouse sobre a linha
-                    backgroundColor: '#28a745', // Cor de fundo do tooltip
+                    enabled: true,
+                    backgroundColor: '#28a745',
                     titleFont: {
                         size: 14,
                         weight: 'bold'
@@ -179,9 +177,7 @@
     });
 </script>
 
+
 <a class="btn-voltar" href="/dizimos-choose-preview">
     <i class="bi bi-arrow-left-circle"></i> Voltar
 </a>
-
-</body>
-</html>

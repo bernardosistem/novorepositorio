@@ -1,117 +1,155 @@
 const { Op } = require('sequelize');
-const { Sequelize } = require("sequelize");
 const Dizimo = require("../Financas/Dizimos");
-const Gasto = require("../Financas/Despesas");
+const Despesas = require("../Financas/Despesas");
 const Oferta = require("../Financas/Ofertas");
 const Membro = require("../membro/Membro");
-const { Connection } = require('puppeteer');
+const OfertaComunity = require("../comunity/OfertaComunity");
+const DizimoComunity = require("../comunity/DizimoComunity");
+const DespesaComunity = require("../comunity/DespesaComunity");
+const MembroComunity = require("../comunity/MembroComunity");
 
-Connectionn = require("../database/database")
+async function contarNotificacoes(req, res, next) {
+    let notificacoes = 0;
 
-const contarNotificacoes = async (req, res, next) => {
-    try {
-        // 1. Total de Ofertas
-        const totalOfertas = await Oferta.sum('valor') || 0;
+    const comunityId = req.session.utilizador?.comunityId;
 
-        // 2. Total de Gastos com origem 'Ofertas'
-        const totalGastosOfertas = await Gasto.sum('valor', {
-            where: { origem: 'Ofertas' },
-        }) || 0;
-
-        // 3. Total de Dízimos
-        const totalDizimos = await Dizimo.sum('valor') || 0;
-
-        // 4. Total de Gastos com origem 'Dízimos'
-        const totalGastosDizimos = await Gasto.sum('valor', {
-            where: { origem: 'Dízimos' },
-        }) || 0;
-
-        // 5. Total de Gastos com origem 'Caixa Mãe'
-        const totalGastosCaixaMae = await Gasto.sum('valor', {
-            where: { origem: 'caixa_mae' },
-        }) || 0;
-
-        // 6. Total de Membros que não dizimaram por um mês ou mais
-        const dataLimite = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
-        const membrosSemDizimo = await Membro.findAll({
-            where: {
-                id: {
-                    [Op.notIn]: Sequelize.literal(`(SELECT MembroId FROM Dizimos WHERE createdAt >= '${dataLimite.toISOString()}')`)
-                }
-            }
-        });
-
-        // Inicializa o contador de notificações
-        let contadorNotificacoes = 0;
-
-        // Lógica para incrementar o contador baseado nas condições
-        if (totalGastosOfertas >= totalOfertas - 3000) {
-            contadorNotificacoes++;
-        }
-
-        if (totalGastosDizimos >= totalDizimos - 3000) {
-            contadorNotificacoes++;
-        }
-
-        if (totalGastosCaixaMae >= (totalOfertas + totalDizimos) - 3000) {
-            contadorNotificacoes++;
-        }
-
-        // Conta os membros que não dizimaram
-        if (membrosSemDizimo.length > 0) {
-            contadorNotificacoes++;
-        }
-
-        // 7. Membros que mais estão dizimando (limitando a 5 membros)
-        const membrosMaisDizimistas = await Connectionn.query(`
-            SELECT Membros.nome, SUM(Dizimos.valor) AS totalDizimos
-            FROM Membros
-            LEFT JOIN Dizimos ON Membros.id = Dizimos.MembroId
-            GROUP BY Membros.id
-            ORDER BY totalDizimos DESC
-            LIMIT 5;
-        `);
-
-        if (membrosMaisDizimistas[0].length > 0) {
-            contadorNotificacoes++; // Notificação sobre membros que mais estão dizimando
-        }
-
-        // 8. Lembrete de Dízimos - apenas se estamos nos últimos dias do mês
-        const diaAtual = new Date().getDate();
-        if (diaAtual >= 25) {
-            contadorNotificacoes++; // Lembrete de dízimos
-        }
-
-        // 9. Dízimos em Declínio
-        const membrosDizimosDeclinados = await Membro.findAll({
-            where: {
-                id: {
-                    [Op.notIn]: Sequelize.literal(`(SELECT MembroId FROM Dizimos WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH))`)
-                }
-            }
-        });
-
-        if (membrosDizimosDeclinados.length > 0) {
-            contadorNotificacoes++; // Notificação sobre membros que não contribuíram
-        }
-
-        // Total de gastos versus total de contribuições (ofertas e dízimos)
-        const totalContribuicoes = totalOfertas + totalDizimos;
-        const totalGastos = totalGastosOfertas + totalGastosDizimos + totalGastosCaixaMae;
-
-        if (totalGastos >= totalContribuicoes) {
-            contadorNotificacoes++; // Notificação sobre gastos totais
-        }
-
-        // Armazene o contador no objeto `req` para uso posterior
-        req.contadorNotificacoes = contadorNotificacoes;
-
-        // Chame o próximo middleware
-        next();
-    } catch (error) {
-        console.error('Erro ao contar notificações:', error);
-        res.status(500).send('Erro ao contar notificações');
+    // Se comunityId for undefined, setar notificações para 0 e retornar
+    if (!comunityId) {
+        req.notificacoes = notificacoes;
+        return next(); // Seguir para o próximo middleware
     }
-};
+
+    // 1. Notificações para Ofertas
+    const totalOfertas = await Oferta.sum('valor', {
+        where: {
+            id: {
+                [Op.in]: await OfertaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['OfertaId']
+                }).then(results => results.map(result => result.OfertaId))
+            }
+        }
+    });
+
+    const despesasOfertas = await Despesas.sum('valor', {
+        where: {
+            origem: 'ofertas',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasOfertas >= totalOfertas) {
+        notificacoes++;
+    } else if (despesasOfertas >= totalOfertas * 0.9) {
+        notificacoes++;
+    }
+
+    // 2. Notificações para Dízimos
+    const totalDizimos = await Dizimo.sum('valor', {
+        where: {
+            id: {
+                [Op.in]: await DizimoComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['DizimoId']
+                }).then(results => results.map(result => result.DizimoId))
+            }
+        }
+    });
+
+    const despesasDizimos = await Despesas.sum('valor', {
+        where: {
+            origem: 'dizimos',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasDizimos >= totalDizimos) {
+        notificacoes++;
+    } else if (despesasDizimos >= totalDizimos * 0.9) {
+        notificacoes++;
+    }
+
+    // 3. Notificação para a Caixa Mãe
+    const totalCaixaMae = totalOfertas + totalDizimos; // Somar os totais já obtidos
+
+    const despesasCaixaMae = await Despesas.sum('valor', {
+        where: {
+            origem: 'caixa_mae',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasCaixaMae >= totalCaixaMae) {
+        notificacoes++;
+    } else if (despesasCaixaMae >= totalCaixaMae * 0.9) {
+        notificacoes++;
+    }
+
+    // 4. Notificações para Membros
+    const membros = await Membro.findAll({
+        include: [{
+            model: MembroComunity,
+            where: { ComunityId: comunityId }
+        }]
+    });
+
+    for (const membro of membros) {
+        const totalDizimosMembro = await Dizimo.count({
+            where: {
+                MembroId: membro.id,
+                createdAt: {
+                    [Op.gte]: new Date(new Date() - 4 * 30 * 24 * 60 * 60 * 1000) // últimos 4 meses
+                },
+            },
+        });
+
+        if (totalDizimosMembro === 0) {
+            notificacoes++;
+        }
+    }
+
+    // 5. Notificações para membros que dízimam regularmente
+    const membrosAtivos = await Membro.findAll({
+        include: [{
+            model: MembroComunity,
+            where: { ComunityId: comunityId }
+        }]
+    });
+
+    for (const membro of membrosAtivos) {
+        const dizimosRegulares = await Dizimo.count({
+            where: {
+                MembroId: membro.id,
+                createdAt: {
+                    [Op.gte]: new Date(new Date() - 30 * 24 * 60 * 60 * 1000) // últimos 30 dias
+                },
+            },
+        });
+
+        if (dizimosRegulares > 0) {
+            notificacoes++;
+        }
+    }
+
+    // Armazena o total de notificações na requisição
+    req.notificacoes = notificacoes;
+
+    next();
+}
 
 module.exports = contarNotificacoes;

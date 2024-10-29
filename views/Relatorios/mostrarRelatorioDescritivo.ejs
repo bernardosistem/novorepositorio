@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Membros</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Adicione o caminho correto para seu CSS -->
+</head>
+<body>
+    <h1>Relatório dos Membros</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Gênero</th>
+                <th>Idade</th>
+                <th>Estado Civil</th>
+                <th>Data de Consagração</th>
+                <th>Data de Batismo</th>
+                <th>Naturalidade</th>
+                <th>Função</th>
+                <!-- Adicione mais colunas conforme necessário -->
+            </tr>
+        </thead>
+        <tbody>
+            <% membros.forEach(membro => { %>
+                <tr>
+                    <td><%= membro.nome %></td>
+                    <td><%= membro.genero %></td>
+                    <td><%= membro.idade %></td>
+                    <td><%= membro.estadoCivil %></td>
+                    <td><%= new Date(membro.dataConsagracao).toLocaleDateString('pt-BR') %></td>
+                    <td><%= new Date(membro.dataBatismo).toLocaleDateString('pt-BR') %></td>
+                    <td><%= membro.naturalidade %></td>
+                    <td><%= membro.funcao %></td>
+                    <!-- Adicione mais células conforme necessário -->
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

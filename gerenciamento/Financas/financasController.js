@@ -1,6 +1,21 @@
 // membroController.js
 const express = require('express');
 const router = express.Router();
+const verificarStatusAprovado  = require("../middlewere/userPendentes");
+const isAdmin = require("../middlewere/isadmin");
+const mysql = require('mysql2/promise');
+
+const contarNotificacoes = require("../middlewere/notificacao");
+
+
+const  OfertaComunity  = require('../comunity/OfertaComunity'); // 
+
+const MembroComunity = require("../comunity/MembroComunity");
+
+const  DespesaComunity = require('../comunity/DespesaComunity'); // Certifique-se de importar corretamente os modelos
+
+const  DizimoComunity  = require('../comunity/DizimoComunity'); 
+
 
 const Enderecos =require("../DadosMembros/Endereco")
 const Dizimos = require('./Dizimos');
@@ -15,24 +30,47 @@ const Membros = require("../membro/Membro");
 
 const DadosEclesiais = require("../DadosMembros/Eclesiais");
 
-const loading = require("../middlewere/loading")
+
 
 const { Op } = require('sequelize');
 
 
 const sequelize = require("sequelize");
 
-
-router.get('/dizimos-pagina', async (req, res) => {
+router.get('/dizimos-pagina', contarNotificacoes, verificarStatusAprovado, async (req, res) => {
     try {
-        // Busca todos os membros
-        const membros = await Membros.findAll();
-        res.render("entradas/Dizimos", { membros });
+        // Verificar se a comunidade está na sessão
+        const comunidadeId = req.session.utilizador?.comunityId;
+        
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar membros que pertencem à comunidade da sessão
+        const membros = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId }, // Filtrar apenas pelos membros da comunidade
+            attributes: ['MembroId'], // Obter apenas o ID do membro
+            raw: true // Para retornar um objeto simples
+        });
+
+        // Extrair os IDs dos membros
+        const membroIds = membros.map(membro => membro.MembroId);
+
+        // Buscar os detalhes dos membros
+        const membrosDetalhados = await Membros.findAll({
+            where: { id: membroIds }, // Filtrar apenas pelos IDs dos membros encontrados
+            attributes: ['id', 'nome'], // Obter apenas id e nome dos membros
+        });
+
+        // Renderizar a página com os membros filtrados
+        res.render("entradas/Dizimos", { membros: membrosDetalhados, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).send('Erro ao buscar membros');
     }
 });
+
 
 
 
@@ -70,8 +108,6 @@ module.exports = upload;
 
 
 
-
-
 router.post('/criar-dizimo', async (req, res) => {
     try {
         const { valor, MembroId } = req.body; // Captura os dados do formulário
@@ -82,13 +118,29 @@ router.post('/criar-dizimo', async (req, res) => {
         }
 
         // Cria um novo dízimo
-        await Dizimos.create({
+        const dizimo = await Dizimos.create({
             valor: parseFloat(valor), // Certifique-se de que o valor é um número
             MembroId: MembroId // O ID do dizimista
         });
 
-        // Retorna um JSON para indicar sucesso
-        res.json({ success: true });
+        // Pega o ComunityId da sessão
+        const comunityId = req.session.utilizador?.comunityId; // Pega o ID da comunidade logada
+
+        if (comunityId) {
+            // Associa o dízimo à comunidade
+            await DizimoComunity.create({
+                DizimoId: dizimo.id,
+                ComunityId: comunityId
+            });
+        } else {
+            throw new Error("Comunidade não encontrada na sessão.");
+        }
+
+        // Busque todos os membros novamente para renderizar
+        const membros = await Membros.findAll();
+
+        // Renderiza a página de dízimos com sucesso
+        res.render("entradas/dizimos", { membros });
     } catch (error) {
         console.error(error);
         // Busque todos os membros novamente para renderizar
@@ -96,6 +148,7 @@ router.post('/criar-dizimo', async (req, res) => {
         res.status(400).json({ error: error.message, membros });
     }
 });
+
 
 
 // Rota para criar uma nova oferta
@@ -107,10 +160,28 @@ router.post('/criar-oferta', async (req, res) => {
             throw new Error("Valor é obrigatório.");
         }
 
-        await Ofertas.create({
+        // Cria a oferta
+        const oferta = await Ofertas.create({
             valor: parseFloat(valor),
             data: data
         });
+
+        // Pega o ComunityId da sessão
+        const comunityId = req.session.utilizador?.comunityId; // Pega o ID da comunidade logada
+
+        if (comunityId) {
+            // Associa a oferta à comunidade
+            await OfertaComunity.create({
+                OfertaId: oferta.id,
+                ComunityId: comunityId
+            });
+        } else {
+            
+        
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        
+        }
 
         // Renderiza a página de sucesso
         res.render('entradas/sucesso', {
@@ -129,10 +200,11 @@ router.post('/criar-oferta', async (req, res) => {
 
 
 
-router.get('/ofertas-pagina', (req, res) => {
+
+router.get('/ofertas-pagina', contarNotificacoes, verificarStatusAprovado, (req, res) => {
    
 
-    res.render("entradas/Ofertas");
+    res.render("entradas/Ofertas", {notificacoes:  req.notificacoes});
 
     
 });
@@ -141,7 +213,7 @@ router.get('/ofertas-pagina', (req, res) => {
 
 
 
-router.get('/relatorios', async (req, res) => {
+router.get('/relatorios', contarNotificacoes, verificarStatusAprovado,isAdmin, async (req, res) => {
     try {
       
       const generos = await Membros.findAll({
@@ -164,6 +236,7 @@ router.get('/relatorios', async (req, res) => {
         funcoes: funcoes.map(f => f.funcao),
         generos: generos.map(g => g.genero),
         categorias: categorias.map(c => c.categoria),
+        notificacoes:  req.notificacoes
       });
     } catch (error) {
       console.error(error);
@@ -226,74 +299,95 @@ router.post('/gerar-relatorio', async (req, res) => {
 });
 
 // Rota para renderizar o relatório gerado
-router.get('/relatorio-gerado', (req, res) => {
+router.get('/relatorio-gerado',contarNotificacoes, (req, res) => {
     const membros = req.session.membrosResultados || [];
-    res.render('Relatorios/relatorioGeradoMembros', { membros });
+    res.render('Relatorios/relatorioGeradoMembros', { membros, notificacoes:  req.notificacoes });
 });
 
 
 
 // Rota para renderizar o relatório gerado
-router.get('/financas-page',  (req, res) => {
+router.get('/financas-page', contarNotificacoes, verificarStatusAprovado, isAdmin, (req, res) => {
     
-    res.render('layout/financapage');
+    res.render('layout/financapage', {notificacoes:  req.notificacoes});
 });
 
 
 
-// Rota para renderizar o relatório gerado
-router.get('/ofertas-page', async (req, res) => {
-    try {
-        // Calculando o total de ofertas
-        const totalOfertas = await Ofertas.sum('valor');
 
-        // Calculando o total de despesas cuja origem é 'ofertas'
-        const totalDespesasOfertas = await Despesas.sum('valor', {
-            where: {
-                origem: 'ofertas' // Filtra as despesas cuja origem é 'ofertas'
-            }
+// Rota para renderizar o relatório gerado
+router.get('/ofertas-page', contarNotificacoes, async (req, res) => {
+    try {
+        // Verificar se a comunidade está na sessão
+const comunityId = req.session.utilizador?.comunityId;
+if (!comunityId) {
+    // Renderizar uma página informativa
+    return res.render('AcessoNegado/NoComunity');
+}
+
+        // Buscando todas as ofertas relacionadas à comunidade
+        const ofertasComunity = await OfertaComunity.findAll({
+            where: { ComunityId: comunityId }
         });
 
-        // Calculando o saldo entre ofertas e despesas
-        const saldo = totalOfertas - (totalDespesasOfertas || 0); // Se não houver despesas, considera 0
+        // Extraindo IDs das ofertas
+        const ofertaIds = ofertasComunity.map(oferta => oferta.OfertaId);
+        const ofertas = await Ofertas.findAll({
+            where: { id: ofertaIds }
+        });
 
-        // Obtendo as ofertas por mês do ano corrente
-        const ofertasPorMes = await Ofertas.findAll({
+        // Calculando o total de ofertas
+        const totalOfertas = ofertas.reduce((total, oferta) => total + oferta.valor, 0);
+
+        // Buscando todas as despesas relacionadas à comunidade com origem 'ofertas'
+        const despesasComunity = await DespesaComunity.findAll({
+            where: { ComunityId: comunityId }
+        });
+
+        // Extraindo IDs das despesas
+        const despesaIds = despesasComunity.map(despesa => despesa.gastoId);
+        const despesas = await Despesas.findAll({
+            where: { id: despesaIds, origem: 'ofertas' } // Filtra despesas cuja origem é 'ofertas'
+        });  
+
+        // Calculando o total de despesas
+        const totalDespesasOfertas = despesas.reduce((total, despesa) => total + despesa.valor, 0);
+
+        // Calculando o saldo entre ofertas e despesas
+        const saldo = totalOfertas - totalDespesasOfertas;
+
+        // Obtendo as ofertas por mês do ano corrente para a comunidade
+        const ofertasPorMes = await OfertaComunity.findAll({
             attributes: [
                 [sequelize.fn('MONTH', sequelize.col('createdAt')), 'mes'],
-                [sequelize.fn('SUM', sequelize.col('valor')), 'total']
+                [sequelize.fn('SUM', sequelize.col('OfertaId')), 'total'] // Supondo que 'OfertaId' seja um campo relevante
             ],
-            where: sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), sequelize.fn('YEAR', sequelize.fn('NOW'))),
+            where: { ComunityId: comunityId },
             group: [sequelize.fn('MONTH', sequelize.col('createdAt'))],
             order: [[sequelize.fn('MONTH', sequelize.col('createdAt')), 'ASC']]
         });
 
         // Preparando os dados para o gráfico
-        const meses = Array(12).fill(0);
+        const valoresPorMes = Array(12).fill(0);
         ofertasPorMes.forEach(oferta => {
             const mes = oferta.get('mes');
             const total = oferta.get('total');
-            meses[mes - 1] = total;
+            valoresPorMes[mes - 1] = total;
         });
 
         // Renderizando a página com os dados
         res.render('layout/ofertas', {
             totalOfertas,
-            totalDespesasOfertas, // Passando o total de despesas
-            saldo, // Passando o saldo
-            meses
+            totalDespesasOfertas,
+            saldo,
+            valoresPorMes,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error('Erro ao buscar as ofertas:', error);
         res.status(500).send('Erro ao buscar os dados das ofertas');
     }
 });
-
-
-
-
-
-
 
 
 
@@ -344,7 +438,7 @@ router.post("/api/relatorios/estatisticos", async (req, res) => {
 });
 
 
-router.get('/relatorio-estatistico', async (req, res) => {
+router.get('/relatorio-estatistico', contarNotificacoes, async (req, res) => {
     const resultadosEstatisticos = req.session.resultadosEstatisticos || {};
     console.log(resultadosEstatisticos); // Verifique a estrutura do objeto aqui
 
@@ -400,7 +494,9 @@ router.get('/relatorio-estatistico', async (req, res) => {
         funcoes,
         categorias,
         filiais,
-        membrosPorDepartamento, // Passar os resultados dos departamentos para o render
+        membrosPorDepartamento, 
+        notificacoes:  req.notificacoes
+        // Passar os resultados dos departamentos para o render
     });
 });
 
@@ -472,12 +568,17 @@ router.post('/api/membros', async (req, res) => {
 
 
 
-
-router.post('/ofertas/total', async (req, res) => {
-    const { periodo, despesaInserida } = req.body; // Incluindo despesaInserida
+router.post('/ofertas/total', contarNotificacoes, async (req, res) => {
+    const { periodo, despesaInserida } = req.body;
 
     let startDate;
     let endDate = new Date(); // Data atual
+
+    const comunityId = req.session.utilizador?.comunityId;
+if (!comunityId) {
+    // Renderizar uma página informativa
+    return res.render('AcessoNegado/NoComunity');
+}
 
     // Definindo a data inicial e final com base no período selecionado
     switch (periodo) {
@@ -511,9 +612,18 @@ router.post('/ofertas/total', async (req, res) => {
     }
 
     try {
-        // Buscando as ofertas no período especificado
+        // Buscar todas as associações na tabela intermediária "OfertaComunity" que correspondem à Comunidade logada
+        const ofertaComunityEntries = await OfertaComunity.findAll({
+            where: { ComunityId: comunityId }
+        });
+
+        // Extrair os IDs das ofertas relacionadas à comunidade
+        const ofertaIds = ofertaComunityEntries.map(entry => entry.OfertaId);
+
+        // Buscar as ofertas dentro do período especificado usando os IDs extraídos
         const totalOfertas = await Ofertas.sum('valor', {
             where: {
+                id: ofertaIds,
                 createdAt: {
                     [Op.gte]: startDate,
                     [Op.lt]: endDate
@@ -521,9 +631,10 @@ router.post('/ofertas/total', async (req, res) => {
             }
         });
 
-        // Buscando o número total de ofertas
+        // Buscar o número total de ofertas
         const numeroTotalOfertas = await Ofertas.count({
             where: {
+                id: ofertaIds,
                 createdAt: {
                     [Op.gte]: startDate,
                     [Op.lt]: endDate
@@ -534,11 +645,21 @@ router.post('/ofertas/total', async (req, res) => {
         // Calculando a média de ofertas
         const mediaOfertas = numeroTotalOfertas > 0 ? (totalOfertas / numeroTotalOfertas) : 0;
 
-        // Se o campo "despesaInserida" estiver preenchido, incluir as despesas
+        // Se o campo "despesaInserida" estiver preenchido, incluir as despesas filtradas pela comunidade via a tabela intermediária "DespesaComunity"
         let totalDespesas = 0;
         if (despesaInserida) {
+            // Buscar todas as associações na tabela intermediária "DespesaComunity" que correspondem à Comunidade logada
+            const despesaComunityEntries = await DespesaComunity.findAll({
+                where: { ComunityId: comunityId }
+            });
+
+            // Extrair os IDs das despesas relacionadas à comunidade
+            const despesaIds = despesaComunityEntries.map(entry => entry.gastoId);
+
+            // Buscar as despesas dentro do período especificado usando os IDs extraídos
             totalDespesas = await Despesas.sum('valor', {
                 where: {
+                    id: despesaIds,
                     origem: 'ofertas', // Filtrando despesas cuja origem é 'ofertas'
                     createdAt: {
                         [Op.gte]: startDate,
@@ -551,8 +672,11 @@ router.post('/ofertas/total', async (req, res) => {
         // Calculando a variação em relação ao período anterior, se aplicável
         const periodoAnterior = new Date(startDate);
         periodoAnterior.setFullYear(periodoAnterior.getFullYear() - 1); // Ajustar conforme o período selecionado
+
+        // Buscar ofertas do período anterior
         const totalOfertasAnterior = await Ofertas.sum('valor', {
             where: {
+                id: ofertaIds,
                 createdAt: {
                     [Op.gte]: periodoAnterior,
                     [Op.lt]: endDate // Ajustar para o mesmo final do período atual
@@ -575,14 +699,14 @@ router.post('/ofertas/total', async (req, res) => {
             startDate,
             endDate,
             totalDespesas,
-            periodo
+            periodo,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error('Erro ao buscar ofertas:', error);
         return res.status(500).json({ message: 'Erro ao buscar ofertas' });
     }
 });
-
 
 
   
@@ -614,12 +738,28 @@ router.post('/generate-pdf', (req, res) => {
 
 
 
-
-
-router.get('/dizimos-tabela', async (req, res) => {
+router.get('/dizimos-tabela', contarNotificacoes, async (req, res) => {
     try {
-        // Buscar os 10 dízimos mais recentes
+        
+        const comunidadeId = req.session.utilizador?.comunityId;
+
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+        // Buscar os membros que pertencem à comunidade da sessão
+        const membros = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId }, // Filtrar apenas pelos membros da comunidade
+            attributes: ['MembroId'], // Obter apenas o ID do membro
+            raw: true // Para retornar um objeto simples
+        });
+
+        // Extrair os IDs dos membros
+        const membroIds = membros.map(membro => membro.MembroId);
+
+        // Buscar os 10 dízimos mais recentes dos membros filtrados, incluindo os nomes dos membros
         const dizimosRecentes = await Dizimos.findAll({
+            where: { MembroId: membroIds }, // Filtrar dízimos pelos IDs dos membros encontrados
             limit: 10, // Limitar para os 10 dízimos mais recentes
             order: [['createdAt', 'DESC']], // Ordenar pela data de criação, do mais recente para o mais antigo
             include: [
@@ -639,7 +779,7 @@ router.get('/dizimos-tabela', async (req, res) => {
         }));
 
         // Renderizar a página EJS com os dados
-        res.render('layout/dizimosTabela', { recentDizimos });
+        res.render('layout/dizimosTabela', { recentDizimos, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).send('Erro ao carregar dados dos dízimos');
@@ -648,28 +788,46 @@ router.get('/dizimos-tabela', async (req, res) => {
 
 
 
-
-
-router.get('/grafico-dizimo-dizimista', async (req, res) => {
+router.get('/grafico-dizimo-dizimista', contarNotificacoes, async (req, res) => {
     try {
+        
+
+        const comunidadeId = req.session.utilizador?.comunityId;
+
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
         // Obter o ano atual
         const anoAtual = new Date().getFullYear();
 
+        // Buscar todos os membros da comunidade
+        const membrosDaComunidade = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId },
+            attributes: ['MembroId'],
+            raw: true
+        });
+
+        // Extrair os IDs dos membros
+        const membroIds = membrosDaComunidade.map(membro => membro.MembroId);
+
         // Obter os totais de dízimos por membro do ano corrente
         const dizimosTotais = await Dizimos.findAll({
-            attributes: [
-                'MembroId', 
-                [sequelize.fn('SUM', sequelize.col('valor')), 'totalDizimos']
-            ],
             where: {
+                MembroId: membroIds, // Filtrar pelos IDs dos membros
                 createdAt: {
                     [Op.gte]: new Date(`${anoAtual}-01-01T00:00:00Z`), // A partir do primeiro dia do ano corrente
                     [Op.lt]: new Date(`${anoAtual + 1}-01-01T00:00:00Z`) // Até o último dia do ano corrente
                 }
             },
+            attributes: [
+                'MembroId',
+                [sequelize.fn('SUM', sequelize.col('valor')), 'totalDizimos']
+            ],
             group: ['MembroId'],
             order: [[sequelize.literal('totalDizimos'), 'DESC']], // Ordenar pelo total
-            limit: 10, // Limitar para os 10 principais membros
+            limit: 10,
             raw: true // Para retornar um objeto simples
         });
 
@@ -692,7 +850,7 @@ router.get('/grafico-dizimo-dizimista', async (req, res) => {
         }));
 
         // Renderizar a página EJS com os dados
-        res.render('layout/GraficoDizimoDizimista', { membros: membrosComDizimos });
+        res.render('layout/GraficoDizimoDizimista', { membros: membrosComDizimos, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).send('Erro ao carregar dados dos dízimos');
@@ -703,14 +861,32 @@ router.get('/grafico-dizimo-dizimista', async (req, res) => {
 
 
 
-
-
-
-
-router.get('/dizimos-dashboard', async (req, res) => {
+// Rota para exibir o gráfico de dízimos
+router.get('/dizimos-dashboard', contarNotificacoes, async (req, res) => {
     try {
-        // Buscar todos os registros de dízimos
-        const dizimos = await Dizimos.findAll();
+        
+
+        const comunidadeId = req.session.utilizador?.comunityId;
+
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar todos os registros de dízimos relacionados à comunidade atual
+        const dizimosComunity = await DizimoComunity.findAll({
+            where: { ComunityId: comunidadeId }
+        });
+
+        // Obter os IDs dos dízimos
+        const dizimoIds = dizimosComunity.map(item => item.DizimoId);
+
+        // Buscar os dízimos usando os IDs encontrados
+        const dizimos = await Dizimos.findAll({
+            where: {
+                id: dizimoIds
+            }
+        });
 
         // Mapeamento dos meses
         const nomesDosMeses = [
@@ -722,29 +898,25 @@ router.get('/dizimos-dashboard', async (req, res) => {
         const anoCorrente = new Date().getFullYear();
 
         // Agrupar os valores por mês apenas do ano corrente
-        const valoresPorMes = {};
+        const valoresPorMes = Array(12).fill(0);
 
         dizimos.forEach(dizimo => {
             const dataDizimo = new Date(dizimo.createdAt);
             const anoDizimo = dataDizimo.getFullYear();
             const mes = dataDizimo.getMonth(); // Retorna o índice do mês (0-11)
 
-            // Considerar apenas os dizimos do ano corrente
+            // Considerar apenas os dízimos do ano corrente
             if (anoDizimo === anoCorrente) {
-                if (valoresPorMes[mes]) {
-                    valoresPorMes[mes] += dizimo.valor;
-                } else {
-                    valoresPorMes[mes] = dizimo.valor;
-                }
+                valoresPorMes[mes] += dizimo.valor;
             }
         });
 
         // Preparar os dados para o gráfico
-        const labels = Object.keys(valoresPorMes).map(mes => nomesDosMeses[mes]);
-        const valores = Object.values(valoresPorMes);
+        const labels = nomesDosMeses;
+        const valores = valoresPorMes;
 
         // Renderizar a página com os dados do gráfico
-        res.render('layout/dizimos', { labels, valores });
+        res.render('layout/dizimos', { labels, valores, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error('Erro ao buscar os dízimos:', error);
         res.status(500).send('Erro ao carregar o dashboard');
@@ -754,37 +926,70 @@ router.get('/dizimos-dashboard', async (req, res) => {
 
 
 
-
-
-
 // Rota para visualizar os dízimos
-router.get('/dizimos-choose-preview', async (req, res) => {
+router.get('/dizimos-choose-preview', contarNotificacoes, async (req, res) => {
     try {
-        // Buscar o total de todos os dízimos
-        const totalDizimos = await Dizimos.sum('valor');
+        
 
-        // Buscar o total de dízimos apenas do ano corrente
-        const totalDizimosAno = await Dizimos.sum('valor', {
-            where: sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), new Date().getFullYear())
+        const comunidadeId = req.session.utilizador?.comunityId;
+
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+        // Buscar todos os dízimos relacionados à comunidade atual
+        const dizimosComunity = await DizimoComunity.findAll({
+            where: { ComunityId: comunidadeId }
         });
 
-        // Calcular o total de despesas com origem "dízimos" do ano corrente
-        const totalDespesasAno = await Despesas.sum('valor', {
+        // Obter os IDs dos dízimos
+        const dizimoIds = dizimosComunity.map(item => item.DizimoId);
+
+        // Buscar os dízimos usando os IDs encontrados
+        const dizimos = await Dizimos.findAll({
             where: {
-                origem: 'dizimos', // Filtra apenas despesas de origem "dízimos"
-                [sequelize.Op.and]: sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), new Date().getFullYear())
+                id: dizimoIds
             }
         });
 
+        // Calcular o total de dízimos
+        const totalDizimos = dizimos.reduce((total, item) => total + item.valor, 0);
+
+        // Filtrar os dízimos do ano corrente
+        const totalDizimosAno = dizimos
+            .filter(item => new Date(item.createdAt).getFullYear() === new Date().getFullYear())
+            .reduce((total, item) => total + item.valor, 0);
+
+        // Buscar todas as despesas relacionadas à comunidade atual
+        const despesasComunity = await DespesaComunity.findAll({
+            where: { ComunityId: comunidadeId }
+        });
+
+        // Obter os IDs das despesas
+        const gastoIds = despesasComunity.map(item => item.gastoId);
+
+        // Buscar as despesas usando os IDs encontrados
+        const despesas = await Despesas.findAll({
+            where: {
+                id: gastoIds
+            }
+        });
+
+        // Calcular o total de despesas com origem "dízimos" do ano corrente
+        const totalDespesasAno = despesas
+            .filter(item => item.origem === 'dizimos' && new Date(item.createdAt).getFullYear() === new Date().getFullYear())
+            .reduce((total, item) => total + item.valor, 0);
+
         // Calcular os dízimos restantes
-        const dizimosRestantes = totalDizimosAno - (totalDespesasAno || 0);
+        const dizimosRestantes = totalDizimosAno - totalDespesasAno;
 
         // Renderizar a página com os dados do total de dízimos e despesas
         res.render('layout/dizimospreview', {
             totalDizimos: totalDizimos || 0,
             totalDizimosAno: totalDizimosAno || 0,
             totalDespesasAno: totalDespesasAno || 0, // Define como 0 se não houver despesas
-            dizimosRestantes
+            dizimosRestantes,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error('Erro ao buscar os dízimos:', error);
@@ -796,12 +1001,7 @@ router.get('/dizimos-choose-preview', async (req, res) => {
 
 
 
-
-
-
-
-
-router.post('/dizimos/total', async (req, res) => {
+router.post('/dizimos/total', calcularTempoMembresia, async (req, res) => {
     const { periodo, despesa_inserida } = req.body; // Captura o campo despesa_inserida
 
     let startDate;
@@ -810,45 +1010,62 @@ router.post('/dizimos/total', async (req, res) => {
     // Definindo a data inicial e final com base no período selecionado
     switch (periodo) {
         case 'dia':
-            // Para o período "dia", consideramos apenas hoje
-            startDate = new Date(endDate); // Começa hoje
-            endDate.setHours(23, 59, 59, 999); // Final do dia de hoje
-            startDate.setHours(0, 0, 0, 0); // Início do dia de hoje
+            startDate = new Date(endDate);
+            endDate.setHours(23, 59, 59, 999);
+            startDate.setHours(0, 0, 0, 0);
             break;
         case 'semana':
             startDate = new Date(endDate);
-            startDate.setDate(endDate.getDate() - 7); // 7 dias atrás
-            endDate.setHours(23, 59, 59, 999); // Final do último dia da semana
+            startDate.setDate(endDate.getDate() - 7);
+            endDate.setHours(23, 59, 59, 999);
             break;
         case 'mes':
             startDate = new Date(endDate);
-            startDate.setMonth(endDate.getMonth() - 1); // 1 mês atrás
-            endDate.setHours(23, 59, 59, 999); // Final do mês atual
+            startDate.setMonth(endDate.getMonth() - 1);
+            endDate.setHours(23, 59, 59, 999);
             break;
         case 'trimestre':
             startDate = new Date(endDate);
-            startDate.setMonth(endDate.getMonth() - 3); // 3 meses atrás
-            endDate.setHours(23, 59, 59, 999); // Final do trimestre atual
+            startDate.setMonth(endDate.getMonth() - 3);
+            endDate.setHours(23, 59, 59, 999);
             break;
         case 'ano':
             startDate = new Date(endDate);
-            startDate.setFullYear(endDate.getFullYear() - 1); // 1 ano atrás
-            endDate.setHours(23, 59, 59, 999); // Final do ano atual
+            startDate.setFullYear(endDate.getFullYear() - 1);
+            endDate.setHours(23, 59, 59, 999);
             break;
         default:
             return res.status(400).json({ message: 'Período inválido' });
     }
     
-    // Agora, você pode usar startDate e endDate para buscar os dados no intervalo correto
-    
-    // Debugging: Exibir as datas
     console.log('Start Date:', startDate);
     console.log('End Date:', endDate);
 
     try {
-        // Buscando os dízimos no período especificado
+       
+        const comunidadeId = req.session.utilizador?.comunityId;
+
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity', {notificacoes:  req.notificacoes});
+        }
+
+        // Buscar os membros que pertencem à comunidade da sessão
+        const membros = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId }, // Filtrar apenas pelos membros da comunidade
+            attributes: ['MembroId'], // Obter apenas o ID do membro
+            raw: true // Para retornar um objeto simples
+        });
+
+        // Extrair os IDs dos membros
+        const membroIds = membros.map(membro => membro.MembroId);
+
+        // Buscando os dízimos no período especificado e filtrando pelos IDs dos membros
         const dizimos = await Dizimos.findAll({
             where: {
+                MembroId: {
+                    [Op.in]: membroIds // Filtrando apenas os dízimos dos membros encontrados
+                },
                 createdAt: {
                     [Op.gte]: startDate,
                     [Op.lt]: endDate
@@ -861,28 +1078,28 @@ router.post('/dizimos/total', async (req, res) => {
         const membrosIds = [];
 
         dizimos.forEach(dizimo => {
-            const membroId = dizimo.MembroId; // Assumindo que você tem MembroId na tabela Dízimos
+            const membroId = dizimo.MembroId;
             if (!totalPorMembro[membroId]) {
                 totalPorMembro[membroId] = { total: 0, quantidade: 0 };
             }
             totalPorMembro[membroId].total += dizimo.valor;
-            totalPorMembro[membroId].quantidade += 1; // Contando o número de dízimos
-            membrosIds.push(membroId); // Armazenando o ID do membro
+            totalPorMembro[membroId].quantidade += 1;
+            membrosIds.push(membroId);
         });
 
         // Buscando os membros correspondentes
-        const membros = await Membros.findAll({
+        const membrosDetalhados = await Membros.findAll({
             where: {
                 id: {
-                    [Op.in]: membrosIds // Filtrando os membros com base nos IDs coletados
+                    [Op.in]: membrosIds
                 }
             }
         });
 
         // Criando um objeto para armazenar os nomes dos membros
         const nomesPorMembro = {};
-        membros.forEach(membro => {
-            nomesPorMembro[membro.id] = membro.nome; // Armazenando os nomes dos membros pelo ID
+        membrosDetalhados.forEach(membro => {
+            nomesPorMembro[membro.id] = membro.nome;
         });
 
         // Total geral de dízimos
@@ -890,7 +1107,6 @@ router.post('/dizimos/total', async (req, res) => {
 
         let totalDespesas = 0;
         if (despesa_inserida === 'despesa inserida') {
-            // Aqui você deve implementar a lógica para buscar o total de despesas
             const despesas = await Despesas.findAll({
                 where: {
                     origem: 'dizimos',
@@ -901,21 +1117,20 @@ router.post('/dizimos/total', async (req, res) => {
                 }
             });
 
-            // Total geral de despesas
             totalDespesas = despesas.reduce((acc, despesa) => acc + despesa.valor, 0);
         }
 
-        const totalRestante = totalGeral - totalDespesas; // Calcula a oferta restante
+        const totalRestante = totalGeral - totalDespesas;
 
-        // Renderizando a página de relatórios com o total de dízimos, despesas e o período
         return res.render('Relatorios/dizimosTotal', { 
             totalGeral: totalGeral || 0, 
-            totalDespesas: totalDespesas || 0, // Adicionando total de despesas à renderização
-            totalRestante: totalRestante || 0, // Passando o total restante
+            totalDespesas: totalDespesas || 0, 
+            totalRestante: totalRestante || 0, 
             totalPorMembro, 
             nomesPorMembro,
             startDate,
-            endDate
+            endDate,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error('Erro ao buscar dízimos:', error);
@@ -926,37 +1141,59 @@ router.post('/dizimos/total', async (req, res) => {
 
 
 
-
-
-
-
 // Rota para visualizar os dizimistas
-router.get('/dizimistas-preview', async (req, res) => {
+router.get('/dizimistas-preview', contarNotificacoes, async (req, res) => {
     try {
-        // Total de dizimistas
-        const totalDizimistas = await Membros.count();
+        
+        const comunidadeId = req.session.utilizador?.comunityId;
 
-        const membros = await Membros.findAll();
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+        // Buscar os membros da comunidade usando a tabela MembroComunity
+        const membrosDaComunidade = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId }
+        });
+
+        // Extrair os IDs dos membros que pertencem à comunidade
+        const idsMembrosDaComunidade = membrosDaComunidade.map(mc => mc.MembroId);
+
+        // Buscar todos os membros da comunidade
+        const membros = await Membros.findAll({
+            where: {
+                id: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                }
+            }
+        });
 
         // Total de dizimistas ativos este ano
         const anoAtual = new Date().getFullYear();
 
-        // Buscar IDs dos membros que fizeram dízimos no ano corrente
+        // Buscar os dízimos dos membros da comunidade para o ano atual
         const dizimistasAtivos = await Dizimos.findAll({
-            where: sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), anoAtual)
+            where: {
+                MembroId: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                },
+                createdAt: {
+                    [Op.gte]: new Date(`${anoAtual}-01-01`), // Início do ano
+                    [Op.lt]: new Date(`${anoAtual + 1}-01-01`) // Início do próximo ano
+                }
+            }
         });
 
-        // Extrair os IDs dos membros
-        const membroIds = dizimistasAtivos.map(dizimo => dizimo.MembroId);
-
-        // Contar membros únicos
-        const totalDizimistasAtivos = new Set(membroIds).size;
+        // Contar membros únicos que fizeram dízimos
+        const totalDizimistasAtivos = new Set(dizimistasAtivos.map(dizimo => dizimo.MembroId)).size;
 
         // Renderizar a página com os dados
         res.render('layout/dizimistaPreview', {
-            totalDizimistas,
+            totalDizimistas: idsMembrosDaComunidade.length, // Total de membros na comunidade
             dizimistasAtivos: totalDizimistasAtivos,
-            membros
+            membros,
+            notificacoes:  req.notificacoes
+            // Passando todos os membros da comunidade
         });
     } catch (error) {
         console.error('Erro ao buscar os dizimistas:', error);
@@ -966,64 +1203,111 @@ router.get('/dizimistas-preview', async (req, res) => {
 
 
 
-router.get('/listas-dizimistas', async (req, res) => {
+// Rota para listar dízimos
+router.get('/listas-dizimistas', contarNotificacoes, async (req, res) => {
     try {
-      // Obter a data atual
-      const agora = new Date();
-      
-      // Definir o início do mês corrente
-      const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
-      
-      // Definir o fim do mês corrente
-      const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0, 23, 59, 59, 999);
-  
-      // Buscar todos os membros
-      const membros = await Membros.findAll();
-  
-      // Buscar todos os dízimos do mês corrente
-      const dizimosDoMes = await Dizimos.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [inicioMes, fimMes],
-          },
-        },
-      });
-  
-      // Criar um mapa para associar os dízimos aos membros
-      const membrosComDizimos = membros.map(membro => {
-        // Filtrar os dízimos que pertencem ao membro atual
-        const dizimosDoMembro = dizimosDoMes.filter(dizimo => dizimo.MembroId === membro.id);
-        return {
-          ...membro.toJSON(), // Converter o membro para um objeto simples
-          dizimos: dizimosDoMembro, // Adicionar os dízimos relacionados ao membro
-        };
-      });
-  
-      // Separar os membros que dizimaram dos que não dizimaram
-      const membrosQueDizimaram = membrosComDizimos.filter(membro => membro.dizimos.length > 0);
-      const membrosQueNaoDizimaram = membrosComDizimos.filter(membro => membro.dizimos.length === 0);
-  
-      // Renderizar a página EJS e passar as variáveis
-      return res.render('layout/listaDizimistas', {
-        dizimaram: membrosQueDizimaram,
-        naoDizimaram: membrosQueNaoDizimaram,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Erro ao buscar membros e dízimos' });
-    }
-  });
-  
+       
+        const comunidadeId = req.session.utilizador?.comunityId;
 
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Obter a data atual
+        const agora = new Date();
+
+        // Definir o início do mês corrente
+        const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+
+        // Definir o fim do mês corrente
+        const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0, 23, 59, 59, 999);
+
+        // Buscar os membros da comunidade usando a tabela MembroComunity
+        const membrosDaComunidade = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId } // Correção aqui
+        });
+
+        // Extrair os IDs dos membros que pertencem à comunidade
+        const idsMembrosDaComunidade = membrosDaComunidade.map(mc => mc.MembroId);
+
+        // Buscar todos os membros da comunidade
+        const membros = await Membros.findAll({
+            where: {
+                id: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                }
+            }
+        });
+
+        // Buscar todos os dízimos do mês corrente, filtrando pelos membros da comunidade
+        const dizimosDoMes = await Dizimos.findAll({
+            where: {
+                createdAt: {
+                    [Op.between]: [inicioMes, fimMes],
+                },
+                MembroId: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                }
+            },
+        });
+
+        // Criar um mapa para associar os dízimos aos membros
+        const membrosComDizimos = membros.map(membro => {
+            // Filtrar os dízimos que pertencem ao membro atual
+            const dizimosDoMembro = dizimosDoMes.filter(dizimo => dizimo.MembroId === membro.id);
+            return {
+                ...membro.toJSON(), // Converter o membro para um objeto simples
+                dizimos: dizimosDoMembro, // Adicionar os dízimos relacionados ao membro
+            };
+        });
+
+        // Separar os membros que dizimaram dos que não dizimaram
+        const membrosQueDizimaram = membrosComDizimos.filter(membro => membro.dizimos.length > 0);
+        const membrosQueNaoDizimaram = membrosComDizimos.filter(membro => membro.dizimos.length === 0);
+
+        // Renderizar a página EJS e passar as variáveis
+        return res.render('layout/listaDizimistas', {
+            dizimaram: membrosQueDizimaram,
+            naoDizimaram: membrosQueNaoDizimaram,
+            notificacoes:  req.notificacoes
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Erro ao buscar membros e dízimos' });
+    }
+});
 
 
 
 // Rota para listar e classificar dizimistas
-router.get('/classes-dizimistas', async (req, res) => {
+router.get('/classes-dizimistas', contarNotificacoes, async (req, res) => {
     try {
-        // Buscar todos os membros
-        const membros = await Membros.findAll();
-    
+       
+
+        const comunidadeId = req.session.utilizador?.comunityId;
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os membros da comunidade usando a tabela MembroComunity
+        const membrosDaComunidade = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId } // Correção aqui
+        });
+
+        // Extrair os IDs dos membros que pertencem à comunidade
+        const idsMembrosDaComunidade = membrosDaComunidade.map(mc => mc.MembroId);
+
+        // Buscar todos os membros da comunidade
+        const membros = await Membros.findAll({
+            where: {
+                id: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                }
+            }
+        });
+     
         // Arrays para armazenar dizimistas classificados
         const regulares = [];
         const irregulares = [];
@@ -1081,7 +1365,8 @@ router.get('/classes-dizimistas', async (req, res) => {
         res.render('ver/classesDizimistas', { 
             regulares, 
             irregulares, 
-            novos 
+            novos,
+            notificacoes:  req.notificacoes
         });
 
     } catch (error) {
@@ -1119,12 +1404,31 @@ router.get('/classes-dizimistas', async (req, res) => {
 
 
 
-
 // Rota para listar dizimistas
-router.get('/gerir-dizimistas', async (req, res) => {
+router.get('/gerir-dizimistas', contarNotificacoes, async (req, res) => {
     try {
-        // Buscar todos os dizimistas
+        // Obter o ID da comunidade da sessão
+        const comunidadeId = req.session.utilizador?.comunityId; // Correção aqui
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os membros da comunidade usando a tabela MembroComunity
+        const membrosDaComunidade = await MembroComunity.findAll({
+            where: { ComunityId: comunidadeId } // Correção aqui
+        });
+
+        // Extrair os IDs dos membros que pertencem à comunidade
+        const idsMembrosDaComunidade = membrosDaComunidade.map(mc => mc.MembroId);
+
+        // Buscar todos os dizimistas que pertencem à comunidade
         const dizimistas = await Membros.findAll({
+            where: {
+                id: {
+                    [Op.in]: idsMembrosDaComunidade // Filtrando pelos membros da comunidade
+                }
+            },
             attributes: [
                 'id',
                 'nome',
@@ -1158,13 +1462,16 @@ router.get('/gerir-dizimistas', async (req, res) => {
             };
         }));
 
-    // Renderizar a página EJS e passar os dados
-    return res.render('Ver/gerirDizimistas', { dizimistas: dizimistasData });
-} catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Erro ao listar dizimistas' });
-}
+        // Renderizar a página EJS e passar os dados
+        return res.render('Ver/gerirDizimistas', { dizimistas: dizimistasData, notificacoes:  req.notificacoes });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Erro ao listar dizimistas' });
+    }
 });
+
+
 
 
 // Funções para calcular o tempo de membresia e determinar o status
@@ -1197,7 +1504,7 @@ function determinarStatus(ultimaContribuicao) {
 
 
 
-router.post('/dizimistas/total', async (req, res) => {
+router.post('/dizimistas/total', contarNotificacoes, async (req, res) => {
     const { periodo, membro } = req.body;
 
     const endDate = new Date();
@@ -1259,7 +1566,9 @@ router.post('/dizimistas/total', async (req, res) => {
                 ultima_contribuicao_data: 'N/A',
                 total_geral: 0,
                 comparacao_anual: 'N/A',
-                sem_dados: true // Indicador para mostrar a mensagem de "sem dados"
+                sem_dados: true,
+                notificacoes:  req.notificacoes
+                // Indicador para mostrar a mensagem de "sem dados"
             });
         }
 
@@ -1341,17 +1650,16 @@ router.post('/dizimistas/total', async (req, res) => {
 
 
 // Rota para buscar um membro e seus detalhes
-router.get('/despesas-page', async (req, res) => {
+router.get('/despesas-page', contarNotificacoes, verificarStatusAprovado,  async (req, res) => {
     try {
   
 
-        res.render("entradas/despesas")
+        res.render("entradas/despesas", {notificacoes:  req.notificacoes})
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erro ao buscar o membro' });
     }
 });
-
 
 
 
@@ -1366,15 +1674,28 @@ router.post('/criar-despesa', upload.single('comprovativo'), async (req, res) =>
         const comprovativo = req.file ? req.file.path : 'sem_comprovativo'; // Define um valor padrão se não houver arquivo
 
         // Criar uma nova despesa
-        const novaDespesa = new Despesas({
+        const novaDespesa = await Despesas.create({
             valor,
             motivo,
             comprovativo,
             origem // Adiciona a origem da despesa
         });
 
-        // Salvar a despesa no banco de dados
-        await novaDespesa.save();
+        // Pega o ComunityId da sessão
+        const comunityId = req.session.utilizador?.comunityId;
+
+        if (comunityId) {
+            // Associa a despesa à comunidade
+            await DespesaComunity.create({
+                gastoId: novaDespesa.id, // ID da despesa recém-criada
+                ComunityId: comunityId   // ID da comunidade da sessão
+            });
+        } else {
+            
+                // Renderizar uma página informativa
+                return res.render('AcessoNegado/NoComunity');
+            
+        }
 
         // Retornar uma resposta de sucesso
         res.status(201).json({ message: 'Despesa cadastrada com sucesso!', despesa: novaDespesa });
@@ -1439,26 +1760,60 @@ router.post('/criar-despesa', upload.single('comprovativo'), async (req, res) =>
 
 
 
-
-
-
-
 // Rota para obter as pré-visualizações de despesas
-router.get('/despesas-previews', async (req, res) => {
+router.get('/despesas-previews', contarNotificacoes, async (req, res) => {
     try {
+        // Obter o ID da comunidade da sessão
+        const comunidadeId = req.session.utilizador?.comunityId;
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os IDs de todas as despesas relacionadas à comunidade
+        const despesasDaComunidade = await DespesaComunity.findAll({
+            where: { ComunityId: comunidadeId },
+            attributes: ['gastoId']
+        });
+
+        // Extrair os IDs das despesas relacionadas à comunidade
+        const idsDespesasDaComunidade = despesasDaComunidade.map(dc => dc.gastoId);
+
         // Obtendo os totais de despesas das origens
-        const total_ofertas = await Despesas.sum('valor', { where: { origem: 'ofertas' } }) || 0;
-        const total_dizimos = await Despesas.sum('valor', { where: { origem: 'dizimos' } }) || 0;
-        const total_caixa_mae = await Despesas.sum('valor', { where: { origem: 'caixa_mae' } }) || 0; // Total da caixa mãe
+        const total_ofertas = await Despesas.sum('valor', { 
+            where: { 
+                origem: 'ofertas',
+                id: { [Op.in]: idsDespesasDaComunidade } // Filtrar pelas despesas da comunidade
+            } 
+        }) || 0;
+
+        const total_dizimos = await Despesas.sum('valor', { 
+            where: { 
+                origem: 'dizimos',
+                id: { [Op.in]: idsDespesasDaComunidade } 
+            } 
+        }) || 0;
+
+        const total_caixa_mae = await Despesas.sum('valor', { 
+            where: { 
+                origem: 'caixa_mae',
+                id: { [Op.in]: idsDespesasDaComunidade }
+            } 
+        }) || 0; // Total da caixa mãe
 
         // Total de todas as despesas
-        const total_geral = await Despesas.sum('valor') || 0;
+        const total_geral = await Despesas.sum('valor', {
+            where: {
+                id: { [Op.in]: idsDespesasDaComunidade }
+            }
+        }) || 0;
 
-        // Obtendo totais para o ano corrente (usando corretamente o campo createdAt)
+        // Obtendo totais para o ano corrente
         const anoCorrente = new Date().getFullYear();
         const total_ofertas_ano_corrente = await Despesas.sum('valor', {
             where: {
                 origem: 'ofertas',
+                id: { [Op.in]: idsDespesasDaComunidade },
                 createdAt: {
                     [Op.gte]: new Date(anoCorrente, 0, 1), // Primeiro dia do ano corrente
                     [Op.lt]: new Date(anoCorrente + 1, 0, 1), // Primeiro dia do próximo ano
@@ -1469,6 +1824,7 @@ router.get('/despesas-previews', async (req, res) => {
         const total_dizimos_ano_corrente = await Despesas.sum('valor', {
             where: {
                 origem: 'dizimos',
+                id: { [Op.in]: idsDespesasDaComunidade },
                 createdAt: {
                     [Op.gte]: new Date(anoCorrente, 0, 1),
                     [Op.lt]: new Date(anoCorrente + 1, 0, 1),
@@ -1479,6 +1835,7 @@ router.get('/despesas-previews', async (req, res) => {
         const total_caixa_mae_ano_corrente = await Despesas.sum('valor', {
             where: {
                 origem: 'caixa_mae',
+                id: { [Op.in]: idsDespesasDaComunidade },
                 createdAt: {
                     [Op.gte]: new Date(anoCorrente, 0, 1),
                     [Op.lt]: new Date(anoCorrente + 1, 0, 1),
@@ -1489,6 +1846,7 @@ router.get('/despesas-previews', async (req, res) => {
         // Total de todas as despesas no ano corrente
         const total_geral_ano_corrente = await Despesas.sum('valor', {
             where: {
+                id: { [Op.in]: idsDespesasDaComunidade },
                 createdAt: {
                     [Op.gte]: new Date(anoCorrente, 0, 1),
                     [Op.lt]: new Date(anoCorrente + 1, 0, 1),
@@ -1505,7 +1863,8 @@ router.get('/despesas-previews', async (req, res) => {
             total_ofertas_ano_corrente,
             total_dizimos_ano_corrente,
             total_caixa_mae_ano_corrente,
-            total_geral_ano_corrente, // Adicionando o total de despesas no ano corrente
+            total_geral_ano_corrente,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error(error);
@@ -1536,14 +1895,25 @@ router.get('/despesas-previews', async (req, res) => {
 
 
 
-
-
-
-
-
 // Rota para buscar os totais de despesas por origem e exibir o gráfico
-router.get('/grafico-despezas', async (req, res) => {
+router.get('/grafico-despezas', contarNotificacoes, async (req, res) => {
     try {
+        // Obter o ID da comunidade da sessão
+        const comunidadeId = req.session.utilizador?.comunityId;
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os IDs de todas as despesas relacionadas à comunidade
+        const despesasDaComunidade = await DespesaComunity.findAll({
+            where: { ComunityId: comunidadeId },
+            attributes: ['gastoId']
+        });
+
+        // Extrair os IDs das despesas relacionadas à comunidade
+        const idsDespesasDaComunidade = despesasDaComunidade.map(dc => dc.gastoId);
+
         // Obtendo o período a partir da query string
         const periodo = req.query.periodo || 'ano'; // 'ano' é o padrão
         const inicioAno = new Date(new Date().getFullYear(), 0, 1);
@@ -1557,7 +1927,8 @@ router.get('/grafico-despezas', async (req, res) => {
                 whereCondition = {
                     createdAt: {
                         [sequelize.Op.between]: [hoje.setHours(0, 0, 0, 0), hoje.setHours(23, 59, 59, 999)]
-                    }
+                    },
+                    id: { [Op.in]: idsDespesasDaComunidade } // Filtrar pelas despesas da comunidade
                 };
                 break;
             case 'semana':
@@ -1566,7 +1937,8 @@ router.get('/grafico-despezas', async (req, res) => {
                 whereCondition = {
                     createdAt: {
                         [sequelize.Op.between]: [inicioSemana.setHours(0, 0, 0, 0), new Date()]
-                    }
+                    },
+                    id: { [Op.in]: idsDespesasDaComunidade }
                 };
                 break;
             case 'mes':
@@ -1574,7 +1946,8 @@ router.get('/grafico-despezas', async (req, res) => {
                 whereCondition = {
                     createdAt: {
                         [sequelize.Op.between]: [inicioMes, new Date()]
-                    }
+                    },
+                    id: { [Op.in]: idsDespesasDaComunidade }
                 };
                 break;
             case 'trimestre':
@@ -1583,7 +1956,8 @@ router.get('/grafico-despezas', async (req, res) => {
                 whereCondition = {
                     createdAt: {
                         [sequelize.Op.between]: [inicioTrimestre, new Date()]
-                    }
+                    },
+                    id: { [Op.in]: idsDespesasDaComunidade }
                 };
                 break;
             case 'ano':
@@ -1591,7 +1965,8 @@ router.get('/grafico-despezas', async (req, res) => {
                 whereCondition = {
                     createdAt: {
                         [sequelize.Op.between]: [inicioAno, fimAno]
-                    }
+                    },
+                    id: { [Op.in]: idsDespesasDaComunidade }
                 };
                 break;
         }
@@ -1608,7 +1983,7 @@ router.get('/grafico-despezas', async (req, res) => {
         const valores = despesasPorOrigem.map(despesa => parseFloat(despesa.dataValues.total));
 
         // Renderizar a página com as labels e os valores para o gráfico
-        res.render('ver/graficoDespezas', { labels, valores, periodo });
+        res.render('ver/graficoDespezas', { labels, valores, periodo, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erro ao buscar as despesas' });
@@ -1634,20 +2009,34 @@ router.get('/grafico-despezas', async (req, res) => {
 
 
 
-
-
-
-
-
-// Rota para buscar despesas e gerar gráfico de despesas por mês
-router.get('/grafico-de-despeza-por-mes', async (req, res) => {
+// Rota para buscar despesas e gerar gráfico de despesas por mês, filtradas por comunidade
+router.get('/grafico-de-despeza-por-mes', contarNotificacoes, async (req, res) => {
     try {
-        // Supondo que você tenha um modelo de Despesa configurado com Sequelize
+        // Obter o ID da comunidade da sessão
+        const comunidadeId = req.session.utilizador?.comunityId;
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os IDs de todas as despesas relacionadas à comunidade
+        const despesasDaComunidade = await DespesaComunity.findAll({
+            where: { ComunityId: comunidadeId },
+            attributes: ['gastoId']
+        });
+
+        // Extrair os IDs das despesas relacionadas à comunidade
+        const idsDespesasDaComunidade = despesasDaComunidade.map(dc => dc.gastoId);
+
+        // Buscar despesas agrupadas por mês, somando os valores das despesas da comunidade
         const despesas = await Despesas.findAll({
             attributes: [
                 [sequelize.fn('MONTH', sequelize.col('createdAt')), 'mes'], // Agrupa pelo mês
                 [sequelize.fn('SUM', sequelize.col('valor')), 'total'] // Soma os valores
             ],
+            where: {
+                id: { [Op.in]: idsDespesasDaComunidade } // Filtra pelas despesas da comunidade
+            },
             group: ['mes'],
             order: [[sequelize.fn('MONTH', sequelize.col('createdAt')), 'ASC']] // Ordena por mês
         });
@@ -1658,7 +2047,8 @@ router.get('/grafico-de-despeza-por-mes', async (req, res) => {
             total: d.dataValues.total
         }));
 
-        res.render("Ver/GraficoDespezaMes", { dadosGrafico });
+        // Renderizar a página com os dados para o gráfico
+        res.render("Ver/GraficoDespezaMes", { dadosGrafico, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erro ao buscar despesas' });
@@ -1674,8 +2064,8 @@ router.get('/grafico-de-despeza-por-mes', async (req, res) => {
 
 
 
-// Rota para gerar o relatório de despesas
-router.post('/despesas/relatorio', async (req, res) => {
+// Rota para gerar o relatório de despesas filtrado por comunidade
+router.post('/despesas/relatorio', contarNotificacoes, async (req, res) => {
     const { periodo, origem } = req.body;
     const endDate = new Date();
     let startDate;
@@ -1707,8 +2097,25 @@ router.post('/despesas/relatorio', async (req, res) => {
     }
 
     try {
-        // Construir a condição da consulta
+        // Verificar se a comunidade está especificada na sessão
+        const comunidadeId = req.session.utilizador?.comunityId;
+        if (!comunidadeId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Buscar os IDs das despesas relacionadas à comunidade
+        const despesasDaComunidade = await DespesaComunity.findAll({
+            where: { ComunityId: comunidadeId },
+            attributes: ['gastoId']
+        });
+
+        // Extrair os IDs das despesas da comunidade
+        const idsDespesasDaComunidade = despesasDaComunidade.map(dc => dc.gastoId);
+
+        // Construir a condição da consulta, filtrando pelas datas e IDs das despesas da comunidade
         const whereCondition = {
+            id: { [Op.in]: idsDespesasDaComunidade }, // Filtra as despesas da comunidade
             createdAt: {
                 [Op.between]: [startDate, endDate] // Filtrar entre startDate e endDate
             }
@@ -1719,14 +2126,14 @@ router.post('/despesas/relatorio', async (req, res) => {
             whereCondition.origem = origem;
         }
 
-        // Buscar os gastos com as condições definidas
+        // Buscar as despesas com as condições definidas
         const despesas = await Despesas.findAll({ where: whereCondition });
 
         // Calcular o total de despesas
         const totalDespesas = despesas.reduce((total, despesa) => total + despesa.valor, 0);
 
-        // Renderizar a página com as despesas, total, e variáveis
-        res.render('Relatorios/RelatorioDespesas', { despesas, totalDespesas, periodo, origem });
+        // Renderizar a página com as despesas, total e variáveis
+        res.render('Relatorios/RelatorioDespesas', { despesas, totalDespesas, periodo, origem, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erro ao gerar o relatório' });
@@ -1815,76 +2222,77 @@ router.post('/despesas/relatorio', async (req, res) => {
 
 
 
-
-
-
-  
-
-router.get('/relatorio-geral-page', async (req, res) => {
+router.get('/relatorio-geral-page', contarNotificacoes, async (req, res) => {
     try {
-        // Cálculos
-        const totalOfertas = await Ofertas.sum('valor') || 0;
-        const totalDizimos = await Dizimos.sum('valor') || 0;
-        const totalDespesas = await Despesas.sum('valor') || 0;
+        const comunityId = req.session.utilizador?.comunityId;// Correção: obtendo comunityId da sessão
+
+        if (!comunityId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
+        // Fazendo o JOIN nas tabelas intermediárias para filtrar pela comunidade correta
+        const ofertas = await Ofertas.findAll({
+            include: [{
+                model: OfertaComunity,
+                where: { ComunityId: comunityId }  // Correção: filtrando pelo campo ComunityId
+            }]
+        });
+
+        const dizimos = await Dizimos.findAll({
+            include: [{
+                model: DizimoComunity,
+                where: { ComunityId: comunityId }  // Correção: filtrando pelo campo ComunityId
+            }]
+        });
+
+        const despesas = await Despesas.findAll({
+            include: [{
+                model: DespesaComunity,
+                where: { ComunityId: comunityId }  // Correção: filtrando pelo campo ComunityId
+            }]
+        });
+
+        // Cálculos dos totais
+        const totalOfertas = ofertas.map(o => o.valor).reduce((acc, valor) => acc + valor, 0) || 0;
+        const totalDizimos = dizimos.map(d => d.valor).reduce((acc, valor) => acc + valor, 0) || 0;
+        const totalDespesas = despesas.map(d => d.valor).reduce((acc, valor) => acc + valor, 0) || 0;
+
         const saldo = totalOfertas + totalDizimos - totalDespesas;
 
         // Desempenho Anual
         const currentYear = new Date().getFullYear();
         const lastYear = currentYear - 1;
 
-        const ofertasAnoAtual = await Ofertas.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(currentYear, 0, 1),
-                    [Op.lt]: new Date(currentYear + 1, 0, 1)
-                }
-            }
-        }) || 0;
+        const ofertasAnoAtual = ofertas
+            .filter(oferta => new Date(oferta.createdAt).getFullYear() === currentYear)
+            .map(oferta => oferta.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
-        const ofertasAnoAnterior = await Ofertas.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(lastYear, 0, 1),
-                    [Op.lt]: new Date(currentYear, 0, 1)
-                }
-            }
-        }) || 0;
+        const ofertasAnoAnterior = ofertas
+            .filter(oferta => new Date(oferta.createdAt).getFullYear() === lastYear)
+            .map(oferta => oferta.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
-        const dizimosAnoAtual = await Dizimos.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(currentYear, 0, 1),
-                    [Op.lt]: new Date(currentYear + 1, 0, 1)
-                }
-            }
-        }) || 0;
+        const dizimosAnoAtual = dizimos
+            .filter(dizimo => new Date(dizimo.createdAt).getFullYear() === currentYear)
+            .map(dizimo => dizimo.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
-        const dizimosAnoAnterior = await Dizimos.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(lastYear, 0, 1),
-                    [Op.lt]: new Date(currentYear, 0, 1)
-                }
-            }
-        }) || 0;
+        const dizimosAnoAnterior = dizimos
+            .filter(dizimo => new Date(dizimo.createdAt).getFullYear() === lastYear)
+            .map(dizimo => dizimo.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
-        const despesasAnoAtual = await Despesas.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(currentYear, 0, 1),
-                    [Op.lt]: new Date(currentYear + 1, 0, 1)
-                }
-            }
-        }) || 0;
+        const despesasAnoAtual = despesas
+            .filter(despesa => new Date(despesa.createdAt).getFullYear() === currentYear)
+            .map(despesa => despesa.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
-        const despesasAnoAnterior = await Despesas.sum('valor', {
-            where: {
-                createdAt: {
-                    [Op.gte]: new Date(lastYear, 0, 1),
-                    [Op.lt]: new Date(currentYear, 0, 1)
-                }
-            }
-        }) || 0;
+        const despesasAnoAnterior = despesas
+            .filter(despesa => new Date(despesa.createdAt).getFullYear() === lastYear)
+            .map(despesa => despesa.valor)
+            .reduce((acc, valor) => acc + valor, 0) || 0;
 
         const crescimentoOfertas = ofertasAnoAnterior
             ? ((ofertasAnoAtual - ofertasAnoAnterior) / ofertasAnoAnterior) * 100
@@ -1898,7 +2306,6 @@ router.get('/relatorio-geral-page', async (req, res) => {
             ? ((despesasAnoAtual - despesasAnoAnterior) / despesasAnoAnterior) * 100
             : 0;
 
-        // Identificando a contribuição com maior crescimento
         const crescimentoContribuicoes = [
             { tipo: 'Ofertas', crescimento: crescimentoOfertas },
             { tipo: 'Dízimos', crescimento: crescimentoDizimos },
@@ -1909,27 +2316,18 @@ router.get('/relatorio-geral-page', async (req, res) => {
             return current.crescimento > prev.crescimento ? current : prev;
         });
 
-        // Metas de arrecadação e despesas
-        const metaArrecadacao = 500000.00; // Defina sua meta de arrecadação aqui
-        const metaDespesas = 10000000.00;   // Defina sua meta de despesas aqui
+        const metaArrecadacao = 500000.00;  // Meta de arrecadação
+        const metaDespesas = 10000000.00;   // Meta de despesas
         const totalArrecadado = totalOfertas + totalDizimos;
 
         const porcentagemArrecadacao = (totalArrecadado > 0)
-        ? Number(((totalArrecadado / metaArrecadacao) * 100).toFixed(2))
-        : 0;
-    
-    const porcentagemDespesas = (totalDespesas > 0)
-        ? Number(((totalDespesas / metaDespesas) * 100).toFixed(2))
-        : 0;
-    
+            ? Number(((totalArrecadado / metaArrecadacao) * 100).toFixed(2))
+            : 0;
 
-        // Log para verificar valores
-        console.log('Total Arrecadado:', totalArrecadado);
-        console.log('Total Despesas:', totalDespesas);
-        console.log('Porcentagem Arrecadação:', porcentagemArrecadacao);
-        console.log('Porcentagem Despesas:', porcentagemDespesas);
+        const porcentagemDespesas = (totalDespesas > 0)
+            ? Number(((totalDespesas / metaDespesas) * 100).toFixed(2))
+            : 0;
 
-        // Notificações
         const notificacoes = [];
         const receitasTotais = totalOfertas + totalDizimos;
 
@@ -1940,7 +2338,6 @@ router.get('/relatorio-geral-page', async (req, res) => {
             notificacoes.push('Alerta: As despesas estão perto de superar as receitas.');
         }
 
-        // Renderizar a página
         res.render('layout/geral_prev', {
             totalOfertas,
             totalDizimos,
@@ -1956,7 +2353,8 @@ router.get('/relatorio-geral-page', async (req, res) => {
             metaDespesas,
             porcentagemArrecadacao,
             porcentagemDespesas,
-            maiorCrescimento // Passando o maior crescimento para a página
+            maiorCrescimento,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error(error);
@@ -1967,11 +2365,18 @@ router.get('/relatorio-geral-page', async (req, res) => {
 
 
 
-router.get('/api/relatorio-geral', async (req, res) => {
+router.get('/api/relatorio-geral-grafico', async (req, res) => {
     try {
         const periodo = req.query.periodo;
         let startDate;
         let endDate = new Date(); // Data atual
+// Verificar se a comunidade está na sessão
+const comunityId = req.session.utilizador?.comunityId;
+if (!comunityId) {
+    // Renderizar uma página informativa
+    return res.render('AcessoNegado/NoComunity');
+}
+
 
         // Definindo a data inicial e final com base no período selecionado
         switch (periodo) {
@@ -2004,12 +2409,22 @@ router.get('/api/relatorio-geral', async (req, res) => {
                 return res.status(400).json({ message: 'Período inválido' });
         }
 
+        // Obtendo os IDs das ofertas, dízimos e despesas associados à comunidade
+        const ofertasComunity = await OfertaComunity.findAll({ where: { ComunityId: comunityId } });
+        const dizimosComunity = await DizimoComunity.findAll({ where: { ComunityId: comunityId } });
+        const despesasComunity = await DespesaComunity.findAll({ where: { ComunityId: comunityId } });
+
+        const ofertaIds = ofertasComunity.map(item => item.OfertaId);
+        const dizimoIds = dizimosComunity.map(item => item.DizimoId);
+        const despesaIds = despesasComunity.map(item => item.gastoId);
+
         // Obtendo os valores filtrados com base no período
         const totalOfertas = await Ofertas.sum('valor', {
             where: {
                 createdAt: {
                     [Op.between]: [startDate, endDate]
-                }
+                },
+                id: ofertaIds // Filtra ofertas pela Comunidade
             }
         }) || 0;
 
@@ -2017,7 +2432,8 @@ router.get('/api/relatorio-geral', async (req, res) => {
             where: {
                 createdAt: {
                     [Op.between]: [startDate, endDate]
-                }
+                },
+                id: dizimoIds // Filtra dízimos pela Comunidade
             }
         }) || 0;
 
@@ -2025,7 +2441,8 @@ router.get('/api/relatorio-geral', async (req, res) => {
             where: {
                 createdAt: {
                     [Op.between]: [startDate, endDate]
-                }
+                },
+                id: despesaIds // Filtra despesas pela Comunidade
             }
         }) || 0;
 
@@ -2037,11 +2454,7 @@ router.get('/api/relatorio-geral', async (req, res) => {
     }
 });
 
-
-
-
-
-
+module.exports = router;
 
 
 
@@ -2080,26 +2493,55 @@ router.post('/api/relatorio-geral', async (req, res) => {
                 return res.status(400).json({ message: 'Período inválido' });
         }
 
+        const comunityId = req.session.utilizador?.comunityId; // ID da comunidade na sessão
+        
+        if (!comunityId) {
+            // Renderizar uma página informativa
+            return res.render('AcessoNegado/NoComunity');
+        }
+
         // Variáveis para armazenar resultados de cada busca e totais
-        let dizimosResultado = null;
-        let ofertasResultado = null;
-        let despesasResultado = null;
+        let dizimosResultado = [];
+        let ofertasResultado = [];
+        let despesasResultado = [];
         let totalDizimos = 0;
         let totalOfertas = 0;
         let totalDespesas = 0;
 
         // Buscas para cada item selecionado usando Sequelize
         if (itensSelecionados.includes('dizimos') || itensSelecionados.includes('geral')) {
-            // Buscando dízimos com nomes dos dizimistas
-            dizimosResultado = await connection.query(
-                `SELECT membros.nome AS dizimistaNome, SUM(dizimos.valor) AS totalValor
-                 FROM dizimos
-                 JOIN membros ON dizimos.MembroId = membros.id
-                 WHERE dizimos.createdAt BETWEEN :startDate AND :endDate
-                 GROUP BY membros.nome`,
-            {
-                replacements: { startDate, endDate },
-                type: sequelize.QueryTypes.SELECT
+            const dizimosComunidad = await DizimoComunity.findAll({
+                where: {
+                    ComunityId: comunityId,
+                    createdAt: {
+                        [Op.between]: [startDate, endDate]
+                    }
+                }
+            });
+
+            // IDs dos dízimos relacionados aos membros
+            const dizimoIds = dizimosComunidad.map(dizimo => dizimo.DizimoId);
+
+            const dizimos = await Dizimos.findAll({
+                where: {
+                    id: dizimoIds // Buscando os dízimos reais
+                }
+            });
+
+            const membrosIds = await MembroComunity.findAll({
+                where: {
+                    ComunityId: comunityId,
+                    MembroId: dizimos.map(dizimo => dizimo.MembroId) // IDs dos membros dos dízimos
+                }
+            });
+
+            // Processando resultados usando map
+            dizimosResultado = dizimos.map(dizimo => {
+                const membro = membrosIds.find(m => m.MembroId === dizimo.MembroId);
+                return {
+                    dizimistaNome: membro ? membro.nome : 'Desconhecido',
+                    totalValor: dizimo.valor // Supondo que a tabela de dízimos tem um campo valor
+                };
             });
 
             // Calculando o total de dízimos
@@ -2107,31 +2549,58 @@ router.post('/api/relatorio-geral', async (req, res) => {
         }
 
         if (itensSelecionados.includes('ofertas') || itensSelecionados.includes('geral')) {
-            // Buscando ofertas
-            ofertasResultado = await Ofertas.findAll({
+            const ofertasComunidad = await OfertaComunity.findAll({
                 where: {
+                    ComunityId: comunityId,
                     createdAt: {
                         [Op.between]: [startDate, endDate]
                     }
                 }
             });
 
+            const ofertaIds = ofertasComunidad.map(oferta => oferta.OfertaId);
+
+            const ofertas = await Ofertas.findAll({
+                where: {
+                    id: ofertaIds // Buscando as ofertas reais
+                }
+            });
+
+            // Processando resultados de ofertas sem incluir nomes de membros
+            ofertasResultado = ofertas.map(oferta => ({
+                totalValor: oferta.valor, // Acesso correto ao valor
+                createdAt: oferta.createdAt // Incluindo a data de criação
+            }));
+
             // Calculando o total de ofertas
-            totalOfertas = ofertasResultado.reduce((acc, oferta) => acc + oferta.valor, 0);
+            totalOfertas = ofertasResultado.reduce((acc, oferta) => acc + oferta.totalValor, 0);
         }
 
         if (itensSelecionados.includes('despesas') || itensSelecionados.includes('geral')) {
-            // Buscando despesas
-            despesasResultado = await Despesas.findAll({
+            const despesasComunidad = await DespesaComunity.findAll({
                 where: {
+                    ComunityId: comunityId,
                     createdAt: {
                         [Op.between]: [startDate, endDate]
                     }
                 }
             });
 
+            const despesaIds = despesasComunidad.map(despesa => despesa.gastoId);
+
+            const despesas = await Despesas.findAll({
+                where: {
+                    id: despesaIds // Buscando as despesas reais
+                }
+            });
+
+            despesasResultado = despesas.map(despesa => ({
+                totalValor: despesa.valor, // Supondo que a tabela de despesas tem um campo valor
+                createdAt: despesa.createdAt // Incluindo a data de criação
+            }));
+
             // Calculando o total de despesas
-            totalDespesas = despesasResultado.reduce((acc, despesa) => acc + despesa.valor, 0);
+            totalDespesas = despesasResultado.reduce((acc, despesa) => acc + despesa.totalValor, 0);
         }
 
         // Armazenando dados na sessão
@@ -2167,10 +2636,8 @@ router.post('/api/relatorio-geral', async (req, res) => {
 
 
 
-
-
 // Rota para renderizar a página Geral.ejs com os dados do relatório
-router.get('/Geral', (req, res) => {
+router.get('/Geral', contarNotificacoes, (req, res) => {
     // Acessa os resultados armazenados na sessão
     const dizimosResultado = req.session.dizimosResultado;
     const ofertasResultado = req.session.ofertasResultado;
@@ -2193,7 +2660,8 @@ router.get('/Geral', (req, res) => {
         dizimistasResultado,
         totalDizimos,
         totalOfertas,
-        totalDespesas
+        totalDespesas,
+        notificacoes:  req.notificacoes
     });
 });
 
@@ -2230,212 +2698,24 @@ const { Connection } = require('puppeteer');
 
 
 
-// Rota para exibir notificações
-router.get('/notificacoes', async (req, res) => {
-    try {
-        // 1. Total de Ofertas
-        const totalOfertas = await Ofertas.sum('valor') || 0;
-
-        // 2. Total de Gastos com origem 'Ofertas'
-        const totalGastosOfertas = await Despesas.sum('valor', {
-            where: { origem: 'Ofertas' },
-        }) || 0;
-
-        // 3. Total de Dízimos
-        const totalDizimos = await Dizimos.sum('valor') || 0;
-
-        // 4. Total de Gastos com origem 'Dízimos'
-        const totalGastosDizimos = await Despesas.sum('valor', {
-            where: { origem: 'Dízimos' },
-        }) || 0;
-
-        // 5. Total de Gastos com origem 'Caixa Mãe'
-        const totalGastosCaixaMae = await Despesas.sum('valor', {
-            where: { origem: 'caixa_mae' },
-        }) || 0;
-
-        // 6. Total de Membros que não dizimaram por um mês ou mais
-        const dataLimite = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
-        const membrosSemDizimo = await Membros.findAll({
-            where: {
-                id: {
-                    [Op.notIn]: connection.literal(`(SELECT MembroId FROM Dizimos WHERE createdAt >= '${dataLimite.toISOString()}')`)
-                }
-            }
-        });
-
-        // Lista para armazenar as notificações detalhadas
-        let mensagensNotificacoes = [];
-
-        // Função para adicionar notificações com tipo
-        function adicionarNotificacao(tipo, mensagem) {
-            mensagensNotificacoes.push({ tipo, mensagem });
-        }
-
-        // Lógica para gerar mensagens específicas
-        if (totalGastosOfertas >= totalOfertas - 3000) {
-            adicionarNotificacao("ma", "Os gastos com ofertas estão se aproximando ou já superaram o total arrecadado em ofertas.");
-        }
-
-        if (totalGastosDizimos >= totalDizimos - 3000) {
-            adicionarNotificacao("ma", "Os gastos com dízimos estão se aproximando ou já superaram o total arrecadado em dízimos.");
-        }
-
-        if (totalGastosCaixaMae >= (totalOfertas + totalDizimos) - 3000) {
-            adicionarNotificacao("ma", "Os gastos do caixa mãe estão se aproximando ou já superaram o total combinado de ofertas e dízimos.");
-        }
-
-        // Verifica se há membros que não dizimaram no último mês
-        if (membrosSemDizimo.length > 0) {
-            const nomesMembros = membrosSemDizimo.map(membro => membro.nome).join(', ');
-            adicionarNotificacao("ma", `Os seguintes membros não contribuíram com dízimos nos últimos 30 dias: ${nomesMembros}.`);
-        }
-
-        // 7. Membros que mais estão dizimando (limitando a 5 membros)
-        const membrosMaisDizimistas = await connection.query(`
-            SELECT Membros.nome, SUM(Dizimos.valor) AS totalDizimos
-            FROM Membros
-            LEFT JOIN Dizimos ON Membros.id = Dizimos.MembroId
-            GROUP BY Membros.id
-            ORDER BY totalDizimos DESC
-            LIMIT 5;
-        `);
-
-        if (membrosMaisDizimistas[0].length > 0) {
-            const nomesDizimistas = membrosMaisDizimistas[0].map(membro => membro.nome).join(', ');
-            adicionarNotificacao("boa", `Os seguintes membros estão contribuindo mais com dízimos: ${nomesDizimistas}.`);
-        }
-
-        // 8. Lembrete de Dízimos - apenas se estamos nos últimos dias do mês
-        const diaAtual = new Date().getDate();
-        if (diaAtual >= 25) {
-            adicionarNotificacao("ma", "Lembrete: O prazo para a contribuição do dízimo deste mês se encerra em breve.");
-        }
-
-        // 9. Dízimos em Declínio
-        const membrosDizimosDeclinados = await Membros.findAll({
-            where: {
-                id: {
-                    [Op.notIn]: connection.literal(`(SELECT MembroId FROM Dizimos WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH))`)
-                }
-            }
-        });
-
-        if (membrosDizimosDeclinados.length > 0) {
-            const nomesDeclinados = membrosDizimosDeclinados.map(membro => membro.nome).join(', ');
-            adicionarNotificacao("ma", `Os seguintes membros não contribuíram com dízimos nos últimos três meses: ${nomesDeclinados}.`);
-        }
-
-        const totalContribuicoes = totalOfertas + totalDizimos;
-        const totalGastos = totalGastosOfertas + totalGastosDizimos + totalGastosCaixaMae;
-
-        if (totalGastos >= totalContribuicoes) {
-            adicionarNotificacao("ma", "Os gastos totais agora são iguais ou superiores ao total de contribuições recebidas de ofertas e dízimos.");
-        }
-
-        // Renderiza a página EJS com as notificações
-        res.render('Ver/notificacoes', { notificacoes: mensagensNotificacoes });
-    } catch (error) {
-        console.error('Erro ao buscar notificações:', error);
-        res.status(500).send('Erro ao buscar notificações');
-    }
-});
-
-module.exports = router;
 
 
 
 
 
-
-
-
-
-
-
-
-router.get('/notificacoes', async (req, res) => {
-    try {
-        // 1. Total de Ofertas
-        const totalOfertas = await Ofertas.sum('valor');
-
-        // 2. Total de Gastos com origem 'Ofertas'
-        const totalGastosOfertas = await Despesas.sum('valor', {
-            where: { origem: 'Ofertas' },
-        });
-
-        // 3. Total de Dízimos
-        const totalDizimos = await Dizimos.sum('valor');
-
-        // 4. Total de Gastos com origem 'Dízimos'
-        const totalGastosDizimos = await Despesas.sum('valor', {
-            where: { origem: 'Dízimos' },
-        });
-
-        // 5. Total de Gastos com origem 'Caixa Mãe'
-        const totalGastosCaixaMae = await Despesas.sum('valor', {
-            where: { origem: 'caixa_mae' },
-        });
-
-        // 6. Total de Membros que não dizimaram por um mês ou mais
-        const dataLimite = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
-        const membrosSemDizimo = await Membros.findAll({
-            where: {
-                id: {
-                    [Op.notIn]: sequelize.literal(`(SELECT MembroId FROM Dizimos WHERE createdAt >= '${dataLimite.toISOString()}')`)
-                }
-            }
-        });
-
-        // Lista para armazenar as notificações detalhadas
-        let mensagensNotificacoes = [];
-
-        // Lógica para gerar mensagens específicas
-        if (totalGastosOfertas >= totalOfertas - 3000) {
-            mensagensNotificacoes.push("Os gastos provenientes das ofertas estão próximos ou excederam o valor total arrecadado em ofertas.");
-        }
-
-        if (totalGastosDizimos >= totalDizimos - 3000) {
-            mensagensNotificacoes.push("Os gastos provenientes dos dízimos estão próximos ou excederam o valor total arrecadado em dízimos.");
-        }
-
-        if (totalGastosCaixaMae >= (totalOfertas + totalDizimos) - 3000) {
-            mensagensNotificacoes.push("Os gastos provenientes do caixa mãe estão próximos ou excederam o valor total de ofertas e dízimos combinados.");
-        }
-
-        // Verifica se há membros que não dizimaram no último mês
-        if (membrosSemDizimo.length > 0) {
-            const nomesMembros = membrosSemDizimo.map(membro => membro.nome).join(', ');
-            mensagensNotificacoes.push(`Os seguintes membros não contribuíram com dízimos nos últimos 30 dias: ${nomesMembros}.`);
-        }
-
-        const totalContribuicoes = totalOfertas + totalDizimos;
-        const totalGastos = totalGastosOfertas + totalGastosDizimos + totalGastosCaixaMae;
-
-        if (totalGastos >= totalContribuicoes) {
-            mensagensNotificacoes.push("O total de gastos superou ou igualou o total de contribuições (ofertas e dízimos).");
-        }
-
-        // Renderiza a página EJS com as notificações
-        res.render('Ver/notificacoes', { notificacoes: mensagensNotificacoes });
-    } catch (error) {
-        console.error('Erro ao buscar notificações:', error);
-        res.status(500).send('Erro ao buscar notificações');
-    }
-});
 
 
 
 
 
 // Rota para renderizar a página de quotas
-router.get('/quotas-pagina', async (req, res) => {
+router.get('/quotas-pagina', contarNotificacoes, async (req, res) => {
     try {
         // Supondo que você tenha um modelo de Departamento para buscar os departamentos
         const departamentos = await Departamentos.findAll();
         
         // Renderizando a página e passando os departamentos
-        res.render("entradas/quotas", { departamentos });
+        res.render("entradas/quotas", { departamentos, notificacoes:  req.notificacoes });
     } catch (error) {
         console.error("Erro ao buscar departamentos:", error);
         res.status(500).send("Erro ao carregar a página.");
@@ -2447,11 +2727,11 @@ router.get('/quotas-pagina', async (req, res) => {
 
 
 // Rota para renderizar a página de quotas
-router.get('/departamento-pagina', async (req, res) => {
+router.get('/departamento-pagina', contarNotificacoes, verificarStatusAprovado,  async (req, res) => {
     try {
        
         // Renderizando a página e passando os departamentos
-        res.render("entradas/Departamentos");
+        res.render("entradas/Departamentos" , {notificacoes:  req.notificacoes});
     } catch (error) {
         console.error("Erro ao buscar departamentos:", error);
         res.status(500).send("Erro ao carregar a página.");
@@ -2461,7 +2741,161 @@ router.get('/departamento-pagina', async (req, res) => {
 
 
 
-router.post('/criar-quota', async (req, res) => {
+
+
+
+// Rota para renderizar a página de descritivos
+router.get('/descritivos', contarNotificacoes, async (req, res) => {
+    try {
+        // Buscar todos os membros
+        const membros = await Membros.findAll();
+        // Buscar dados eclesiais associados
+        const dadosEclesiais = await DadosEclesiais.findAll();
+
+        // Extrair informações necessárias
+        const generos = new Set();
+        const idades = new Set();
+        const estadosCivil = new Set();
+        const bis = new Set();
+        const naturalidades = new Set();
+        const provincias = new Set();
+        const situacoes = new Set();
+        const categorias = new Set();
+        const funcoes = new Set();
+        const datasConsagracao = new Set();
+        const datasBatismo = new Set();
+
+        membros.forEach(membro => {
+            // Gêneros
+            if (membro.genero) generos.add(membro.genero);
+            // Idades
+            if (membro.data_nascimento) {
+                const idade = new Date().getFullYear() - new Date(membro.data_nascimento).getFullYear();
+                idades.add(idade);
+            }
+            // Estado Civil
+            if (membro.estado_civil) estadosCivil.add(membro.estado_civil);
+            // Bilhete de Identidade
+            if (membro.bi) bis.add(membro.bi);
+            // Naturalidade
+            if (membro.naturalidade) naturalidades.add(membro.naturalidade);
+            // Província
+            if (membro.provincia) provincias.add(membro.provincia);
+        });
+
+        // Extraindo dados eclesiais
+        dadosEclesiais.forEach(dado => {
+            // Situação
+            if (dado.situacao) situacoes.add(dado.situacao);
+            // Categoria
+            if (dado.categoria) categorias.add(dado.categoria);
+            // Função
+            if (dado.funcao) funcoes.add(dado.funcao);
+            // Data de Consagração
+            if (dado.dataConsagracao) {
+                const dataConsagracaoFormatada = new Date(dado.dataConsagracao).toLocaleDateString('pt-BR');
+                datasConsagracao.add(dataConsagracaoFormatada);
+            }
+            // Data de Batismo
+            if (dado.dataBatismo) {
+                const dataBatismoFormatada = new Date(dado.dataBatismo).toLocaleDateString('pt-BR');
+                datasBatismo.add(dataBatismoFormatada);
+            }
+        });
+
+        // Passar os dados para a página EJS
+        res.render("Relatorios/descritivos", {
+            generos: Array.from(generos),
+            idades: Array.from(idades),
+            estadosCivil: Array.from(estadosCivil),
+            bis: Array.from(bis),
+            naturalidades: Array.from(naturalidades),
+            provincias: Array.from(provincias),
+            situacoes: Array.from(situacoes),
+            categorias: Array.from(categorias),
+            funcoes: Array.from(funcoes),
+            datasConsagracao: Array.from(datasConsagracao),
+            datasBatismo: Array.from(datasBatismo),
+            notificacoes:  req.notificacoes
+        });
+    } catch (error) {
+        console.error("Erro ao carregar a página:", error);
+        res.status(500).send("Erro ao carregar a página.");
+    }
+});
+
+
+
+// Rota para mostrar o relatório descritivo
+router.get('/mostrar-relatorio-descritivo', contarNotificacoes, async (req, res) => {
+    try {
+        // Recebe e decodifica os itens selecionados
+        const itensSelecionados = JSON.parse(decodeURIComponent(req.query.itens));
+
+        // Verifica se itensSelecionados é um array válido
+        if (!Array.isArray(itensSelecionados) || itensSelecionados.length === 0) {
+            return res.status(400).json({ error: 'Nenhum item selecionado.' });
+        }
+
+        // Inicializa as condições de where
+        const whereConditions = {
+            [sequelize.Op.and]: []
+        };
+
+        // Define um objeto de mapeamento para estados civis
+        const estadosCivis = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo'];
+
+        // Adicione verificações dinâmicas para todos os campos
+        itensSelecionados.forEach(item => {
+            if (/^\d+$/.test(item)) {
+                // Item é um BI
+                whereConditions[sequelize.Op.and].push({ bi: item });
+            } else if (typeof item === 'string' && item.trim() !== '') {
+                // Item é uma província ou naturalidade
+                if (item.includes("naturalidade")) {
+                    whereConditions[sequelize.Op.and].push({ naturalidade: item });
+                } else if (estadosCivis.includes(item)) {
+                    // Item é um estado civil
+                    whereConditions[sequelize.Op.and].push({ estado_civil: item });
+                } else {
+                    // Item é uma província
+                    whereConditions[sequelize.Op.and].push({ provincia: item });
+                }
+            } else if (item.includes("situacao")) {
+                whereConditions[sequelize.Op.and].push({ '$Eclesiais.situacao$': item });
+            } else if (item.includes("categoria")) {
+                whereConditions[sequelize.Op.and].push({ '$Eclesiais.categoria$': item });
+            } else if (item.includes("funcao")) {
+                whereConditions[sequelize.Op.and].push({ '$Eclesiais.funcao$': item });
+            }
+        });
+
+        // Execute a consulta com as condições dinâmicas
+        const membrosEncontrados = await Membros.findAll({
+            include: [{
+                model: DadosEclesiais,
+                required: false // Se você quiser apenas membros que têm dados eclesiais, defina como true
+            }],
+            where: whereConditions
+        });
+
+        // Renderiza a página do relatório com os membros encontrados
+        res.json({ membros: membrosEncontrados, notificacoes:  req.notificacoes });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao gerar o relatório' });
+    }
+});
+
+
+
+
+
+
+
+
+
+router.post('/criar-quota', contarNotificacoes, async (req, res) => {
     console.log('Corpo da requisição:', req.body); // Adicione esta linha para debugar
     const { valor, descricao, departamentoId } = req.body;
 
@@ -2477,7 +2911,7 @@ router.post('/criar-quota', async (req, res) => {
 
         const departamentos = await Departamentos.findAll();
 
-        res.render("entradas/quotas", {departamentos})
+        res.render("entradas/quotas", {departamentos, notificacoes:  req.notificacoes})
     } catch (error) {
         console.error("Erro ao cadastrar a quota:", error);
         res.status(500).json({ message: "Erro ao cadastrar a quota." });
@@ -2487,7 +2921,7 @@ router.post('/criar-quota', async (req, res) => {
 
 
 
-router.post('/criar-departamento', async (req, res) => {
+router.post('/criar-departamento', contarNotificacoes, async (req, res) => {
     console.log('Corpo da requisição:', req.body); // Adicione esta linha para debugar
     const { nomeDepartamento } = req.body;
 
@@ -2498,7 +2932,7 @@ router.post('/criar-departamento', async (req, res) => {
         });
 
         
-        res.render("entradas/Departamentos");
+        res.render("entradas/Departamentos", {notificacoes:  req.notificacoes});
 
 
     } catch (error) {
@@ -2516,7 +2950,7 @@ router.post('/criar-departamento', async (req, res) => {
 
 
 // Rota para renderizar a página de quotas
-router.get('/quotas-previews', async (req, res) => {
+router.get('/quotas-previews', contarNotificacoes, async (req, res) => {
     try {
         // Buscar IDs únicos dos departamentos que possuem quotas associadas
         const departamentosContribuintes = await Cuotas.findAll({
@@ -2548,7 +2982,8 @@ router.get('/quotas-previews', async (req, res) => {
         res.render("layout/quotasPreviwes", {
             totalDepartamentos,
             totalQuotas,
-            quotasPagasTrimestre
+            quotasPagasTrimestre,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error("Erro ao buscar departamentos:", error);
@@ -2558,7 +2993,7 @@ router.get('/quotas-previews', async (req, res) => {
 
 
 // Rota para buscar quotas pagas e não pagas neste trimestre
-router.get('/quotas-status', async (req, res) => {
+router.get('/quotas-status', contarNotificacoes, async (req, res) => {
     try {
         // Data atual e data do trimestre passado
         const dataAtual = new Date();
@@ -2613,7 +3048,8 @@ router.get('/quotas-status', async (req, res) => {
         // Renderizar a página e passar os dados
         res.render("Relatorios/quotasStatus", {
             quotasPagas: quotasPagasAgrupadas,
-            quotasNaoPagas: departamentosNaoPagos
+            quotasNaoPagas: departamentosNaoPagos,
+            notificacoes:  req.notificacoes
         });
     } catch (error) {
         console.error("Erro ao buscar quotas:", error);
@@ -2674,6 +3110,146 @@ router.get('/grafico-quotas', async (req, res) => {
 
 
 
+router.get('/notificacoes', async (req, res) => {
+    const mensagens = [];
+    const comunityId = req.session.utilizador?.comunityId;
+
+    if (!comunityId) {
+        return res.render('AcessoNegado/NoComunity');
+    }
+
+    // 1. Notificações para Ofertas
+    const totalOfertas = await Ofertas.sum('valor', {
+        where: {
+            id: {
+                [Op.in]: await OfertaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['OfertaId']
+                }).then(results => results.map(result => result.OfertaId))
+            }
+        }
+    });
+
+    const despesasOfertas = await Despesas.sum('valor', {
+        where: {
+            origem: 'ofertas',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasOfertas >= totalOfertas) {
+        mensagens.push("🎉 Ótimas notícias! Todas as ofertas arrecadadas foram cobertas pelas despesas, garantindo que todos os recursos estão sendo utilizados adequadamente.");
+    } else if (despesasOfertas >= totalOfertas * 0.9) {
+        mensagens.push("⚠️ Atenção: As despesas estão muito próximas do total das ofertas, o que pode impactar o orçamento se não for monitorado.");
+    }
+
+    // 2. Notificações para Dízimos
+    const totalDizimos = await Dizimos.sum('valor', {
+        where: { 
+            id: {
+                [Op.in]: await DizimoComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['DizimoId']
+                }).then(results => results.map(result => result.DizimoId))
+            }
+        }
+    });
+
+    const despesasDizimos = await Despesas.sum('valor', {
+        where: {
+            origem: 'dizimos',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasDizimos >= totalDizimos) {
+        mensagens.push("🎉 Excelente! Todos os dízimos recebidos foram utilizados para cobrir as despesas, mantendo a saúde financeira da comunidade.");
+    } else if (despesasDizimos >= totalDizimos * 0.9) {
+        mensagens.push("⚠️ Atenção: As despesas estão quase iguais ao total dos dízimos, o que exige atenção para evitar déficits futuros.");
+    }
+
+    // 3. Notificação para a Caixa Mãe
+    const totalCaixaMae = totalOfertas + totalDizimos;
+
+    const despesasCaixaMae = await Despesas.sum('valor', {
+        where: {
+            origem: 'caixa_mae',
+            id: {
+                [Op.in]: await DespesaComunity.findAll({
+                    where: { ComunityId: comunityId },
+                    attributes: ['gastoId']
+                }).then(results => results.map(result => result.DespesaId))
+            }
+        }
+    });
+
+    if (despesasCaixaMae >= totalCaixaMae) {
+        mensagens.push("🎉 Boa notícia! A Caixa Mãe está com as despesas equilibradas, assegurando a continuidade dos projetos.");
+    } else if (despesasCaixaMae >= totalCaixaMae * 0.9) {
+        mensagens.push("⚠️ Importante: As despesas da Caixa Mãe estão quase equilibradas com os recursos disponíveis, e uma revisão pode ser necessária.");
+    }
+
+    // 4. Notificações para Membros
+    const membros = await Membros.findAll({
+        include: [{
+            model: MembroComunity,
+            where: { ComunityId: comunityId }
+        }]
+    });
+
+    for (const membro of membros) {
+        const totalDizimosMembro = await Dizimos.count({
+            where: {
+                MembroId: membro.id,
+                createdAt: {
+                    [Op.gte]: new Date(new Date() - 4 * 30 * 24 * 60 * 60 * 1000)
+                },
+            },
+        });
+
+        if (totalDizimosMembro === 0) {
+            mensagens.push(`⚠️ Alerta: O membro ${membro.nome} não fez dízimos nos últimos 4 meses. É importante incentivá-lo a participar.`);
+        }
+    }
+
+    // 5. Notificações para membros que dízimam regularmente
+    const membrosAtivos = await Membros.findAll({
+        include: [{
+            model: MembroComunity,
+            where: { ComunityId: comunityId }
+        }]
+    });
+
+    for (const membro of membrosAtivos) {
+        const dizimosRegulares = await Dizimos.count({
+            where: {
+                MembroId: membro.id,
+                createdAt: {
+                    [Op.gte]: new Date(new Date() - 30 * 24 * 60 * 60 * 1000)
+                },
+            },
+        });
+
+        if (dizimosRegulares > 0) {
+            mensagens.push(`🎉 Bom trabalho! O membro ${membro.nome} tem contribuído com dízimos regularmente, ajudando a comunidade a prosperar.`);
+        }
+    }
+
+    // Renderiza a página com as mensagens de notificação
+    res.render('Ver/notificacoes', { mensagens });
+});
+
+module.exports = router;
 
 
 

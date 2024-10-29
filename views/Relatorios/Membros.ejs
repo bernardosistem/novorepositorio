@@ -208,10 +208,37 @@ input[type="checkbox"]:checked {
 }
 
 
+.back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            background-color: #0d62bc; /* Cor de fundo */
+            color: white; /* Cor do texto */
+            border: none; /* Remover borda */
+            border-radius: 5px; /* Bordas arredondadas */
+            padding: 10px 15px; /* Espaçamento interno */
+            text-decoration: none; /* Remover sublinhado */
+            transition: background-color 0.3s; /* Transição suave */
+            margin-top: 100px;
+        }
+        .back-button i {
+            margin-right: 5px; /* Espaço entre ícone e texto */
+        }
+        .back-button:hover {
+            background-color: #0056b3; /* Cor ao passar o mouse */
+        }
+
 
     </style>
 </head>
 <body>
+
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
   
    <div class="page">
     <div class="container">

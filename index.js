@@ -3,7 +3,7 @@ const app = express();
 const session = require('express-session');
 const Sequelize = require('sequelize');
 const sequelize = require('./gerenciamento/database/database');
-
+const bcrypt = require("bcryptjs");
 
 const Notificacao = require("./gerenciamento/middlewere/notificacao");
 
@@ -95,9 +95,53 @@ const departamentoMembros = require("./gerenciamento/DadosMembros/DepartamentoMe
 const Cuotas = require("./gerenciamento/Financas/Cuotas");
 
 
+
+const Comunity = require("./gerenciamento/comunity/Comunity");
+
+
+const ofertacomunity= require("./gerenciamento/comunity/OfertaComunity");
+
+const dizimocomunity= require("./gerenciamento/comunity/DizimoComunity");
+
+const despesacomunity= require("./gerenciamento/comunity/DespesaComunity");
+
+
+const membrocomunity= require("./gerenciamento/comunity/MembroComunity");
+
+
+
+const fotocomunity= require("./gerenciamento/comunity/fotoComunity");
+
+
+
+
+const UtilizadorComunity = require("./gerenciamento/comunity/UserComunity");
+
+
+
+const Utilizador= require("./gerenciamento/User/User");
+
+
+const Status= require("./gerenciamento/User/Status");
+
+
+
 const menbroController = require("./gerenciamento/membro/membroController");
 
 app.use("/", menbroController)
+
+
+
+const userController = require("./gerenciamento/User/usercontroller");
+
+app.use("/", userController)
+
+
+
+
+const comunityController = require("./gerenciamento/comunity/comunityController");
+
+app.use("/", comunityController)
 
 
 
@@ -108,17 +152,47 @@ app.use("/", FinancasController)
 
 
 // Use o middleware para contar notificações
-app.use(Notificacao);
 
 
+const contarNotificacoes = require("./gerenciamento/middlewere/notificacao");
 
-// Rota da página inicial
+app.use(contarNotificacoes)
+
+
 app.get("/", async (req, res) => {
-  // Renderiza a página passando o contador de notificações
-  res.render("layout/index", {
-      notificacoes: req.contadorNotificacoes // Passa a variável de notificações para a view
+    try {
+        const comunityId = req.session.utilizador?.comunityId;
+        const utilizadorId = req.session.utilizador?.id;
+        let fotoUrl = null;
+  
+        if (comunityId && utilizadorId) {
+            const statusData = await Status.findOne({
+                where: { ComunityId: comunityId, usuario2Id: utilizadorId }
+            }); 
+  
+            if (statusData && statusData.status.toLowerCase() === 'pendente') {
+                fotoUrl = null;
+            } else {
+                const fotoData = await fotocomunity.findOne({ where: { ComunityId: comunityId } });
+                if (fotoData) {
+                    fotoUrl = fotoData.foto;
+                }
+            }
+        }
+  
+
+        console.log(req.notifications);
+  
+        res.render("layout/index", {
+            notificacoes:  req.notificacoes,
+            fotoUrl: fotoUrl
+        });
+    } catch (error) {
+        console.error('Erro ao buscar status ou foto da comunidade:', error);
+        res.status(500).send('Erro no servidor ao carregar a página.');
+    }
   });
-});
+  
 
 
 app.post('/dados-eclesiais', async (req, res) => {
@@ -179,6 +253,13 @@ app.delete('/remover-membro/:id', async (req, res) => {
       res.sendStatus(500); // Retorna status 500 em caso de erro
   }
 });
+
+
+
+
+
+
+
 
 
 

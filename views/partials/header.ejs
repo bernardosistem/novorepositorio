@@ -1,394 +1,393 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bernet@</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="styles.css">
     <style>
-        /* Reset básico */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
-            padding-top: 0; /* Remover a compensação do cabeçalho */
-            background-color: #f0f0f0;
-            overflow-x: hidden;
+            background: linear-gradient(to bottom, #e0f7fa, #ffffff); /* Gradiente de fundo suave */
+            font-family: 'Arial', sans-serif; /* Fonte mais elegante */
+            overflow-x: hidden; /* Evita overflow horizontal */
         }
 
-        /* Header fixo com transparência */
-        header {
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-            background-color: transparent; /* Transparente por padrão */
-            height: 150px;
-        }
-
-        header.fixed-top.scrolled {
-            background-color: rgba(0, 0, 0, 0.7); /* Torna o fundo mais escuro ao rolar */
-        }
-
-        .nav-link {
-            font-size: 1.3rem;
-            margin-left: 1rem;
-            transition: color 0.3s;
-            position: relative;
-            overflow: hidden; /* Para permitir a animação do fundo */
-            color: #ffffff; /* Cor padrão do texto */
-        }
-
-        .nav-link:hover {
-            color: #007bff; /* Destaque no hover */
-        }
-
-        .nav-link i {
-            margin-right: 0.5rem;
-        }
-
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 123, 255, 0.5); /* Cor azul clara */
-            transform: translateY(-100%); /* Começa fora da tela */
-            transition: transform 0.3s ease; /* Transição suave */
-            z-index: 0; /* Fica atrás do texto */
-        }
-
-        .nav-link:hover::before {
-            transform: translateY(0); /* Move para a posição visível */
-        }
-
-        .nav-link:hover {
-            color: #ffffff; /* Mantém a cor do texto ao passar o mouse */
-        }
-
-        .nav-link i {
-            transition: transform 0.3s; /* Transição suave para ícones */
-        }
-
-        .nav-link:hover i {
-            transform: scale(1.2); /* Aumenta o ícone ao passar o mouse */
-        }
-
-        /* Estilização dos Dropdowns */
-        .dropdown-menu {
-            background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro e transparente */
-            border-radius: 0.5rem; /* Bordas arredondadas */
-            transition: all 0.3s ease; /* Transição suave */
-        }
-
-        .dropdown-item {
-            color: #ffffff; /* Cor do texto */
-            transition: background-color 0.3s, transform 0.3s; /* Transição suave para o fundo e transformação */
-        }
-
-        .dropdown-item:hover {
-            background-color: rgba(0, 123, 255, 0.5); /* Cor ao passar o mouse */
-            transform: scale(1.05); /* Leve aumento no item */
-        }
-
-        .dropdown-item i {
-            margin-right: 0.5rem; /* Espaçamento entre ícone e texto */
-            transition: transform 0.3s; /* Transição suave para ícones */
-        }
-
-        .dropdown-item:hover i {
-            transform: scale(1.2); /* Aumenta o ícone ao passar o mouse */
-        }
-
-        /* Hero section com vídeo */
-        .hero {
-            position: relative;
-            overflow: hidden;
-            height: 100vh;
-            bottom: 70px;
-            height: 100vh; /* Ajusta a altura do vídeo para ocupar o espaço disponível */
-            margin-bottom: -100px; 
-        }
-
-       /* Ajuste do vídeo para garantir que cobre toda a área */
-.hero video {
-    min-width: 100%;
-    min-height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    /* Adiciona uma largura mínima para garantir que cubra toda a área */
-    width: 100vw;
-    height: 100vh;
+      
+        .navbar {
+    position: fixed; /* Manter a navbar fixa no topo */
+    top: 0;
+    left: 0; /* Adiciona left: 0 para garantir que a navbar comece no lado esquerdo */
+    width: 100%; /* Define a largura total da navbar */
+    z-index: 1000;
+    background: linear-gradient(135deg, #003366, #00509e);
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s ease;
+    margin: 0; /* Garante que não haja margens externas */
 }
 
-        .hero .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-        }
-
-        .container {
-            position: relative;
-            z-index: 3;
-        }
-
-        h1.display-1 {
-            font-size: 5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Botões */
-        .btn-custom {
-            background-color: #0056b3; /* Azul mais vibrante */
-            color: white;
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s, transform 0.3s;
-            margin: 0.5rem; /* Espaçamento entre botões */
-        }
-
-        .btn-custom:hover {
-            background-color: #004494; /* Azul mais escuro ao passar o mouse */
-            transform: translateY(-2px); /* Leve elevação ao passar o mouse */
-        }
-
-       
-        footer {
-    background: linear-gradient(135deg, #004494 0%, #007bff 100%); 
-    
-    margin-top: 0; 
-    /* Gradiente de azul */
+@media (min-width: 992px) {
+    .navbar {
+        height: 160px;
+    }
 }
 
-footer h5 {
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: #ffffff;
+    font-size: 2rem; /* Aumenta o tamanho da fonte */
     font-weight: bold;
-    font-size: 1.8rem;
+    transition: color 0.3s ease;
 }
 
-.social-icons i {
-    font-size: 2rem;
-    transition: transform 0.3s;
+.navbar-brand img {
+    width: 150px;
+    height: auto;
+    margin-right: 10px;
 }
 
-.social-icons a:hover i {
-    transform: scale(1.2); /* Efeito de aumento ao passar o mouse */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.7);
 }
 
-.footer-links a {
-    color: #ffffff; /* Cor dos links */
-    font-size: 1.1rem;
-    transition: color 0.3s;
+.navbar-toggler-icon {
+    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba(255, 255, 255, 1)" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
 }
 
-.footer-links a:hover {
-    color: #ffcc00; /* Cor de destaque ao passar o mouse */
-    text-decoration: underline; /* Sublinhado ao passar o mouse */
+.nav-link {
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 15px;
+    font-size: 1.2rem;
+    position: relative;
+    padding: 0.75rem 1rem;
+    transition: color 0.3s ease;
 }
 
-footer p {
-    margin-top: 0.5rem;
-    font-size: 1rem;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    footer h5 {
-        font-size: 1.5rem;
+/* Ajustes responsivos para dispositivos móveis */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.5rem; /* Diminuir o tamanho da fonte no mobile */
     }
 
-    footer p {
-        font-size: 0.9rem;
+    .navbar-brand img {
+        width: 100px; /* Reduzir o tamanho do logo no mobile */
+    }
+
+    .nav-link {
+        font-size: 1rem; /* Diminuir o tamanho da fonte dos links no mobile */
+        padding: 0.5rem 0.75rem; /* Ajustar o padding no mobile */
+        margin: 0 5px;
+    }
+
+    .navbar {
+        height: auto; /* Ajusta a altura da navbar no mobile */
+        padding: 10px 0;
+    }
+}
+
+
+.btn-custom {
+    margin: 10px; /* Margem entre os botões */
+    padding: 12px 24px; /* Espaçamento interno dos botões */
+    font-size: 1.5rem; /* Tamanho da fonte dos botões */
+    border-radius: 5px; /* Bordas arredondadas */
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Transição suave */
+    display: inline-flex; /* Para alinhar ícones e texto */
+    align-items: center; /* Centraliza verticalmente */
+    text-decoration: none; /* Remove sublinhado */
+}
+
+.btn-enter {
+    background-color: #00509e; /* Azul mais escuro */
+    color: #ffffff; /* Cor do texto */
+}
+
+.btn-register {
+    background-color: #0080ff; /* Azul mais claro */
+    color: #ffffff; /* Cor do texto */
+}
+
+.btn-custom:hover {
+    transform: scale(1.1); /* Efeito de aumento ao passar o mouse */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra ao passar o mouse */
+}
+
+.btn-custom i {
+    margin-right: 8px; /* Espaço entre ícone e texto do botão */
+}
+
+@media (max-width: 576px) { /* Para dispositivos móveis */
+    .btn-custom {
+        padding: 8px 16px; /* Reduzir o padding */
+        font-size: 1.2rem; /* Diminuir o tamanho da fonte */
     }
 }
 
 
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            header.fixed-top {
-                background-color: rgba(0, 0, 0, 0.9); /* Fundo escuro para dispositivos móveis */
-            }
 
-            h1.display-1 {
-                font-size: 3rem;
-            }
 
-            .nav-link {
-                font-size: 1rem;
-            }
 
-            .hero {
-                padding-top: 100px; /* Ajuste para header fixo em telas menores */
-            }
-        }
 
-        .logo img {
-            height: 240px !important; /* Aumente a altura do logotipo conforme necessário */
-            width: auto; /* Mantém a proporção */
-            position: absolute; /* Permite que o logotipo não afete o layout */
-            top: -50px !important; /* Mantenha a posição para cima */
-            left: -110px !important; /* Mova o logotipo mais para a esquerda */
-        }
+
+
+
+
+
+.content {
+    position: relative;
+    z-index: 2;
+    transition: margin-top 0.3s ease;
+    padding-top: 80px;
+    text-align: center;
+    flex: 1; /* Permite que a área de conteúdo cresça para ocupar o espaço disponível */
+}
+
+h1 {
+    color: #ffffff;
+    margin: 50px 0;
+    font-size: 3rem; /* Tamanho padrão */
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+p {
+    font-size: 1.2rem; /* Tamanho padrão */
+    color: #ffffff;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+@media (max-width: 576px) { /* Para dispositivos móveis */
+    h1 {
+        font-size: 2rem; /* Reduzir o tamanho do título */
+        margin: 30px 0; /* Ajustar a margem */
+    }
+
+    p {
+        font-size: 1rem; /* Reduzir o tamanho do parágrafo */
+    }
+}
+
+
+
+
+
+
+
+
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* Altera a altura para cobrir toda a área do telemóvel */
+    object-fit: cover;
+    z-index: -1;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+
+/* Estilo para a imagem da comunidade */
+.community-photo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.community-img {
+    width: 150px; /* Tamanho padrão para desktop */
+    height: 150px;
+    border-radius: 50%; /* Torna a imagem circular */
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    /* Em desktops, aumenta o tamanho da imagem */
+    .community-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .community-photo {
+        position: absolute;
+        top: 0;
+        right: 10%; /* Ajuste conforme o layout desejado */
+    }
+}
+
+@media (max-width: 767px) {
+    /* Em dispositivos móveis, reduz o tamanho da imagem */
+    .community-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .community-photo {
+        position: relative;
+        margin-bottom: 15px;
+    }
+}
+
+
     </style>
 </head>
 <body>
-    <body>
-        <header class="fixed-top">
-            <nav class="container d-flex justify-content-between align-items-center py-3">
-                <div class="logo text-white">
-                    <img src="/img/logo3.png" alt="Logo" style="height: 220px; position: absolute; top: -20px; left: -20px;">
-                </div>
-                <ul class="nav ms-auto d-none d-md-flex align-items-center">
-                    <li class="nav-item"><a href="/" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white"><i class="bi bi-person"></i> Perfil</a></li>
-                    <li class="nav-item"><a href="/formulario-de-membros" class="nav-link text-white"><i class="bi bi-people"></i> Adicionar Membros</a></li>
+
+     <!-- Vídeo de fundo -->
+    <video autoplay muted loop class="video-background">
+        <source src="/img/BERNET5.mp4" type="video/mp4">
+        Seu navegador não suporta o vídeo.
+    </video>
+
+    <!-- Sobreposição escura -->
+    <div class="overlay"></div>
+
+ <!-- Navegação -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/img/logo3.png" alt="Logo">
+            Bernet@
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="nav-container">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/"><i class="bi bi-house"></i> Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil"><i class="bi bi-person"></i> Perfil</a>
+                    </li>
+                    <!-- Menu Gestão Administrativa com submenus e ícone de configurações -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="/relatorios" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-bar-chart"></i> Relatórios
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestaoAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear"></i> Gestão Administrativa
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-text"></i> Relatórios Descritivos/Estatísticos</a></li>
-                            <li><a class="dropdown-item" href="/financas-page"><i class="bi bi-wallet"></i> Relatório Financeiro</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestaoAdmin">
+                            <li><a class="dropdown-item" href="/formulario-de-membros"><i class="bi bi-person-plus"></i> Adicionar Membro</a></li>
+                            <li><a class="dropdown-item" href="/emissao-cartoes"><i class="bi bi-card-text"></i> Emissão de Cartões</a></li>
+                            <!-- Submenu Relatórios com sub-submenus e ícone -->
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#" id="navbarDropdownRelatorios">
+                                    <i class="bi bi-file-earmark-text"></i> Relatórios
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownRelatorios">
+                                    <li><a class="dropdown-item" href="/relatorios/descritivo"><i class="bi bi-graph-up"></i> Descritivo</a></li>
+                                    <li><a class="dropdown-item" href="/relatorios"><i class="bi bi-bar-chart-line"></i> Estatístico</a></li>
+                                    <li><a class="dropdown-item" href="/relatorios/geral"><i class="bi bi-file-earmark"></i> Geral</a></li>
+                                </ul>
+                            </li>
+                            <!-- Novo submenu Adicionar Departamento -->
+                            <li><a class="dropdown-item" href="/departamento-pagina"><i class="bi bi-building"></i> Adicionar Departamento</a></li>
                         </ul>
                     </li>
+                    <!-- Menu Gestão Financeira com submenus e ícone de dinheiro -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-plus-square"></i> Inserir
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGestaoFinanceira" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-currency-dollar"></i> Gestão Financeira
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/ofertas-pagina"><i class="bi bi-file-earmark-plus"></i> Ofertas</a></li>
-                            <li><a class="dropdown-item" href="/dizimos-pagina"><i class="bi bi-file-earmark-plus"></i>Dízimos</a></li>
-                            <li><a class="dropdown-item" href="/despesas-page"><i class="bi bi-file-earmark-plus"></i> Despesas</a></li>
-                            <li><a class="dropdown-item" href="/quotas-pagina"><i class="bi bi-file-earmark-plus"></i> Quotas</a></li>
-                            <li><a class="dropdown-item" href="/departamento-pagina"><i class="bi bi-file-earmark-plus"></i> Departamento</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGestaoFinanceira">
+                            <li><a class="dropdown-item" href="/ofertas-pagina"><i class="bi bi-wallet2"></i> Inserir Ofertas</a></li>
+                            <li><a class="dropdown-item" href="/dizimos-pagina"><i class="bi bi-cash-coin"></i> Inserir Dízimo</a></li>
+                            <li><a class="dropdown-item" href="/quotas-pagina"><i class="bi bi-bank"></i> Inserir Quotas</a></li>
+                            <li><a class="dropdown-item" href="/despesas-page"><i class="bi bi-cart"></i> Efetuar Despesa</a></li>
+                            <li><a class="dropdown-item" href="/financas-page"><i class="bi bi-bar-chart"></i> Relatórios</a></li>
                         </ul>
                     </li>
-                    
-
-                    <!-- Novo Menu de Notificações -->
-<li class="nav-item">
-    <a href="/notificacoes" class="nav-link text-white">
-        <i class="bi bi-bell"></i> Notificações 
-        <span class="badge rounded-pill bg-danger text-white" style="position: relative; top: -10px; left: -5px;">
-            <%= notificacoes %> <!-- Exibe o número dinâmico de notificações -->
-        </span>
-    </a>
-</li>
-
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notificacoes"><i class="bi bi-bell"></i> Notificações
+                            <span class="badge rounded-pill bg-danger text-white" style="position: relative; top: -10px; left: -5px;">
+                                <%= notificacoes %>
+                            </span>
+                        </a>
+                    </li>
                 </ul>
-                <button class="btn btn-outline-light d-md-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                    <i class="bi bi-list"></i>
-                </button>
-            </nav>
-    
-         <!-- Offcanvas Menu para Móveis -->
-<div class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="mobileMenu">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title text-white">Menu</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+        </div>
     </div>
-    <div class="offcanvas-body">
-        <ul class="nav flex-column">
-            <li class="nav-item"><a href="#" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white"><i class="bi bi-person"></i> Perfil</a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-white"><i class="bi bi-people"></i> Adicionar Membros</a></li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-bar-chart"></i> Relatórios
-                </a>
-                <ul class="dropdown-menu bg-dark">
-                    <li><a class="dropdown-item text-white" href="#"><i class="bi bi-file-earmark-text"></i> Relatórios Descritivos/Estatísticos</a></li>
-                    <li><a class="dropdown-item text-white" href="#"><i class="bi bi-wallet"></i> Relatório Financeiro</a></li>
-                </ul>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-plus-square"></i> Inserir
-                </a>
-                <ul class="dropdown-menu bg-dark">
-                    <li><a class="dropdown-item text-white" href="#"><i class="bi bi-file-earmark-plus"></i> Inserir Ofertas</a></li>
-                    <li><a class="dropdown-item text-white" href="#"><i class="bi bi-file-earmark-plus"></i> Inserir Despesas</a></li>
-                    <li><a class="dropdown-item" href="/quotas-pagina"><i class="bi bi-file-earmark-plus"></i> Inserir Quotas</a></li>
-                </ul>
-            </li>
-            <!-- Seção de Notificações -->
-            <li class="nav-item">
-                <a href="#" class="nav-link text-white position-relative">
-                    <i class="bi bi-bell"></i> Notificações
-                    <span style="margin-left: -210px; margin-top: 10px;" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        5
-                    </span>
-                </a>
-            </li>
-        </ul>
+</nav>
+
+<!-- Script para manter submenus abertos -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Alvo de todos os elementos com submenu
+        document.querySelectorAll('.dropdown-submenu .dropdown-toggle').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                let submenu = this.nextElementSibling;
+                
+                // Fecha outros submenus abertos
+                document.querySelectorAll('.dropdown-menu .show').forEach(function (openSubmenu) {
+                    if (openSubmenu !== submenu) {
+                        openSubmenu.classList.remove('show');
+                    }
+                });
+
+                // Alterna visibilidade do submenu
+                submenu.classList.toggle('show');
+            });
+        });
+    });
+</script>
+
+<style>
+/* Ajustes para submenus */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+}
+</style>
+
+
+  <!-- Conteúdo principal -->
+<div style="margin-top: 200px;" class="content text-center">
+    <div class="community-photo">
+        <% if (fotoUrl) { %>
+            <!-- Exibe a foto se existir -->
+            <img src="<%= fotoUrl %>" alt="Foto da Comunidade" class="community-img">
+        <% } %>
+    </div>
+
+    <h1>Sistema de Gestão de Igrejas</h1>
+    <p>Um novo e melhor jeito de gerenciar sua igreja!</p>
+
+    <div class="d-flex justify-content-center">
+        <a href="/login" class="btn-custom btn-enter">
+            <i class="bi bi-arrow-right"></i> Entrar
+        </a>
+        <a href="comunity-page-create" class="btn-custom btn-register">
+            <i class="bi bi-pencil"></i> Registrar-se
+        </a>
     </div>
 </div>
 
-        </header>
-    </body>
-    
-    
-    <section class="hero d-flex align-items-center">
-        <video autoplay loop muted>
-            <source src="/img/BERNET5.mp4" type="video/mp4"> 
-            Seu navegador não suporta vídeo.
-        </video>
-        <div class="overlay"></div>
-        <div class="container text-center text-white">
-            <h1 class="display-1">Sistema de Gestão de Igrejas</h1>
-            <p class="lead">Luxury Stay Experience</p>
-            <div>
-                <a href="#" class="btn btn-custom"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sessão</a>
-                <a href="#" class="btn btn-custom"><i class="bi bi-person-plus"></i> Criar Conta</a>
-            </div>
-        </div>
-    </section>
-
-    <footer class="text-center text-white bg-dark py-5">
-        <div class="container">
-            <h5 class="mb-4">Conecte-se Conosco</h5>
-            <div class="social-icons mb-4">
-                <a href="#" class="text-decoration-none me-3"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="text-decoration-none me-3"><i class="bi bi-twitter"></i></a>
-                <a href="#" class="text-decoration-none me-3"><i class="bi bi-instagram"></i></a>
-            </div>
-            <div class="footer-links mb-4">
-                <a href="#" class="text-decoration-none me-3">Sobre Nós</a>
-                <a href="#" class="text-decoration-none me-3">Política de Privacidade</a>
-                <a href="#" class="text-decoration-none">Termos de Serviço</a>
-            </div>
-            <p class="mt-4">Sistema de Gestão de Igrejas - Cadastre membros, gere finanças e crie relatórios detalhados.</p>
-            <p>© 2024 The River. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-    
-    
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Adiciona classe ao header quando rolar a página
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('header');
-            header.classList.toggle('scrolled', window.scrollY > 0);
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>
+
